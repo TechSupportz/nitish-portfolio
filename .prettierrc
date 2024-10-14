@@ -1,9 +1,9 @@
 {
-            "semi": false,
-            "arrowParens": "avoid",
-            "trailingComma": "all",
-            "jsxSingleQuote": false,
-            "tabWidth": 4,
-            "singleQuote": false,
-            "plugins": ["prettier-plugin-tailwindcss"]
-        }
+    "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+    "semi": false,
+    "arrowParens": "avoid",
+    "trailingComma": "all",
+    "jsxSingleQuote": false,
+    "tabWidth": 4,
+    "singleQuote": false
+}
