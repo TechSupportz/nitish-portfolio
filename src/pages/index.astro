@@ -3,14 +3,11 @@ import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="Nitish">
-    <div
-        class="flex h-full flex-col items-center justify-center gap-4 text-white"
-    >
-        <h1 class="text-4xl text-white">Hello?</h1>
-        <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse,
-            voluptate. Dolor eaque nemo reprehenderit voluptatibus expedita
-            quasi. Vero, accusantium ullam.
-        </p>
+    <div class="flex h-full flex-col">
+        <div
+            class="h-2/3 w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+            style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
+        >
+        </div>
     </div>
 </Layout>

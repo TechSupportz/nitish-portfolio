@@ -3,7 +3,7 @@ import "@fontsource-variable/dm-sans"
 import dmSans from "@fontsource-variable/dm-sans/files/dm-sans-latin-standard-normal.woff2"
 import "@fontsource/poppins"
 import poppinsBold from "@fontsource/poppins/files/poppins-latin-700-normal.woff2"
-
+import Navbar from "../components/Navbar.astro"
 
 interface Props {
     title: string
@@ -19,12 +19,25 @@ const { title } = Astro.props
         <meta name="description" content="Astro description" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preload" as="font" type="font/woff2" href={poppinsBold} crossorigin="anonymous">
-		<link rel="preload" as="font" type="font/woff2" href={dmSans} crossorigin="anonymous">
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={poppinsBold}
+            crossorigin="anonymous"
+        />
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={dmSans}
+            crossorigin="anonymous"
+        />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
     </head>
     <body>
+        <Navbar />
         <slot />
     </body>
 </html>
@@ -34,14 +47,19 @@ const { title } = Astro.props
         height: 100%;
         width: 100%;
         background-color: #121212;
-		@apply text-white;
+        @apply text-white;
     }
 
-	h1, h2, h3, h4, h5, h6 {
-		@apply font-display font-bold;
-	}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display font-bold;
+    }
 
-	p {
-		@apply font-light
-	}
+    p {
+        @apply font-light;
+    }
 </style>
