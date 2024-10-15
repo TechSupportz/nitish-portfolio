@@ -5,9 +5,45 @@ import Layout from "../layouts/Layout.astro"
 <Layout title="Nitish">
     <div class="flex h-full flex-col">
         <div
-            class="h-2/3 w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+            class="absolute h-2/3 w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
             style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
         >
+        </div>
+        <div class="z-10 flex h-3/6 items-center">
+            <div class="flex flex-col gap-3 pl-24">
+                <p class="text-3xl">Hello my name is</p>
+                <h1 class="text-8xl">Nitish</h1>
+                <h1 class="flex text-8xl">
+                    I am a&nbsp;
+                    <div class="mt-1 h-[calc(1.5ch+5px)] overflow-hidden">
+                        <span class="">
+                            <ul class="animate-infiniteScroll">
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Software Developer
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Tech Fanatic
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Student
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Software Developer
+                                </li>
+                            </ul>
+                        </span>
+                    </div>
+                </h1>
+            </div>
+            <!-- <div class="size-48 blur-3xl bg-blue-200 absolute mix-blend-soft-light"></div> -->
         </div>
     </div>
 </Layout>
