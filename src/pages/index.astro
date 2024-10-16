@@ -5,50 +5,72 @@ import Layout from "../layouts/Layout.astro"
 <Layout title="Nitish">
     <div class="flex h-full flex-col">
         <div
-            class="absolute h-2/3 w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+            class="xs:h-1/2 absolute h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 lg:h-3/5"
             style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
         >
         </div>
-        <div class="z-10 flex h-3/6 items-center">
-            <div class="flex flex-col gap-3 pl-24">
-                <p class="text-3xl">Hello my name is</p>
-                <h1 class="text-8xl">Nitish</h1>
-                <h1 class="flex text-8xl">
-                    I am a&nbsp;
-                    <div class="mt-1 h-[calc(1.5ch+4px)] overflow-hidden">
-                        <span>
-                            <ul id="scroll-list" class="animate-infiniteScroll">
-                                <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                                >
-                                    Software Developer
-                                </li>
-                                <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                                >
-                                    Tech Fanatic
-                                </li>
-                                <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                                >
-                                    Student
-                                </li>
-                                <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                                >
-                                    Software Developer
-                                </li>
-                            </ul>
-                        </span>
-                    </div>
+        <div class="xs:h-1/2 z-10 flex h-[45%] items-center">
+            <div
+                class="xs:pl-6 2xs:pl-4 flex flex-col gap-1 pl-3 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
+            >
+                <p
+                    class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
+                >
+                    Hello my name is
+                </p>
+                <h1
+                    class="xs:text-6xl mb-0.5 text-5xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
+                >
+                    Nitish
                 </h1>
+                <div
+                    class="xs:text-6xl flex flex-col flex-wrap items-baseline gap-2 text-5xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
+                >
+                    <h1>I am a&nbsp;</h1>
+                    <div
+                        class="h-[1.55ch] overflow-hidden font-display font-bold"
+                    >
+                        <ul id="scroll-list" class="animate-infiniteScroll">
+                            <li
+                                class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                            >
+                                Software Developer
+                            </li>
+                            <li
+                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                            >
+                                Software Dev
+                            </li>
+                            <li
+                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                            >
+                                Tech Fanatic
+                            </li>
+                            <li
+                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                            >
+                                Student
+                            </li>
+                            <li
+                                class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                            >
+                                Software Developer
+                            </li>
+                            <li
+                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                            >
+                                Software Dev
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- NOTE - This is just for testing purposes -->
-        <h2 id="test-text" class="w-full text-center text-3xl text-red-400">
-        </h2>
+        <!-- <h2 id="test-text" class="w-full text-center text-3xl text-red-400"> -->
     </div>
 </Layout>
+
 <script>
     const scrollList = document.getElementById("scroll-list")
 

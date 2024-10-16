@@ -9,6 +9,10 @@ export default {
             display: ["Poppins", "sans-serif"],
         },
         extend: {
+            screens: {
+                "2xs": "320px",
+                xs: "456px",
+            },
             animation: {
                 infiniteScroll: "scrollUp 6s infinite",
             },
@@ -20,9 +24,9 @@ export default {
                     "49.5%, 66%": {
                         transform: "translateY(-50%)",
                     },
-					"82.5%, 100%": {
-						transform: "translateY(-75%)",
-					},
+                    "82.5%, 100%": {
+                        transform: "translateY(-75%)",
+                    },
                 },
             },
         },
