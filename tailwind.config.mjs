@@ -10,7 +10,7 @@ export default {
         },
         extend: {
             animation: {
-                infiniteScroll: "scrollUp 4s infinite",
+                infiniteScroll: "scrollUp 6s infinite",
             },
             keyframes: {
                 scrollUp: {

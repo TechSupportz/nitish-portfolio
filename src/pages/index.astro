@@ -15,9 +15,9 @@ import Layout from "../layouts/Layout.astro"
                 <h1 class="text-8xl">Nitish</h1>
                 <h1 class="flex text-8xl">
                     I am a&nbsp;
-                    <div class="mt-1 h-[calc(1.5ch+5px)] overflow-hidden">
-                        <span class="">
-                            <ul class="animate-infiniteScroll">
+                    <div class="mt-1 h-[calc(1.5ch+4px)] overflow-hidden">
+                        <span>
+                            <ul id="scroll-list" class="animate-infiniteScroll">
                                 <li
                                     class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
                                 >
@@ -43,7 +43,35 @@ import Layout from "../layouts/Layout.astro"
                     </div>
                 </h1>
             </div>
-            <!-- <div class="size-48 blur-3xl bg-blue-200 absolute mix-blend-soft-light"></div> -->
         </div>
+        <!-- NOTE - This is just for testing purposes -->
+        <h2 id="test-text" class="w-full text-center text-3xl text-red-400">
+        </h2>
     </div>
 </Layout>
+<script>
+    const scrollList = document.getElementById("scroll-list")
+
+    if (scrollList) {
+        const testText = document.getElementById("test-text")
+
+        setInterval(() => {
+            const style = window.getComputedStyle(scrollList)
+            const matrix = new DOMMatrixReadOnly(style.transform)
+            const translateY = (matrix.m42 / scrollList.clientHeight) * 100
+
+            if (!testText) return
+
+            if (translateY < 0 && translateY >= -25) {
+                // "Tech Fanatic" is visible
+                testText.innerText = "Tech Fanatic"
+            } else if (translateY <= -25 && translateY >= -50) {
+                // "Student" is visible
+                testText.innerText = "Student"
+            } else if (translateY < -55 || translateY >= 0) {
+                // "Software Developer" is visible
+                testText.innerText = "Software Developer"
+            }
+        }, 200)
+    }
+</script>
