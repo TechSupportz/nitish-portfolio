@@ -9,6 +9,9 @@ export default {
             display: ["Poppins", "sans-serif"],
         },
         extend: {
+            colors: {
+                charcoal: "#121212",
+            },
             screens: {
                 "2xs": "320px",
                 xs: "456px",

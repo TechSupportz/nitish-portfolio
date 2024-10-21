@@ -1,12 +1,16 @@
 ---
 import { Image } from "astro:assets"
+import { Menu } from "lucide-astro"
 ---
 
 <nav
-    class="sticky top-0 z-50 flex items-center justify-between bg-[#121212] px-8 pb-2 pt-4 shadow-2xl shadow-[#121212]"
+    class="bg-charcoal shadow-charbg-charcoal sticky top-0 z-20 flex items-center justify-between px-4 py-4 shadow-2xl md:px-8"
 >
     <Image src="/logo.svg" alt="logo" loading="eager" height={56} width={56} />
-    <div class="flex flex-row items-center gap-6 text-xl text-white">
+    <div id="menu-button" class="block text-zinc-200 lg:hidden cursor-pointer">
+        <Menu size="1.75rem" />
+    </div>
+    <div class="hidden flex-row items-center gap-6 text-xl text-white lg:flex">
         <a href="/about" class="group transition duration-300">
             about
             <span
@@ -27,3 +31,11 @@ import { Image } from "astro:assets"
         </a>
     </div>
 </nav>
+<script>
+    import { isDrawerOpen } from "../store/uiStore"
+
+    document.getElementById("menu-button")!.addEventListener("click", () => {
+        isDrawerOpen.set(true)
+		console.log("clicked")
+    })
+</script>
