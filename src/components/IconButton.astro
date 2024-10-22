@@ -1,0 +1,16 @@
+---
+type Props = {
+    href: string
+    openInNewTab?: boolean
+}
+
+const { href, openInNewTab } = Astro.props
+---
+
+<a
+    href={href}
+    target={openInNewTab ? "_blank" : "_self"}
+    class="size-10 cursor-pointer opacity-50 transition-opacity duration-300 ease-in-out hover:opacity-100 sm:size-12 2xl:size-16"
+>
+    <slot />
+</a>

@@ -12,13 +12,13 @@ const Drawer = () => {
                 className={cn(
                     "fixed inset-0 z-40 h-screen w-full bg-black bg-opacity-45 backdrop-blur-sm transition-all",
                     {
-                        "opacity-0 pointer-events-none": !$isDrawerOpen,
+                        "pointer-events-none opacity-0": !$isDrawerOpen,
                     },
                 )}
             ></div>
             <div
                 className={cn(
-                    "bg-charcoal fixed right-0 top-0 z-50 h-screen w-64 translate-x-full transform rounded-l-2xl shadow-lg transition-all duration-500",
+                    "fixed right-0 top-0 z-50 h-screen w-64 translate-x-full transform-gpu rounded-l-2xl bg-charcoal shadow-lg transition-all duration-500",
                     {
                         "translate-x-0": $isDrawerOpen,
                     },

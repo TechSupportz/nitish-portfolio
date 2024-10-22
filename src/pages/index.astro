@@ -1,17 +1,21 @@
 ---
+import { Image } from "astro:assets"
+import IconButton from "../components/IconButton.astro"
 import Layout from "../layouts/Layout.astro"
+import githubIcon from "../assets/github.svg"
+import linkedInIcon from "../assets/linkedin.svg"
 ---
 
 <Layout title="Nitish">
     <div class="flex h-full flex-col">
         <div
-            class="xs:h-1/2 absolute h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 lg:h-3/5"
+            class="absolute inset-x-0 h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/5"
             style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
         >
         </div>
-        <div class="xs:h-1/2 z-10 flex h-[45%] items-center">
+        <div class="z-10 flex h-[45%] items-center xs:h-1/2">
             <div
-                class="xs:pl-6 2xs:pl-4 flex flex-col gap-1 pl-3 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
+                class="flex flex-col gap-1 pl-3 2xs:pl-4 xs:pl-6 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
             >
                 <p
                     class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
@@ -19,18 +23,21 @@ import Layout from "../layouts/Layout.astro"
                     Hello my name is
                 </p>
                 <h1
-                    class="xs:text-6xl mb-0.5 text-5xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
+                    class="mb-0.5 text-5xl xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
                 >
                     Nitish
                 </h1>
                 <div
-                    class="xs:text-6xl flex flex-col flex-wrap items-baseline gap-2 text-5xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
+                    class="flex flex-col flex-wrap items-baseline gap-2 text-5xl xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
                 >
                     <h1>I am a&nbsp;</h1>
                     <div
                         class="h-[1.55ch] overflow-hidden font-display font-bold"
                     >
-                        <ul id="scroll-list" class="animate-infiniteScroll">
+                        <ul
+                            id="scroll-list"
+                            class="animate-infiniteScroll text-nowrap"
+                        >
                             <li
                                 class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
                             >
@@ -63,6 +70,27 @@ import Layout from "../layouts/Layout.astro"
                             </li>
                         </ul>
                     </div>
+                </div>
+                <div class="mt-2 flex gap-4 2xl:gap-6">
+                    <IconButton href="https://github.tnitish.com/" openInNewTab>
+                        <Image
+                            src={githubIcon}
+                            alt="GitHub Icon"
+                            width={64}
+                            height={64}
+                        />
+                    </IconButton>
+                    <IconButton
+                        href="https://linkedin.tnitish.com/"
+                        openInNewTab
+                    >
+                        <Image
+                            src={linkedInIcon}
+                            alt="LinkedIn Icon"
+                            width={64}
+                            height={64}
+                        />
+                    </IconButton>
                 </div>
             </div>
         </div>

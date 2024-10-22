@@ -3,32 +3,45 @@ import { Image } from "astro:assets"
 import { Menu } from "lucide-astro"
 ---
 
-<nav
-    class="bg-charcoal shadow-charbg-charcoal sticky top-0 z-20 flex items-center justify-between px-4 py-4 shadow-2xl md:px-8"
->
-    <Image src="/logo.svg" alt="logo" loading="eager" height={56} width={56} />
-    <div id="menu-button" class="block text-zinc-200 lg:hidden cursor-pointer">
-        <Menu size="1.75rem" />
-    </div>
-    <div class="hidden flex-row items-center gap-6 text-xl text-white lg:flex">
-        <a href="/about" class="group transition duration-300">
-            about
-            <span
-                class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-            ></span>
-        </a>
-        <a href="/projects" class="group transition duration-300">
-            projects
-            <span
-                class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-            ></span>
-        </a>
-        <a href="/contact" class="group transition duration-300">
-            contact
-            <span
-                class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-            ></span>
-        </a>
+<nav class="shadow-charbg-charcoal sticky top-0 z-20 bg-charcoal">
+    <div
+        class="m-auto flex h-full max-w-[1900px] items-center justify-between px-4 py-4 shadow-2xl md:px-8"
+    >
+        <Image
+            src="/logo.svg"
+            alt="logo"
+            loading="eager"
+            height={56}
+            width={56}
+        />
+        <div
+            id="menu-button"
+            class="block cursor-pointer text-zinc-200 lg:hidden"
+        >
+            <Menu size="1.75rem" />
+        </div>
+        <div
+            class="hidden flex-row items-center gap-6 text-xl text-white lg:flex"
+        >
+            <a href="/about" class="group transition duration-300">
+                about
+                <span
+                    class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                ></span>
+            </a>
+            <a href="/projects" class="group transition duration-300">
+                projects
+                <span
+                    class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                ></span>
+            </a>
+            <a href="/contact" class="group transition duration-300">
+                contact
+                <span
+                    class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                ></span>
+            </a>
+        </div>
     </div>
 </nav>
 <script>
@@ -36,6 +49,5 @@ import { Menu } from "lucide-astro"
 
     document.getElementById("menu-button")!.addEventListener("click", () => {
         isDrawerOpen.set(true)
-		console.log("clicked")
     })
 </script>
