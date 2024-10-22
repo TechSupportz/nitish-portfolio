@@ -1,9 +1,9 @@
 ---
 import { Image } from "astro:assets"
-import IconButton from "../components/IconButton.astro"
-import Layout from "../layouts/Layout.astro"
 import githubIcon from "../assets/github.svg"
 import linkedInIcon from "../assets/linkedin.svg"
+import IconButton from "../components/IconButton.astro"
+import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="Nitish">
@@ -76,6 +76,7 @@ import linkedInIcon from "../assets/linkedin.svg"
                         <Image
                             src={githubIcon}
                             alt="GitHub Icon"
+                            loading={"eager"}
                             width={64}
                             height={64}
                         />
@@ -87,6 +88,7 @@ import linkedInIcon from "../assets/linkedin.svg"
                         <Image
                             src={linkedInIcon}
                             alt="LinkedIn Icon"
+                            loading={"eager"}
                             width={64}
                             height={64}
                         />
