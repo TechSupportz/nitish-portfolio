@@ -4,100 +4,127 @@ import githubIcon from "../assets/github.svg"
 import linkedInIcon from "../assets/linkedin.svg"
 import IconButton from "../components/IconButton.astro"
 import Layout from "../layouts/Layout.astro"
+import TextCard from "../components/TextCard"
 ---
 
 <Layout title="Nitish">
     <div class="flex h-full flex-col">
-        <div
-            class="absolute inset-x-0 h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/5"
-            style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
-        >
-        </div>
-        <div class="z-10 flex h-[45%] items-center xs:h-1/2">
+		<!--FIXME - Negative margin is kinda jank -->
+        <div class="h-[45%] xs:h-1/2 lg:h-3/5 -mb-[20%]">
             <div
-                class="flex flex-col gap-1 pl-3 2xs:pl-4 xs:pl-6 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
+                class="absolute inset-x-0 h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/5"
+                style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
             >
-                <p
-                    class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
-                >
-                    Hello my name is
-                </p>
-                <h1
-                    class="mb-0.5 text-5xl xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
-                >
-                    Nitish
-                </h1>
+            </div>
+            <div class="z-10 flex h-full items-center">
                 <div
-                    class="flex flex-col flex-wrap items-baseline gap-2 text-5xl xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
+                    class="flex flex-col gap-1 pl-3 2xs:pl-4 xs:pl-6 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
                 >
-                    <h1>I am a&nbsp;</h1>
+                    <p
+                        class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
+                    >
+                        Hello my name is
+                    </p>
+                    <h1
+                        class="mb-0.5 text-5xl xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
+                    >
+                        Nitish
+                    </h1>
                     <div
-                        class="h-[1.55ch] overflow-hidden font-display font-bold"
+                        class="flex flex-col flex-wrap items-baseline gap-2 text-5xl xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
                     >
-                        <ul
-                            id="scroll-list"
-                            class="animate-infiniteScroll text-nowrap"
+                        <h1>I am a&nbsp;</h1>
+                        <div
+                            class="h-[1.55ch] overflow-hidden font-display font-bold"
                         >
-                            <li
-                                class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                            <ul
+                                id="scroll-list"
+                                class="animate-infiniteScroll text-nowrap"
                             >
-                                Software Developer
-                            </li>
-                            <li
-                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
-                            >
-                                Software Dev
-                            </li>
-                            <li
-                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                            >
-                                Tech Fanatic
-                            </li>
-                            <li
-                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
-                            >
-                                Student
-                            </li>
-                            <li
-                                class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
-                            >
-                                Software Developer
-                            </li>
-                            <li
-                                class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
-                            >
-                                Software Dev
-                            </li>
-                        </ul>
+                                <li
+                                    class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                                >
+                                    Software Developer
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                                >
+                                    Software Dev
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Tech Fanatic
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                >
+                                    Student
+                                </li>
+                                <li
+                                    class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                                >
+                                    Software Developer
+                                </li>
+                                <li
+                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                                >
+                                    Software Dev
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="mt-2 flex gap-4 2xl:gap-6">
-                    <IconButton href="https://github.tnitish.com/" openInNewTab>
-                        <Image
-                            src={githubIcon}
-                            alt="GitHub Icon"
-                            loading={"eager"}
-                            width={64}
-                            height={64}
-                        />
-                    </IconButton>
-                    <IconButton
-                        href="https://linkedin.tnitish.com/"
-                        openInNewTab
-                    >
-                        <Image
-                            src={linkedInIcon}
-                            alt="LinkedIn Icon"
-                            loading={"eager"}
-                            width={64}
-                            height={64}
-                        />
-                    </IconButton>
+                    <div class="mt-2 flex gap-4 2xl:gap-6">
+                        <IconButton
+                            href="https://github.tnitish.com/"
+                            openInNewTab
+                        >
+                            <Image
+                                src={githubIcon}
+                                alt="GitHub Icon"
+                                loading={"eager"}
+                                width={64}
+                                height={64}
+                            />
+                        </IconButton>
+                        <IconButton
+                            href="https://linkedin.tnitish.com/"
+                            openInNewTab
+                        >
+                            <Image
+                                src={linkedInIcon}
+                                alt="LinkedIn Icon"
+                                loading={"eager"}
+                                width={64}
+                                height={64}
+                            />
+                        </IconButton>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- NOTE - This is just for testing purposes -->
         <!-- <h2 id="test-text" class="w-full text-center text-3xl text-red-400"> -->
+        <div
+            class="z-10 flex h-[55%] flex-col justify-evenly p-4 xs:h-1/2 lg:h-2/5"
+        >
+            <TextCard
+                title="Software Developer"
+                body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
+            />
+            <div class="place-self-end">
+                <TextCard
+                    title="Tech Fanatic"
+                    body="Always curious about the cutting edge in everything tech from phones to laptops & electric cars"
+                    isActive={false}
+                />
+            </div>
+            <TextCard
+                title="Student"
+                body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
+                isActive={false}
+            />
+        </div>
     </div>
 </Layout>
 
