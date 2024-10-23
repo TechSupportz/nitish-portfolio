@@ -48,21 +48,21 @@ const Drawer = () => {
                                 className="group transition duration-300"
                             >
                                 About
-                                <span className="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
+                                <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                             <a
                                 href="/projects"
                                 className="group transition duration-300"
                             >
                                 Projects
-                                <span className="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
+                                <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                             <a
                                 href="/contact"
                                 className="group transition duration-300"
                             >
                                 Contact
-                                <span className="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
+                                <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                         </div>
                     </div>

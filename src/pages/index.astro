@@ -102,28 +102,53 @@ import Layout from "../layouts/Layout.astro"
 </Layout>
 
 <script>
+    import { scrollListItemVisibility } from "../store/uiStore"
+
     const scrollList = document.getElementById("scroll-list")
 
     if (scrollList) {
-        const testText = document.getElementById("test-text")
-
         setInterval(() => {
             const style = window.getComputedStyle(scrollList)
             const matrix = new DOMMatrixReadOnly(style.transform)
             const translateY = (matrix.m42 / scrollList.clientHeight) * 100
 
-            if (!testText) return
-
             if (translateY < 0 && translateY >= -25) {
                 // "Tech Fanatic" is visible
-                testText.innerText = "Tech Fanatic"
+                scrollListItemVisibility.set({
+                    softwareDeveloper: false,
+                    techFanatic: true,
+                    student: false,
+                })
             } else if (translateY <= -25 && translateY >= -50) {
                 // "Student" is visible
-                testText.innerText = "Student"
+                scrollListItemVisibility.set({
+                    softwareDeveloper: false,
+                    techFanatic: false,
+                    student: true,
+                })
             } else if (translateY < -55 || translateY >= 0) {
                 // "Software Developer" is visible
-                testText.innerText = "Software Developer"
+                scrollListItemVisibility.set({
+                    softwareDeveloper: true,
+                    techFanatic: false,
+                    student: false,
+                })
             }
-        }, 200)
+        }, 150)
     }
+
+    //NOTE This is just for testing purposes
+    // const testText = document.getElementById("test-text")
+    // if (testText) {
+    //     scrollListItemVisibility.subscribe(value => {
+    //         testText.innerText = scrollListItemVisibility.value
+    //             .softwareDeveloper
+    //             ? "Software Developer"
+    //             : scrollListItemVisibility.value.techFanatic
+    //               ? "Tech Fanatic"
+    //               : scrollListItemVisibility.value.student
+    //                 ? "Student"
+    //                 : "None"
+    //     })
+    // }
 </script>
