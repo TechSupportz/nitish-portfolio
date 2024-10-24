@@ -8,14 +8,13 @@ import TextCard from "../components/TextCard"
 ---
 
 <Layout title="Nitish">
-    <div class="flex h-full flex-col">
-		<!--FIXME - Negative margin is kinda jank -->
-        <div class="h-[45%] xs:h-1/2 lg:h-3/5 -mb-[20%]">
-            <div
-                class="absolute inset-x-0 h-[45%] w-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/5"
-                style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
-            >
-            </div>
+    <div
+        class="absolute inset-x-0 h-[45%] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/4"
+        style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
+    >
+    </div>
+    <div class="relative h-full w-full">
+        <div class="h-[40%] xs:h-[45%] lg:h-[60%]">
             <div class="z-10 flex h-full items-center">
                 <div
                     class="flex flex-col gap-1 pl-3 2xs:pl-4 xs:pl-6 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
@@ -106,30 +105,34 @@ import TextCard from "../components/TextCard"
         <!-- NOTE - This is just for testing purposes -->
         <!-- <h2 id="test-text" class="w-full text-center text-3xl text-red-400"> -->
         <div
-            class="z-10 flex h-[55%] flex-col justify-evenly p-4 xs:h-1/2 lg:h-2/5"
+            class="absolute inset-x-0 top-[37.5%] z-10 m-auto h-[55%] w-full px-4 pb-8 xs:top-[42.5%] xs:h-[50%] sm:w-10/12 md:w-4/5 lg:top-[50%] xl:top-[55%] lg:w-full"
         >
-            <TextCard
-                title="Software Developer"
-                body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
-            />
-            <div class="place-self-end">
+            <div
+                class="flex flex-col justify-evenly gap-4 lg:gap-6 xl:gap-8 lg:w-full lg:flex-row lg:justify-stretch lg:min-h-2/5 xl:h-3/5"
+            >
+                <TextCard
+                    title="Software Developer"
+                    body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
+                />
                 <TextCard
                     title="Tech Fanatic"
                     body="Always curious about the cutting edge in everything tech from phones to laptops & electric cars"
                     isActive={false}
+                    offset
+                />
+                <TextCard
+                    title="Student"
+                    body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
+                    isActive={false}
                 />
             </div>
-            <TextCard
-                title="Student"
-                body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
-                isActive={false}
-            />
         </div>
     </div>
 </Layout>
 
 <script>
     import { scrollListItemVisibility } from "../store/uiStore"
+    import type { TScrollListItemVisibility } from "../types/ScrollListType"
 
     const scrollList = document.getElementById("scroll-list")
 
@@ -139,27 +142,38 @@ import TextCard from "../components/TextCard"
             const matrix = new DOMMatrixReadOnly(style.transform)
             const translateY = (matrix.m42 / scrollList.clientHeight) * 100
 
+            let $scrollListItemVisibility: TScrollListItemVisibility = {
+                softwareDeveloper: false,
+                techFanatic: false,
+                student: false,
+            }
+
             if (translateY < 0 && translateY >= -25) {
                 // "Tech Fanatic" is visible
-                scrollListItemVisibility.set({
+                $scrollListItemVisibility = {
                     softwareDeveloper: false,
                     techFanatic: true,
                     student: false,
-                })
+                }
             } else if (translateY <= -25 && translateY >= -50) {
                 // "Student" is visible
-                scrollListItemVisibility.set({
+                $scrollListItemVisibility = {
                     softwareDeveloper: false,
                     techFanatic: false,
                     student: true,
-                })
+                }
             } else if (translateY < -55 || translateY >= 0) {
                 // "Software Developer" is visible
-                scrollListItemVisibility.set({
+                $scrollListItemVisibility = {
                     softwareDeveloper: true,
                     techFanatic: false,
                     student: false,
-                })
+                }
+            }
+
+            // Use lodash isEqual or smt similar
+            if ($scrollListItemVisibility !== scrollListItemVisibility.value) {
+                scrollListItemVisibility.set($scrollListItemVisibility)
             }
         }, 150)
     }
