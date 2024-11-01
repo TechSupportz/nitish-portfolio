@@ -1,0 +1,12 @@
+---
+import inProgressImage from "../assets/in-progress.svg"
+import Image from "astro/components/Image.astro"
+---
+
+<div class="flex flex-col items-center justify-center gap-8">
+    <h1 class="text-3xl">Oops looks like this page isnt done yet</h1>
+    <Image src={inProgressImage} alt="In Progress" />
+    <h1 class="text-xl font-semibold">
+        Coming soon... or maybe not. Who knows?
+    </h1>
+</div>

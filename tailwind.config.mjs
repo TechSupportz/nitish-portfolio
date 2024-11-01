@@ -13,7 +13,6 @@ export default {
                 charcoal: "#121212",
             },
             screens: {
-                "2xs": "320px",
                 xs: "456px",
             },
             animation: {
