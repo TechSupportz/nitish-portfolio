@@ -9,7 +9,7 @@ import ProfileCard from "../components/ProfileCard"
 
 <Layout title="Nitish">
     <div
-        class="absolute inset-x-0 h-[45%] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-3/4"
+        class="absolute inset-x-0 h-[45%] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-4/6 max-h-[1024px]"
         style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
     >
     </div>
@@ -17,7 +17,7 @@ import ProfileCard from "../components/ProfileCard"
         <div class="h-[40%] xs:h-[45%] lg:h-[60%]">
             <div class="z-10 flex h-full items-center">
                 <div
-                    class="flex flex-col gap-1 pl-3 2xs:pl-4 xs:pl-6 sm:gap-2 md:pl-8 lg:pl-12 xl:pl-16"
+                    class="flex w-full flex-col gap-1 px-4 xs:px-6 sm:gap-2 md:px-8 lg:px-12 xl:px-16"
                 >
                     <p
                         class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
@@ -73,58 +73,60 @@ import ProfileCard from "../components/ProfileCard"
                             </ul>
                         </div>
                     </div>
-                    <div class="mt-2 flex gap-4 2xl:gap-6">
-                        <IconButton
-                            href="https://github.tnitish.com/"
-                            openInNewTab
+                    <div class="relative mt-2 lg:static lg:-mx-16">
+                        <div class="flex gap-4 lg:mx-16 2xl:gap-6">
+                            <IconButton
+                                href="https://github.tnitish.com/"
+                                openInNewTab
+                            >
+                                <Image
+                                    src={githubIcon}
+                                    alt="GitHub Icon"
+                                    loading={"eager"}
+                                    width={64}
+                                    height={64}
+                                />
+                            </IconButton>
+                            <IconButton
+                                href="https://linkedin.tnitish.com/"
+                                openInNewTab
+                            >
+                                <Image
+                                    src={linkedInIcon}
+                                    alt="LinkedIn Icon"
+                                    loading={"eager"}
+                                    width={64}
+                                    height={64}
+                                />
+                            </IconButton>
+                        </div>
+                        <div
+                            class="absolute inset-x-0 m-auto mt-6 w-full pb-8 sm:w-10/12 md:mt-10 md:w-4/5 lg:mt-12 lg:min-h-72 lg:w-full lg:px-8 2xl:mt-16"
                         >
-                            <Image
-                                src={githubIcon}
-                                alt="GitHub Icon"
-                                loading={"eager"}
-                                width={64}
-                                height={64}
-                            />
-                        </IconButton>
-                        <IconButton
-                            href="https://linkedin.tnitish.com/"
-                            openInNewTab
-                        >
-                            <Image
-                                src={linkedInIcon}
-                                alt="LinkedIn Icon"
-                                loading={"eager"}
-                                width={64}
-                                height={64}
-                            />
-                        </IconButton>
+                            <div
+                                class="flex w-full flex-col gap-[3vh] lg:h-screen lg:max-h-72 lg:flex-row lg:justify-center lg:gap-6 xl:gap-8"
+                            >
+                                <ProfileCard
+                                    client:load
+                                    title="Software Developer"
+                                    body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
+                                    initialActive
+                                />
+                                <ProfileCard
+                                    client:load
+                                    title="Tech Fanatic"
+                                    body="Always curious about the cutting edge in everything tech from phones to laptops & electric cars"
+                                    offset
+                                />
+                                <ProfileCard
+                                    client:load
+                                    title="Student"
+                                    body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div
-            class="absolute inset-x-0 top-[37.5%] z-10 m-auto h-[55%] w-full px-4 pb-8 xs:top-[42.5%] xs:h-[50%] sm:w-10/12 md:w-4/5 lg:top-[50%] lg:w-full xl:top-[55%]"
-        >
-            <div
-                class="flex flex-col justify-evenly gap-4 lg:h-[50%] lg:w-full lg:flex-row lg:justify-stretch lg:gap-6 xl:h-3/5 xl:gap-8 min-h-fit max-h-72"
-            >
-                <ProfileCard
-                    client:load
-                    title="Software Developer"
-                    body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
-                    initialActive
-                />
-                <ProfileCard
-                    client:load
-                    title="Tech Fanatic"
-                    body="Always curious about the cutting edge in everything tech from phones to laptops & electric cars"
-                    offset
-                />
-                <ProfileCard
-                    client:load
-                    title="Student"
-                    body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
-                />
             </div>
         </div>
     </div>

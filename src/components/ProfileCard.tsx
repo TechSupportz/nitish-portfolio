@@ -50,7 +50,7 @@ const ProfileCard = ({
         >
             <h1
                 className={cn(
-                    "text-balance text-lg font-semibold transition-opacity duration-300 ease-in-out sm:text-xl md:text-2xl lg:text-3xl",
+                    "text-nowrap text-lg font-semibold transition-opacity duration-300 ease-in-out sm:text-xl md:text-2xl lg:text-3xl",
                     {
                         "opacity-30": !isActive,
                     },
