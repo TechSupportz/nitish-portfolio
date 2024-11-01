@@ -16,7 +16,7 @@ const Drawer = () => {
             <div
                 onClick={closeDrawer}
                 className={cn(
-                    "fixed inset-0 z-40 h-screen w-full bg-black bg-opacity-45 backdrop-blur-sm transition-all duration-500 ease-in-out",
+                    "fixed inset-0 z-40 h-screen w-full bg-black bg-opacity-45 backdrop-blur-md transition-all duration-500 ease-in-out",
                     {
                         "pointer-events-none opacity-0": !$isDrawerOpen,
                     },
