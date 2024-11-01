@@ -4,7 +4,7 @@ import githubIcon from "../assets/github.svg"
 import linkedInIcon from "../assets/linkedin.svg"
 import IconButton from "../components/IconButton.astro"
 import Layout from "../layouts/Layout.astro"
-import TextCard from "../components/TextCard"
+import ProfileCard from "../components/ProfileCard"
 ---
 
 <Layout title="Nitish">
@@ -13,7 +13,7 @@ import TextCard from "../components/TextCard"
         style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
     >
     </div>
-    <div class="relative h-full w-full">
+    <div class="relative h-dvh w-full">
         <div class="h-[40%] xs:h-[45%] lg:h-[60%]">
             <div class="z-10 flex h-full items-center">
                 <div
@@ -102,28 +102,28 @@ import TextCard from "../components/TextCard"
                 </div>
             </div>
         </div>
-        <!-- NOTE - This is just for testing purposes -->
-        <!-- <h2 id="test-text" class="w-full text-center text-3xl text-red-400"> -->
         <div
-            class="absolute inset-x-0 top-[37.5%] z-10 m-auto h-[55%] w-full px-4 pb-8 xs:top-[42.5%] xs:h-[50%] sm:w-10/12 md:w-4/5 lg:top-[50%] xl:top-[55%] lg:w-full"
+            class="absolute inset-x-0 top-[37.5%] z-10 m-auto h-[55%] w-full px-4 pb-8 xs:top-[42.5%] xs:h-[50%] sm:w-10/12 md:w-4/5 lg:top-[50%] lg:w-full xl:top-[55%]"
         >
             <div
-                class="flex flex-col justify-evenly gap-4 lg:gap-6 xl:gap-8 lg:w-full lg:flex-row lg:justify-stretch lg:min-h-2/5 xl:h-3/5"
+                class="flex flex-col justify-evenly gap-4 lg:h-[50%] lg:w-full lg:flex-row lg:justify-stretch lg:gap-6 xl:h-3/5 xl:gap-8 min-h-fit max-h-72"
             >
-                <TextCard
+                <ProfileCard
+                    client:load
                     title="Software Developer"
                     body="Full stack web & mobile developer who likes to solve problems & always open to learning & trying out new technologies"
+                    initialActive
                 />
-                <TextCard
+                <ProfileCard
+                    client:load
                     title="Tech Fanatic"
                     body="Always curious about the cutting edge in everything tech from phones to laptops & electric cars"
-                    isActive={false}
                     offset
                 />
-                <TextCard
+                <ProfileCard
+                    client:load
                     title="Student"
                     body="Alumni of Temasek Polytchnic & will be pursuing a degree in Computer Science at NUS in 2026"
-                    isActive={false}
                 />
             </div>
         </div>
@@ -177,19 +177,4 @@ import TextCard from "../components/TextCard"
             }
         }, 150)
     }
-
-    //NOTE This is just for testing purposes
-    // const testText = document.getElementById("test-text")
-    // if (testText) {
-    //     scrollListItemVisibility.subscribe(value => {
-    //         testText.innerText = scrollListItemVisibility.value
-    //             .softwareDeveloper
-    //             ? "Software Developer"
-    //             : scrollListItemVisibility.value.techFanatic
-    //               ? "Tech Fanatic"
-    //               : scrollListItemVisibility.value.student
-    //                 ? "Student"
-    //                 : "None"
-    //     })
-    // }
 </script>

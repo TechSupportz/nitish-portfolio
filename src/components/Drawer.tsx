@@ -24,7 +24,7 @@ const Drawer = () => {
             ></div>
             <div
                 className={cn(
-                    "fixed right-0 top-0 z-50 h-screen w-3/4 translate-x-full transform-gpu rounded-l-[2rem] bg-charcoal shadow-lg transition-all duration-500 ease-in-out",
+                    "fixed right-0 top-0 z-50 h-dvh w-3/4 translate-x-full transform-gpu rounded-l-[2rem] bg-charcoal shadow-lg transition-all duration-500 ease-in-out",
                     {
                         "translate-x-0": $isDrawerOpen,
                     },
