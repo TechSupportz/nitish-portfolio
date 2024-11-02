@@ -17,6 +17,7 @@ export default {
             },
             animation: {
                 infiniteScroll: "scrollUp 6s infinite",
+                "quick-spin": "spinQuick 0.45s linear",
             },
             keyframes: {
                 scrollUp: {
@@ -29,6 +30,11 @@ export default {
                     "82.5%, 100%": {
                         transform: "translateY(-75%)",
                     },
+                },
+                spinQuick: {
+                    "0%": { transform: "scale(1) rotate(0deg)" },
+                    "50%": { transform: "scale(1.25) rotate(180deg)" },
+                    "100%": { transform: "scale(1) rotate(360deg)" },
                 },
             },
         },

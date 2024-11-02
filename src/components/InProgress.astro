@@ -3,10 +3,18 @@ import inProgressImage from "../assets/in-progress.svg"
 import Image from "astro/components/Image.astro"
 ---
 
-<div class="flex flex-col items-center justify-center gap-8">
-    <h1 class="text-3xl">Oops looks like this page isnt done yet</h1>
-    <Image src={inProgressImage} alt="In Progress" />
-    <h1 class="text-xl font-semibold">
+<div class="flex flex-col items-center justify-center gap-6 lg:gap-8 px-4 text-center">
+    <h1 class="text-balance xs:text-lg sm:text-xl md:text-2xl lg:text-3xl">
+        Oops looks like this page isnt done yet
+    </h1>
+    <Image
+        src={inProgressImage}
+        alt="In Progress"
+        class="w-[20rem] xs:w-[24rem] sm:w-[28rem] md:w-[32rem] lg:w-[36rem] xl:w-[40rem]"
+    />
+    <h1
+        class="text-pretty text-xs font-medium xs:text-sm sm:text-base md:text-lg lg:text-xl"
+    >
         Coming soon... or maybe not. Who knows?
     </h1>
 </div>

@@ -9,12 +9,12 @@ import { Menu } from "lucide-astro"
     }
 </style>
 <nav
-    class="navbar showNav fixed inset-x-0 top-0 z-20 w-full -translate-y-[72px] bg-charcoal font-display shadow-charcoal transition-transform duration-300 md:-translate-y-[80px]"
+    class="navbar showNav fixed top-0 z-20 w-full -translate-y-[72px] bg-charcoal font-display shadow-charcoal transition-transform duration-300 md:-translate-y-[80px]"
 >
     <div
         class="m-auto flex h-full max-w-[1900px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
     >
-        <a href="/" class="size-12 md:size-14">
+        <a href="/" class="logo size-12 md:size-14">
             <Image
                 src="/logo.svg"
                 alt="logo"
@@ -61,6 +61,8 @@ import { Menu } from "lucide-astro"
     })
 
     const navbar = document.querySelector(".navbar")
+    const logo = document.querySelector(".logo")
+
     let lastScrollTop = 0
 
     window.addEventListener("scroll", () => {
@@ -73,5 +75,17 @@ import { Menu } from "lucide-astro"
         }
 
         lastScrollTop = scrollTop
+    })
+
+    window.addEventListener("load", () => {
+        logo?.classList.add("animate-quick-spin")
+    })
+
+    logo?.addEventListener("mouseenter", () => {
+        logo?.classList.add("animate-quick-spin")
+    })
+
+    logo?.addEventListener("animationend", () => {
+        logo?.classList.remove("animate-quick-spin")
     })
 </script>
