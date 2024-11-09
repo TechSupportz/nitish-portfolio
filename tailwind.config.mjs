@@ -16,11 +16,11 @@ export default {
                 xs: "456px",
             },
             animation: {
-                infiniteScroll: "scrollUp 6s infinite",
-                "quick-spin": "spinQuick 0.45s linear",
+                "infinite-scroll": "scroll-up 6s infinite",
+                "quick-spin": "quick-spin 0.35s linear",
             },
             keyframes: {
-                scrollUp: {
+                "scroll-up": {
                     "16.5%, 33%": {
                         transform: "translateY(-25%)",
                     },
@@ -31,7 +31,7 @@ export default {
                         transform: "translateY(-75%)",
                     },
                 },
-                spinQuick: {
+                "quick-spin": {
                     "0%": { transform: "scale(1) rotate(0deg)" },
                     "50%": { transform: "scale(1.25) rotate(180deg)" },
                     "100%": { transform: "scale(1) rotate(360deg)" },

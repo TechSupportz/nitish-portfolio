@@ -9,8 +9,12 @@ import ProfileCard from "../components/ProfileCard"
 
 <Layout title="Nitish">
     <div
-        class="absolute inset-x-0 h-[45%] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-4/6 max-h-[1024px]"
+        class="dot-matrix absolute inset-x-0 h-[45%] max-h-[1024px] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-4/6"
         style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
+    >
+    </div>
+    <div
+        class="pointer-glow fixed top-1/4 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-300 opacity-0 mix-blend-overlay blur-3xl transition-opacity duration-500"
     >
     </div>
     <div class="relative h-dvh w-full">
@@ -25,6 +29,7 @@ import ProfileCard from "../components/ProfileCard"
                         Hello my name is
                     </p>
                     <h1
+                        id="name"
                         class="mb-0.5 text-5xl xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
                     >
                         Nitish
@@ -38,7 +43,7 @@ import ProfileCard from "../components/ProfileCard"
                         >
                             <ul
                                 id="scroll-list"
-                                class="animate-infiniteScroll text-nowrap"
+                                class="animate-infinite-scroll text-nowrap"
                             >
                                 <li
                                     class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
@@ -138,6 +143,10 @@ import ProfileCard from "../components/ProfileCard"
 
     const scrollList = document.getElementById("scroll-list")
 
+    const dotMatrix = document.querySelector<HTMLElement>(".dot-matrix")
+    const pointerGlow = document.querySelector<HTMLElement>(".pointer-glow")
+    const name = document.getElementById("name")
+
     if (scrollList) {
         setInterval(() => {
             const style = window.getComputedStyle(scrollList)
@@ -178,5 +187,31 @@ import ProfileCard from "../components/ProfileCard"
                 scrollListItemVisibility.set($scrollListItemVisibility)
             }
         }, 150)
+    }
+
+    if (dotMatrix && pointerGlow && name) {
+        document.body.onpointermove = e => {
+            if (
+                e.clientY < dotMatrix.clientHeight - 64 &&
+                e.clientY > 80 &&
+                e.clientX > 10 &&
+                e.clientX < window.innerWidth - 10
+            ) {
+                pointerGlow.animate(
+                    {
+                        top: `${e.clientY}px`,
+                        left: `${e.clientX}px`,
+                    },
+                    {
+                        duration: 500,
+                        easing: "ease-out",
+                        fill: "forwards",
+                    },
+                )
+                pointerGlow.style.opacity = "1"
+            } else {
+                pointerGlow.style.opacity = "0"
+            }
+        }
     }
 </script>
