@@ -68,7 +68,7 @@ import { Menu } from "lucide-astro"
     window.addEventListener("scroll", () => {
         const scrollTop = window.scrollY
 
-        if (scrollTop > lastScrollTop) {
+        if (scrollTop + 64 > lastScrollTop && scrollTop > 64) {
             navbar?.classList.remove("showNav")
         } else {
             navbar?.classList.add("showNav")
