@@ -1,8 +1,8 @@
 import { useStore } from "@nanostores/react"
 import { X } from "lucide-react"
-import emailIcon from "../assets/email.svg"
-import githubIcon from "../assets/github.svg"
-import linkedInIcon from "../assets/linkedin.svg"
+import emailIcon from "../images/email.svg"
+import githubIcon from "../images/github.svg"
+import linkedInIcon from "../images/linkedin.svg"
 import { isDrawerOpen } from "../store/uiStore"
 import { cn } from "../utils/cn"
 
