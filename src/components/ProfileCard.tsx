@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
-import { cn } from "../utils/cn"
 import { useStore } from "@nanostores/react"
+import { useEffect, useState } from "react"
 import { scrollListItemVisibility } from "../store/uiStore"
+import { cn } from "../utils/cn"
 
 type ProfileCardProps = {
     title: string
