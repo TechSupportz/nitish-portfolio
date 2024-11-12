@@ -14,6 +14,7 @@ import poppinsBold from "@fontsource/poppins/files/poppins-latin-700-normal.woff
 import Drawer from "../components/Drawer"
 import Navbar from "../components/Navbar.astro"
 import { cn } from "../utils/cn"
+import Posthog from "../components/posthog.astro"
 
 type Props = {
     title: string
@@ -82,6 +83,7 @@ const { title, center } = Astro.props
         <title>{title}</title>
     </head>
     <body>
+        <Posthog />
         <Drawer client:load />
         <Navbar />
         <div
