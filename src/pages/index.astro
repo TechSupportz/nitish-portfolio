@@ -23,18 +23,18 @@ import Layout from "../layouts/Layout.astro"
                     class="flex w-full flex-col gap-1 px-4 xs:px-6 sm:gap-2 md:px-8 lg:px-12 xl:px-16"
                 >
                     <p
-                        class="text-md xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
+                        class="text-md motion-preset-blur-right-md motion-duration-1000 xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
                     >
                         Hello my name is
                     </p>
                     <h1
                         id="name"
-                        class="mb-0.5 text-5xl xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
+                        class="motion-preset-blur-right-md mb-0.5 text-5xl motion-duration-1000 motion-delay-75 xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
                     >
                         Nitish
                     </h1>
                     <div
-                        class="flex flex-col flex-wrap items-baseline gap-2 text-5xl xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
+                        class="motion-preset-blur-right-md flex flex-col flex-wrap items-baseline gap-2 text-5xl motion-duration-1000 motion-delay-100 xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
                     >
                         <h1>I am a&nbsp;</h1>
                         <div
@@ -43,6 +43,7 @@ import Layout from "../layouts/Layout.astro"
                             <ul
                                 id="scroll-list"
                                 class="animate-infinite-scroll text-nowrap"
+                                style="animation-delay: 1200ms;"
                             >
                                 <li
                                     class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
@@ -78,7 +79,9 @@ import Layout from "../layouts/Layout.astro"
                         </div>
                     </div>
                     <div class="relative mt-2 lg:static lg:-mx-16">
-                        <div class="flex gap-4 lg:mx-16 2xl:gap-6">
+                        <div
+                            class="motion-preset-blur-right-md motion-delay-150 motion-duration-1000 flex gap-4 lg:mx-16 2xl:gap-6"
+                        >
                             <IconButton
                                 href="https://github.tnitish.com/"
                                 openInNewTab

@@ -38,13 +38,18 @@ const ProfileCard = ({
     return (
         <div
             className={cn(
-                "flex max-w-72 flex-col gap-1 rounded-lg border-2 border-solid border-white/[3%] bg-gradient-to-br from-[#202020] to-charcoal to-35% px-4 py-3 shadow-white/0 transition-all duration-300 ease-in-out sm:max-w-80 sm:px-5 sm:py-4 md:max-w-96 md:gap-2 md:px-6 md:py-5 lg:w-full lg:max-w-none lg:gap-4 lg:px-7 lg:py-6",
+                "motion-preset-blur-up-md flex max-w-72 flex-col gap-1 rounded-lg border-2 border-solid border-white/[3%] bg-gradient-to-br from-[#202020] to-charcoal to-35% px-4 py-3 shadow-white/0 transition-all duration-300 ease-in-out motion-duration-700 sm:max-w-80 sm:px-5 sm:py-4 md:max-w-96 md:gap-2 md:px-6 md:py-5 lg:w-full lg:max-w-none lg:gap-4 lg:px-7 lg:py-6",
                 {
                     "border-white/10 shadow-md shadow-white/5 hover:shadow-lg hover:shadow-white/5":
                         isActive,
                 },
                 {
                     "max-lg:place-self-end": offset,
+                },
+                {
+                    "motion-delay-0": title === "Software Developer",
+                    "motion-delay-[300ms]": title === "Tech Fanatic",
+                    "motion-delay-[600ms]": title === "Student",
                 },
             )}
         >
