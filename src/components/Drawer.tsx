@@ -47,21 +47,21 @@ const Drawer = () => {
                                 href="/about"
                                 className="group transition duration-300"
                             >
-                                About
+                                about
                                 <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                             <a
                                 href="/projects"
                                 className="group transition duration-300"
                             >
-                                Projects
+                                projects
                                 <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                             <a
                                 href="/contact"
                                 className="group transition duration-300"
                             >
-                                Contact
+                                contact
                                 <span className="block h-[5px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"></span>
                             </a>
                         </div>
