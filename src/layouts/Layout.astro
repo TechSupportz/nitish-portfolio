@@ -18,10 +18,11 @@ import Posthog from "../components/posthog.astro"
 
 type Props = {
     title: string
+    disableScroll?: boolean
     center?: boolean
 }
 
-const { title, center } = Astro.props
+const { title, center, disableScroll } = Astro.props
 ---
 
 <!doctype html>
@@ -82,13 +83,13 @@ const { title, center } = Astro.props
 
         <title>{title}</title>
     </head>
-    <body>
+    <body class={cn({ "lg:overflow-hidden": disableScroll })}>
         <Posthog />
         <Drawer client:load />
         <Navbar />
         <div
-            class={cn("m-auto  h-full max-w-screen-2xl", {
-                "mt-[72px] md:mt-[80px]": !center,
+            class={cn("m-auto h-full max-w-screen-2xl", {
+                "mt-[72px]": !center,
                 "flex justify-center items-center flex-col": center,
             })}
         >
