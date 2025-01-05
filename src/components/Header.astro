@@ -1,0 +1,22 @@
+---
+type Props = {
+    title: string
+}
+
+const { title } = Astro.props
+---
+
+<div
+    class="flex h-32 w-full flex-col justify-center bg-gradient-to-t from-transparent to-charcoal to-20% xs:h-36 md:h-48"
+>
+    <div
+        class="dot-matrix inset-x-0 h-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+        style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
+    >
+    </div>
+    <h1
+        class="absolute px-4 text-5xl xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
+    >
+        {title}
+    </h1>
+</div>

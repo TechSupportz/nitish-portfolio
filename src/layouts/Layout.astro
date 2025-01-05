@@ -15,14 +15,16 @@ import Drawer from "../components/Drawer"
 import Navbar from "../components/Navbar.astro"
 import { cn } from "../utils/cn"
 import Posthog from "../components/posthog.astro"
+import Header from "../components/Header.astro"
 
 type Props = {
     title: string
+    headerTitle?: string
     disableScroll?: boolean
     center?: boolean
 }
 
-const { title, center, disableScroll } = Astro.props
+const { title, center, headerTitle, disableScroll } = Astro.props
 ---
 
 <!doctype html>
@@ -86,10 +88,15 @@ const { title, center, disableScroll } = Astro.props
     <body class={cn({ "lg:overflow-hidden": disableScroll })}>
         <Posthog />
         <Drawer client:load />
-        <Navbar />
+        <div class="fixed top-0 z-20 w-full">
+            <Navbar />
+            {headerTitle && <Header title={headerTitle} />}
+        </div>
         <div
             class={cn("m-auto h-full max-w-screen-2xl", {
-                "mt-[72px]": !center,
+                "mt-[72px]": !center && !headerTitle,
+                "mt-[calc(8rem+72px)] xs:mt-[calc(9rem+72px)] md:mt-[calc(12rem+72px)]":
+                    !!headerTitle,
                 "flex justify-center items-center flex-col": center,
             })}
         >

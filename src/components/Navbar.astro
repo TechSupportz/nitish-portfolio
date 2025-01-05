@@ -9,10 +9,10 @@ import { Menu } from "lucide-astro"
     }
 </style>
 <nav
-    class="navbar showNav fixed top-0 z-20 w-full -translate-y-[72px] bg-charcoal font-display shadow-charcoal transition-transform duration-300 md:-translate-y-[80px]"
+    class="navbar showNav z-20 w-full -translate-y-[72px] bg-charcoal font-display shadow-charcoal transition-transform duration-300 md:-translate-y-[80px]"
 >
     <div
-        class="m-auto flex h-full max-w-[1900px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
+        class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
     >
         <a href="/" class="logo size-12 md:size-14">
             <Image
@@ -63,19 +63,20 @@ import { Menu } from "lucide-astro"
     const navbar = document.querySelector(".navbar")
     const logo = document.querySelector(".logo")
 
-    let lastScrollTop = 0
+    // NOTE - Decide if I want to keep this or not
+    // let lastScrollTop = 0
 
-    window.addEventListener("scroll", () => {
-        const scrollTop = window.scrollY
+    // window.addEventListener("scroll", () => {
+    //     const scrollTop = window.scrollY
 
-        if (scrollTop + 64 > lastScrollTop && scrollTop > 64) {
-            navbar?.classList.remove("showNav")
-        } else {
-            navbar?.classList.add("showNav")
-        }
+    //     if (scrollTop + 64 > lastScrollTop && scrollTop > 64) {
+    //         navbar?.classList.remove("showNav")
+    //     } else {
+    //         navbar?.classList.add("showNav")
+    //     }
 
-        lastScrollTop = scrollTop
-    })
+    //     lastScrollTop = scrollTop
+    // })
 
     window.addEventListener("load", () => {
         logo?.classList.add("animate-quick-spin")
