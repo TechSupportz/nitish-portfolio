@@ -1,8 +1,39 @@
 ---
-import InProgress from "../components/InProgress.astro"
+import StickyTitle from "../components/StickyTitle.astro"
 import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="Projects" headerTitle="Projects">
-    <InProgress />
+    <div>
+        <div>
+            <StickyTitle title="featured" count={3} />
+            <div class="grid place-items-center">
+                {
+                    Array.from({ length: 15 }).map((_, i) => (
+                        <div class="m-2 h-24 w-56 bg-neutral-800" />
+                    ))
+                }
+            </div>
+        </div>
+        <div>
+            <StickyTitle title="personal" count={3} />
+            <div class="grid place-items-center">
+                {
+                    Array.from({ length: 12 }).map((_, i) => (
+                        <div class="m-2 h-24 w-56 bg-neutral-800" />
+                    ))
+                }
+            </div>
+        </div>
+        <div>
+            <StickyTitle title="hackathons" count={3} />
+            <div class="grid place-items-center">
+                {
+                    Array.from({ length: 20 }).map((_, i) => (
+                        <div class="m-2 h-24 w-56 bg-neutral-800" />
+                    ))
+                }
+            </div>
+        </div>
+    </div>
 </Layout>
