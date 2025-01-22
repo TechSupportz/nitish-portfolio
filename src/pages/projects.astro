@@ -1,4 +1,5 @@
 ---
+import ProjectCard from "../components/ProjectCard.astro"
 import StickyTitle from "../components/StickyTitle.astro"
 import Layout from "../layouts/Layout.astro"
 ---
@@ -7,12 +8,13 @@ import Layout from "../layouts/Layout.astro"
     <div>
         <div>
             <StickyTitle title="featured" count={3} />
-            <div class="grid place-items-center">
-                {
-                    Array.from({ length: 15 }).map((_, i) => (
-                        <div class="m-2 h-24 w-56 bg-neutral-800" />
-                    ))
-                }
+            <div class="my-4 grid place-items-center">
+                <ProjectCard
+                    title="Transito"
+                    description="Transito is the go-to app for bus timings. It's all about giving you the info you need, fast."
+                    imageUrl="https://placehold.co/300x200"
+                    icons={["flutter", "android", "ios"]}
+                />
             </div>
         </div>
         <div>

@@ -1,0 +1,19 @@
+---
+import { ProjectIcons, type ProjectIconType } from "../utils/projectIcons"
+
+interface Props {
+    type: ProjectIconType
+    size?: number
+    class?: string
+}
+
+const { type, size = 24, class: className = "" } = Astro.props
+---
+
+<img
+    src={ProjectIcons[type].src}
+    alt={`${type} icon`}
+    width={size}
+    height={size}
+    class={className}
+/>

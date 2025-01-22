@@ -15,6 +15,9 @@ export default {
             screens: {
                 xs: "456px",
             },
+            aspectRatio: {
+                "3/2": "3 / 2",
+            },
             animation: {
                 "infinite-scroll": "scroll-up 6s infinite",
                 "quick-spin": "quick-spin 0.35s linear",
