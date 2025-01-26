@@ -1,15 +1,21 @@
 ---
+import { cn } from "../utils/cn"
+
 type Props = {
-    title: Lowercase<string>
+    title: string
     count: number
+    class?: string
 }
 
-const { title, count } = Astro.props
+const { title, count, class: className = "" } = Astro.props
 ---
 
 <div
-    class="sticky top-[calc(8rem+72px)] z-10 flex items-center justify-between px-4 py-2 backdrop-blur-md xs:top-[calc(9rem+72px)] md:top-[calc(12rem+72px)]"
+    class={cn(
+        "sticky top-[calc(8rem+72px)] z-10 flex items-center justify-between px-4 py-2 backdrop-blur-md xs:top-[calc(9rem+72px)] md:top-[calc(12rem+72px)]",
+        className,
+    )}
 >
-    <h2 class="text-2xl font-bold">{title}</h2>
+    <h2 class="text-2xl font-bold">{title.toLowerCase()}</h2>
     <p class="font-sans font-light">{count} projects</p>
 </div>

@@ -2,40 +2,52 @@
 import ProjectCard from "../components/ProjectCard.astro"
 import StickyTitle from "../components/StickyTitle.astro"
 import Layout from "../layouts/Layout.astro"
+import { projectContent } from "../content/projects"
 ---
 
 <Layout title="Projects" headerTitle="Projects">
-    <div>
-        <div>
-            <StickyTitle title="featured" count={3} />
-            <div class="my-4 grid place-items-center">
-                <ProjectCard
-                    title="Transito"
-                    description="Transito is the go-to app for bus timings. It's all about giving you the info you need, fast. Built using Flutter with a Firestore database"
-                    imageUrl="https://placehold.co/300x200"
-                    icons={["flutter", "android", "ios"]}
-                />
-            </div>
-        </div>
-        <div>
-            <StickyTitle title="personal" count={3} />
-            <div class="grid place-items-center">
+    <div class="lg:just lg:flex lg:px-12 lg:pt-12 xl:px-16">
+        <div class="fixed hidden h-full lg:flex lg:w-1/4">
+            <div class="relative flex flex-col gap-8">
                 {
-                    Array.from({ length: 12 }).map((_, i) => (
-                        <div class="m-2 h-24 w-56 bg-neutral-800" />
+                    Object.keys(projectContent).map(category => (
+                        <div>
+                            <h2 class="text-3xl font-bold">{category}</h2>
+                            <div>
+                                {projectContent[category].map(project => (
+                                    <p class="text-xl font-extralight">
+                                        {project.title.toLowerCase()}
+                                    </p>
+                                ))}
+                            </div>
+                        </div>
                     ))
                 }
             </div>
         </div>
-        <div>
-            <StickyTitle title="hackathons" count={3} />
-            <div class="grid place-items-center">
-                {
-                    Array.from({ length: 20 }).map((_, i) => (
-                        <div class="m-2 h-24 w-56 bg-neutral-800" />
-                    ))
-                }
-            </div>
+        <div class="w-full lg:ml-[25%] lg:w-3/4">
+            {
+                Object.keys(projectContent).map(category => (
+                    <div class="lg:mb-24">
+                        <StickyTitle
+                            title={category}
+                            count={projectContent[category].length}
+                            class="lg:hidden"
+                        />
+                        <div class="my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-end lg:gap-24 lg:pl-12">
+                            {projectContent[category].map(project => (
+                                <ProjectCard
+                                    title={project.title}
+                                    description={project.description}
+                                    imageUrl={project.imageUrl}
+                                    url={project.url}
+                                    icons={project.icons}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))
+            }
         </div>
     </div>
 </Layout>

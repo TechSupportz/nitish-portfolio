@@ -22,4 +22,4 @@ export const ProjectIcons = {
     typescript: typescriptIcon,
 }
 
-export type ProjectIconType = keyof typeof ProjectIcons
+export type TProjectIcon = keyof typeof ProjectIcons
