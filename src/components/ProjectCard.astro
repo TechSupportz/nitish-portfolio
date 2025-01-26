@@ -15,24 +15,37 @@ const { title, description, imageUrl, icons } = Astro.props
 
 <div class="relative mx-6 mb-5">
     <Image
-        class="h-auto max-w-[300px] rounded-md object-cover"
+        class="max-w-[300px] rounded-md object-cover sm:h-auto sm:min-w-[400px] sm:max-w-[400px] lg:max-w-[450px]"
         src={imageUrl}
         alt="Project Image"
-        width={300}
-        height={200}
+        width={300 * 3}
+        height={200 * 3}
     />
     <div
-        class="absolute -bottom-5 -left-6 h-min w-fit rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5"
+        class="absolute bottom-0 left-0 h-min w-fit -translate-x-6 translate-y-5 rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5"
     >
         <div class="flex items-center gap-2">
-            {icons.map(icon => <ProjectIcon type={icon} size={16} />)}
+            {
+                icons.map(icon => (
+                    <ProjectIcon
+                        type={icon}
+                        class="size-4 sm:size-5 lg:size-6"
+                    />
+                ))
+            }
         </div>
     </div>
     <div
-        class="absolute -bottom-5 -right-6 max-w-[19ch] rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5"
+        class="absolute bottom-0 right-0 h-min max-w-[65%] translate-x-6 translate-y-5 rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5 lg:inset-y-0 lg:my-auto lg:max-w-[70%] lg:translate-x-3/4 lg:translate-y-0 lg:px-3 lg:py-4"
     >
-        <h1 class="mb-1 text-nowrap text-sm">{title}</h1>
-        <p class="text-pretty text-xs">
+        <h1
+            class="mb-1 text-nowrap text-sm sm:text-base md:text-lg lg:mb-2 lg:text-2xl"
+        >
+            {title}
+        </h1>
+        <p
+            class="line-clamp-4 text-pretty text-xs sm:text-sm lg:line-clamp-[10] lg:text-base"
+        >
             {description}
         </p>
     </div>
