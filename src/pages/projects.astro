@@ -6,26 +6,38 @@ import { projectContent } from "../content/projects"
 ---
 
 <Layout title="Projects" headerTitle="Projects">
-    <div class="lg:just lg:flex lg:px-12 lg:pt-12 xl:px-16">
+    <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
         <div class="fixed hidden h-full lg:flex lg:w-1/4">
-            <div class="relative flex flex-col gap-8">
+            <div class="flex flex-col gap-8 pr-12">
                 {
                     Object.keys(projectContent).map(category => (
-                        <div>
-                            <h2 class="text-3xl font-bold">{category}</h2>
-                            <div>
+                        <details open>
+                            <summary class="mb-1 list-none font-display text-2xl font-bold xl:text-3xl">
+                                {category}
+                            </summary>
+                            <div class="pl-4">
                                 {projectContent[category].map(project => (
-                                    <p class="text-xl font-extralight">
+                                    <p class="text-balance text-lg font-extralight xl:text-xl">
                                         {project.title.toLowerCase()}
                                     </p>
                                 ))}
                             </div>
-                        </div>
+                        </details>
                     ))
                 }
             </div>
+            <div
+                class="mr-12 h-3/4 w-[4px] overflow-clip"
+                style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
+            >
+                <div
+                    id="divider"
+                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 transition-transform duration-300 ease-out"
+                >
+                </div>
+            </div>
         </div>
-        <div class="w-full lg:ml-[25%] lg:w-3/4">
+        <div class="w-full lg:ml-[25vw] lg:w-3/4">
             {
                 Object.keys(projectContent).map(category => (
                     <div class="lg:mb-24">
@@ -34,7 +46,7 @@ import { projectContent } from "../content/projects"
                             count={projectContent[category].length}
                             class="lg:hidden"
                         />
-                        <div class="my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-end lg:gap-24 lg:pl-12">
+                        <div class="lg:p my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-center lg:gap-24">
                             {projectContent[category].map(project => (
                                 <ProjectCard
                                     title={project.title}
@@ -51,3 +63,11 @@ import { projectContent } from "../content/projects"
         </div>
     </div>
 </Layout>
+<script>
+    window.addEventListener("scroll", () => {
+        const divider = document.getElementById("divider")
+        if (!divider) return
+
+        divider.style.transform = `translateY(-${window.scrollY / 50}px)`
+    })
+</script>
