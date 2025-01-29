@@ -127,4 +127,18 @@ const { title, center, headerTitle, disableScroll } = Astro.props
     p {
         @apply font-light;
     }
+
+    details::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition:
+            block-size 0.35s ease,
+            content-visibility 0.35s ease;
+        transition-behavior: allow-discrete;
+    }
+
+    details[open]::details-content {
+        block-size: auto;
+        block-size: calc-size(auto, size);
+    }
 </style>

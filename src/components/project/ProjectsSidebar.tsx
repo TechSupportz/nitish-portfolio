@@ -1,10 +1,7 @@
 import { projectContent } from "@content/projects"
 import { useStore } from "@nanostores/react"
 import type { TProjectCategory } from "@src/types/ProjectContentType"
-import {
-	$currentProject,
-	$currentProjectCategory
-} from "@store/projectsStore"
+import { $currentProject, $currentProjectCategory } from "@store/projectsStore"
 import { cn } from "@utils/cn"
 import { useEffect } from "react"
 
@@ -17,7 +14,7 @@ const ProjectsSidebar = () => {
     }, [currentProjectCategory, currentProject])
 
     return (
-        <div className="flex flex-col gap-8 pr-12">
+        <div className="flex flex-col gap-6 pr-12">
             {(Object.keys(projectContent) as TProjectCategory[]).map(
                 category => (
                     <details
@@ -25,10 +22,10 @@ const ProjectsSidebar = () => {
                         key={category}
                         open={category === currentProjectCategory}
                     >
-                        <summary className="mb-1 list-none font-display text-2xl font-bold xl:text-3xl">
+                        <summary className="list-none font-display text-2xl font-bold xl:text-3xl cursor-pointer">
                             {category}
                         </summary>
-                        <div className="pl-4">
+                        <div className="pl-4 pt-1">
                             {projectContent[category].map(project => (
                                 <p
                                     key={project.title}
