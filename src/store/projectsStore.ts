@@ -15,8 +15,8 @@ export const $currentProject = computed($projectVisibility, visibility => {
 export const $currentProjectCategory = computed(
     $projectVisibility,
     visibility => {
-        // Group by category and count visible projects
-        const categoryCounts = Object.values(visibility).reduce(
+        // Count number of visible projects in each category
+        const categoryProjectCount = Object.values(visibility).reduce(
             (acc, project) => {
                 if (project.isVisible) {
                     acc[project.category] = (acc[project.category] || 0) + 1
@@ -26,8 +26,8 @@ export const $currentProjectCategory = computed(
             {} as Record<string, number>,
         )
 
-        // Find category with max visible projects
-        const [maxCategory] = Object.entries(categoryCounts).reduce(
+        // Find category with most visible projects
+        const [topCategory] = Object.entries(categoryProjectCount).reduce(
             ([maxCat, maxCount], [category, count]) => {
                 return count > maxCount ? [category, count] : [maxCat, maxCount]
             },
@@ -36,10 +36,10 @@ export const $currentProjectCategory = computed(
 
         const currentProject = visibility[$currentProject.get()]
 
-        if (maxCategory !== currentProject.category) {
+        if (topCategory !== currentProject.category) {
             return currentProject.category
         }
 
-        return maxCategory || "featured"
+        return topCategory || "featured"
     },
 )
