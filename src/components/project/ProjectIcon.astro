@@ -1,7 +1,5 @@
 ---
-import { cn } from '@utils/cn'
-import { type TProjectIcon, ProjectIcons } from '@utils/projectIcons'
-
+import { type TProjectIcon, ProjectIcons } from "@utils/projectIcons"
 
 interface Props {
     type: TProjectIcon
@@ -14,7 +12,10 @@ const { type, class: className = "" } = Astro.props
 <img
     src={ProjectIcons[type].src}
     alt={`${type} icon`}
-    class={cn(className, {
-        "size-4": !className.includes("size-"),
-    })}
+    class:list={[
+        className,
+        {
+            "size-4": !className.includes("size-"),
+        },
+    ]}
 />
