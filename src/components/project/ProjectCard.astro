@@ -1,14 +1,20 @@
 ---
 import ProjectIcon from "@components/project/ProjectIcon.astro"
-import type { TProject } from "@src/types/ProjectContentType"
+import type { TProject, TProjectCategory } from "@src/types/ProjectContentType"
 import { Image } from "astro:assets"
 
-type Props = TProject
+type Props = TProject & {
+    category: TProjectCategory
+}
 
-const { title, description, imageUrl, icons, url } = Astro.props
+const { title, category, description, imageUrl, icons, url } = Astro.props
 ---
 
-<a href=`${url}`>
+<a
+    href=`${url}`
+    id={title.toLowerCase()}
+    class={`${category}-project project-card`}
+>
     <div class="relative mx-6 mb-5 lg:mr-60">
         <Image
             class="max-w-[300px] rounded-md object-cover sm:h-auto sm:min-w-[400px] sm:max-w-[400px] lg:max-w-[450px]"

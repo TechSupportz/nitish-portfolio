@@ -14,6 +14,7 @@ export default {
             },
             screens: {
                 xs: "456px",
+				wmax: "1600px"
             },
             aspectRatio: {
                 "3/2": "3 / 2",

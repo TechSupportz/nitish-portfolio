@@ -3,71 +3,94 @@ import ProjectCard from "@components/project/ProjectCard.astro"
 import StickyTitle from "@components/project/StickyTitle.astro"
 import Layout from "@layouts/Layout.astro"
 import { projectContent } from "@content/projects"
+import ProjectsSidebar from "@components/project/ProjectsSidebar"
+import type { TProjectCategory } from "@src/types/ProjectContentType"
 ---
 
 <Layout title="Projects" headerTitle="Projects">
     <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
-        <div class="fixed hidden h-full lg:flex lg:w-1/4">
-            <div class="flex flex-col gap-8 pr-12">
-                {
-                    Object.keys(projectContent).map(category => (
-                        <details open>
-                            <summary class="mb-1 list-none font-display text-2xl font-bold xl:text-3xl">
-                                {category}
-                            </summary>
-                            <div class="pl-4">
-                                {projectContent[category].map(project => (
-                                    <p class="text-balance text-lg font-extralight xl:text-xl">
-                                        {project.title.toLowerCase()}
-                                    </p>
-                                ))}
-                            </div>
-                        </details>
-                    ))
-                }
-            </div>
+        <div
+            class="wmax:max-w-[400px] fixed hidden h-5/6 justify-between lg:flex lg:w-[25vw]"
+        >
+            <ProjectsSidebar client:load />
             <div
-                class="mr-12 h-3/4 w-[4px] overflow-clip"
+                class="mr-12 h-full w-[4px] overflow-clip"
                 style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
             >
                 <div
                     id="divider"
-                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 transition-transform duration-300 ease-out"
+                    class="transition-tdivsform h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 duration-300 ease-out"
                 >
                 </div>
             </div>
         </div>
-        <div class="w-full lg:ml-[25vw] lg:w-3/4">
+        <div class="wmax:ml-[400px] mb-16 w-full lg:ml-[25vw] lg:w-3/4">
             {
-                Object.keys(projectContent).map(category => (
-                    <div class="lg:mb-24">
-                        <StickyTitle
-                            title={category}
-                            count={projectContent[category].length}
-                            class="lg:hidden"
-                        />
-                        <div class="lg:p my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-center lg:gap-24">
-                            {projectContent[category].map(project => (
-                                <ProjectCard
-                                    title={project.title}
-                                    description={project.description}
-                                    imageUrl={project.imageUrl}
-                                    url={project.url}
-                                    icons={project.icons}
-                                />
-                            ))}
+                (Object.keys(projectContent) as TProjectCategory[]).map(
+                    category => (
+                        <div class="lg:mb-24">
+                            <StickyTitle
+                                title={category}
+                                count={projectContent[category].length}
+                                class="lg:hidden"
+                            />
+                            <div class="lg:p my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-center lg:gap-24">
+                                {projectContent[category].map(project => (
+                                    <ProjectCard
+                                        title={project.title}
+                                        category={category}
+                                        description={project.description}
+                                        imageUrl={project.imageUrl}
+                                        url={project.url}
+                                        icons={project.icons}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))
+                    ),
+                )
             }
         </div>
     </div>
 </Layout>
 <script>
+    import { $projectVisibility } from "@store/projectsStore"
+    import type { TProjectCategory } from "@src/types/ProjectContentType"
+
+    const projectCards = document.querySelectorAll(".project-card")
+
+    window.onbeforeunload = function () {
+        window.scrollTo(0, 0)
+    }
+
+    // Function to animate the divider
     window.addEventListener("scroll", () => {
         const divider = document.getElementById("divider")
         if (!divider) return
 
         divider.style.transform = `translateY(-${window.scrollY / 50}px)`
+    })
+
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                const { target, isIntersecting } = entry
+
+                $projectVisibility.setKey(target.id, {
+                    category: target.classList[0].split(
+                        "-",
+                    )[0] as TProjectCategory,
+                    isVisible: isIntersecting,
+                })
+            })
+        },
+        {
+            rootMargin: "-264px 0px 0px 0px",
+            threshold: 0.7,
+        },
+    )
+
+    projectCards.forEach(card => {
+        observer.observe(card)
     })
 </script>

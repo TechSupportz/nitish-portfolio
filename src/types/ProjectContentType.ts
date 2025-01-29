@@ -8,4 +8,12 @@ export type TProject = {
     icons: TProjectIcon[]
 }
 
-export type TProjectContent = Record<string, TProject[]>
+export type TProjectVisibility = {
+    [key: string]: {
+        category: TProjectCategory
+        isVisible: boolean
+    }
+}
+
+export type TProjectCategory = "featured" | "personal" | "hackathon" | "school"
+export type TProjectContent = Record<TProjectCategory, TProject[]>
