@@ -54,7 +54,7 @@ import { Menu } from "lucide-astro"
     </div>
 </nav>
 <script>
-    import { isDrawerOpen } from "../store/uiStore"
+    import { isDrawerOpen } from "@store/uiStore"
 
     document.getElementById("menu-button")!.addEventListener("click", () => {
         isDrawerOpen.set(true)

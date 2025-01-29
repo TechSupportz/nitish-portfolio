@@ -1,4 +1,4 @@
-import type { TProjectContent } from "../types/ProjectContentType"
+import type { TProjectContent } from "@src/types/ProjectContentType"
 
 // FIXME - This is a placeholder for the project content, NOT ALL ARE REAL PROJECTS
 

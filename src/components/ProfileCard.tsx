@@ -1,7 +1,8 @@
 import { useStore } from "@nanostores/react"
+import { $scrollListItemVisibility } from "@store/uiStore"
+import { cn } from "@utils/cn"
 import { useEffect, useState } from "react"
-import { scrollListItemVisibility } from "../store/uiStore"
-import { cn } from "../utils/cn"
+
 
 type ProfileCardProps = {
     title: string
@@ -16,24 +17,24 @@ const ProfileCard = ({
     initialActive = false,
     offset = false,
 }: ProfileCardProps) => {
-    const $scrollListItemVisibility = useStore(scrollListItemVisibility)
+    const scrollListItemVisibility = useStore($scrollListItemVisibility)
     const [isActive, setIsActive] = useState(initialActive)
 
     useEffect(() => {
         switch (title) {
             case "Software Developer":
-                setIsActive($scrollListItemVisibility.softwareDeveloper)
+                setIsActive(scrollListItemVisibility.softwareDeveloper)
                 break
             case "Tech Fanatic":
-                setIsActive($scrollListItemVisibility.techFanatic)
+                setIsActive(scrollListItemVisibility.techFanatic)
                 break
             case "Student":
-                setIsActive($scrollListItemVisibility.student)
+                setIsActive(scrollListItemVisibility.student)
                 break
             default:
                 setIsActive(false)
         }
-    }, [$scrollListItemVisibility])
+    }, [scrollListItemVisibility])
 
     return (
         <div

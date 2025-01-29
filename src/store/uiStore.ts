@@ -1,9 +1,9 @@
+import type { TScrollListItemVisibility } from "@src/types/ScrollListType"
 import { atom, map } from "nanostores"
-import type { TScrollListItemVisibility } from "../types/ScrollListType"
 
 export const isDrawerOpen = atom(false)
-export const scrollListItemVisibility = map<TScrollListItemVisibility>({
+export const $scrollListItemVisibility = map<TScrollListItemVisibility>({
     softwareDeveloper: true,
-	techFanatic: false,
-	student: false,
+    techFanatic: false,
+    student: false,
 })

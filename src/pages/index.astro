@@ -1,9 +1,9 @@
 ---
-import githubIcon from "../assets/github.svg"
-import linkedInIcon from "../assets/linkedIn.svg"
-import IconButton from "../components/IconButton.astro"
-import ProfileCard from "../components/ProfileCard"
-import Layout from "../layouts/Layout.astro"
+import githubIcon from "@assets/github.svg"
+import linkedInIcon from "@assets/linkedIn.svg"
+import IconButton from "@components/IconButton.astro"
+import ProfileCard from "@components/ProfileCard"
+import Layout from "@layouts/Layout.astro"
 ---
 
 <Layout title="Nitish" disableScroll>
@@ -80,7 +80,7 @@ import Layout from "../layouts/Layout.astro"
                     </div>
                     <div class="relative mt-2 lg:static lg:-mx-16">
                         <div
-                            class="motion-preset-blur-right-md motion-delay-150 motion-duration-1000 flex gap-4 lg:mx-16 2xl:gap-6"
+                            class="motion-preset-blur-right-md flex gap-4 motion-duration-1000 motion-delay-150 lg:mx-16 2xl:gap-6"
                         >
                             <IconButton
                                 href="https://github.tnitish.com/"
@@ -140,8 +140,8 @@ import Layout from "../layouts/Layout.astro"
 </Layout>
 
 <script>
-    import { scrollListItemVisibility } from "../store/uiStore"
-    import type { TScrollListItemVisibility } from "../types/ScrollListType"
+    import { $scrollListItemVisibility } from "@store/uiStore"
+    import type { TScrollListItemVisibility } from "@src/types/ScrollListType"
 
     const scrollList = document.getElementById("scroll-list")
 
@@ -150,12 +150,13 @@ import Layout from "../layouts/Layout.astro"
     const name = document.getElementById("name")
 
     if (scrollList) {
+        // FIXME - Use IntersectionObserver
         setInterval(() => {
             const style = window.getComputedStyle(scrollList)
             const matrix = new DOMMatrixReadOnly(style.transform)
             const translateY = (matrix.m42 / scrollList.clientHeight) * 100
 
-            let $scrollListItemVisibility: TScrollListItemVisibility = {
+            let scrollListItemVisibility: TScrollListItemVisibility = {
                 softwareDeveloper: false,
                 techFanatic: false,
                 student: false,
@@ -163,21 +164,21 @@ import Layout from "../layouts/Layout.astro"
 
             if (translateY < 0 && translateY >= -25) {
                 // "Tech Fanatic" is visible
-                $scrollListItemVisibility = {
+                scrollListItemVisibility = {
                     softwareDeveloper: false,
                     techFanatic: true,
                     student: false,
                 }
             } else if (translateY <= -25 && translateY >= -50) {
                 // "Student" is visible
-                $scrollListItemVisibility = {
+                scrollListItemVisibility = {
                     softwareDeveloper: false,
                     techFanatic: false,
                     student: true,
                 }
             } else if (translateY < -55 || translateY >= 0) {
                 // "Software Developer" is visible
-                $scrollListItemVisibility = {
+                scrollListItemVisibility = {
                     softwareDeveloper: true,
                     techFanatic: false,
                     student: false,
@@ -185,8 +186,8 @@ import Layout from "../layouts/Layout.astro"
             }
 
             // Use lodash isEqual or smt similar
-            if ($scrollListItemVisibility !== scrollListItemVisibility.value) {
-                scrollListItemVisibility.set($scrollListItemVisibility)
+            if (scrollListItemVisibility !== $scrollListItemVisibility.value) {
+                $scrollListItemVisibility.set(scrollListItemVisibility)
             }
         }, 150)
     }

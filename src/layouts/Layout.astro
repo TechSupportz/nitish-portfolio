@@ -1,4 +1,8 @@
 ---
+import Drawer from "@components/Drawer"
+import Header from "@components/layout/Header.astro"
+import Navbar from "@components/layout/Navbar.astro"
+import Posthog from "@components/layout/Posthog.astro"
 import "@fontsource-variable/dm-sans"
 import dmSans from "@fontsource-variable/dm-sans/files/dm-sans-latin-standard-normal.woff2"
 import "@fontsource/poppins/100.css"
@@ -11,11 +15,8 @@ import "@fontsource/poppins/700.css"
 import "@fontsource/poppins/800.css"
 import "@fontsource/poppins/900.css"
 import poppinsBold from "@fontsource/poppins/files/poppins-latin-700-normal.woff2"
-import Drawer from "../components/Drawer"
-import Header from "../components/Header.astro"
-import Navbar from "../components/Navbar.astro"
-import Posthog from "../components/posthog.astro"
-import { cn } from "../utils/cn"
+import { cn } from "@utils/cn"
+
 
 type Props = {
     title: string

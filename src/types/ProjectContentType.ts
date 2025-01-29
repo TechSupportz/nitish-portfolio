@@ -1,4 +1,4 @@
-import type { TProjectIcon } from "../utils/projectIcons"
+import type { TProjectIcon } from "@utils/projectIcons"
 
 export type TProject = {
     title: string

@@ -1,10 +1,10 @@
 import { useStore } from "@nanostores/react"
+import { isDrawerOpen } from "@store/uiStore"
+import { cn } from "@utils/cn"
 import { X } from "lucide-react"
-import emailIcon from "../assets/email.svg"
-import githubIcon from "../assets/github.svg"
-import linkedInIcon from "../assets/linkedIn.svg"
-import { isDrawerOpen } from "../store/uiStore"
-import { cn } from "../utils/cn"
+import emailIcon from "@assets/email.svg"
+import githubIcon from "@assets/github.svg"
+import linkedInIcon from "@assets/linkedIn.svg"
 
 const Drawer = () => {
     const $isDrawerOpen = useStore(isDrawerOpen)
