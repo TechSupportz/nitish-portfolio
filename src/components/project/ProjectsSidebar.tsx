@@ -56,7 +56,7 @@ const ProjectsSidebar = () => {
                                     className={cn(
                                         "cursor-pointer text-balance pl-1.5 text-lg font-extralight transition-all duration-300 ease-out xl:text-xl",
                                         {
-                                            "font-normal":
+                                            "font-medium":
                                                 currentProject ===
                                                 project.title.toLowerCase(),
                                         },
