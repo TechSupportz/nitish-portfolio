@@ -10,7 +10,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
 <Layout title="Projects" headerTitle="Projects">
     <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
         <div
-            class="wmax:max-w-[400px] fixed hidden h-5/6 justify-between lg:flex lg:w-[25vw]"
+            class="fixed hidden h-5/6 justify-between lg:flex lg:w-[25vw] wmax:max-w-[400px]"
         >
             <ProjectsSidebar client:load />
             <div
@@ -19,12 +19,12 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
             >
                 <div
                     id="divider"
-                    class="transition-tdivsform h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 duration-300 ease-out"
+                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 transition-transform duration-300 ease-out"
                 >
                 </div>
             </div>
         </div>
-        <div class="wmax:ml-[400px] mb-[128px] w-full lg:ml-[25vw] lg:w-3/4">
+        <div class="mb-[128px] w-full lg:ml-[25vw] lg:w-3/4 wmax:ml-[400px]">
             {
                 (Object.keys(projectContent) as TProjectCategory[]).map(
                     category => (
