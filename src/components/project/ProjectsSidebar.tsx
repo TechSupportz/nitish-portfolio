@@ -35,6 +35,15 @@ const ProjectsSidebar = () => {
                         id={`details-${category}`}
                         key={category}
                         open={category === currentProjectCategory}
+                        className={cn(
+                            "motion-preset-blur-down-md motion-duration-1500",
+                            {
+                                "motion-delay-100": category === "featured",
+                                "motion-delay-200": category === "personal",
+                                "motion-delay-300": category === "hackathon",
+                                "motion-delay-[400ms]": category === "school",
+                            },
+                        )}
                     >
                         <summary
                             className="cursor-pointer list-none font-display text-2xl font-bold xl:text-3xl"

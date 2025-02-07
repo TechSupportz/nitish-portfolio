@@ -14,7 +14,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
         >
             <ProjectsSidebar client:load />
             <div
-                class="mr-12 h-full w-[4px] overflow-clip"
+                class="motion-preset-fade-lg mr-12 h-full w-[4px] overflow-clip motion-duration-2000 motion-delay-500"
                 style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
             >
                 <div
@@ -24,7 +24,9 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                 </div>
             </div>
         </div>
-        <div class="mb-[128px] w-full lg:ml-[25vw] lg:w-3/4 wmax:ml-[400px]">
+        <div
+            class="motion-preset-focus mb-[128px] w-full motion-duration-1500 motion-delay-75 lg:ml-[25vw] lg:w-3/4 wmax:ml-[400px]"
+        >
             {
                 (Object.keys(projectContent) as TProjectCategory[]).map(
                     category => (
