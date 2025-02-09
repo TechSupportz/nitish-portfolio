@@ -1,5 +1,4 @@
 ---
-
 type Props = {
     title: string
     count: number
@@ -11,10 +10,10 @@ const { title, count, class: className = "" } = Astro.props
 
 <div
     class:list={[
-        "sticky top-[calc(8rem+72px)] z-10 flex items-center justify-between px-4 py-2 backdrop-blur-md xs:top-[calc(9rem+72px)] md:top-[calc(12rem+72px)]",
+        "sticky top-[calc(8rem+72px)] z-10 flex items-center justify-between px-4 py-2 backdrop-blur-md backdrop-brightness-95 xs:top-[calc(9rem+72px)] md:top-[calc(12rem+72px)]",
         className,
     ]}
 >
     <h2 class="text-2xl font-bold">{title.toLowerCase()}</h2>
-    <p class="font-sans font-light">{count} projects</p>
+    <p class="font-sans font-light">{count} project{count === 1 ? "" : "s"}</p>
 </div>

@@ -14,7 +14,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
         >
             <ProjectsSidebar client:load />
             <div
-                class="motion-preset-fade-lg mr-12 h-full w-[4px] overflow-clip motion-duration-2000 motion-delay-500"
+                class="motion-preset-fade-lg mr-12 h-full w-[4px] overflow-clip motion-duration-1500 motion-delay-500"
                 style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
             >
                 <div
@@ -24,9 +24,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                 </div>
             </div>
         </div>
-        <div
-            class="motion-preset-focus mb-[128px] w-full motion-duration-1500 motion-delay-75 lg:ml-[25vw] lg:w-3/4 wmax:ml-[400px]"
-        >
+        <div class="pb-4 lg:mb-32 w-full lg:ml-[25vw] lg:w-3/4 wmax:ml-[400px]">
             {
                 (Object.keys(projectContent) as TProjectCategory[]).map(
                     category => (
@@ -34,9 +32,9 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                             <StickyTitle
                                 title={category}
                                 count={projectContent[category].length}
-                                class="lg:hidden"
+                                class="motion-preset-focus motion-duration-1000 motion-delay-75 lg:hidden lg:motion-duration-1500"
                             />
-                            <div class="my-4 grid place-items-center gap-6 sm:gap-8 lg:place-items-center lg:gap-24">
+                            <div class="motion-preset-focus my-4 grid place-items-center gap-6 motion-duration-1000 motion-delay-75 sm:gap-8 lg:place-items-center lg:gap-24 lg:motion-duration-1500">
                                 {projectContent[category].map(project => (
                                     <ProjectCard
                                         title={project.title}
