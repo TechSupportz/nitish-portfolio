@@ -7,80 +7,44 @@ export const projectContent: TProjectContent = {
         {
             title: "Transito",
             description:
-                "Real-time bus tracking app providing accurate arrival times and routes. Built with Flutter and Firebase for seamless cross-platform experience.",
+                "A cross-platform bus timing application all about giving you the info you need, fast.",
+            additionalDescription:
+                "Features were cherry-picked to keep things straightforward and still being useful.",
             imageUrl: "https://placehold.co/300x200",
-            url: "https://transito.example.com",
+            url: "https://transito.tnitish.com",
             icons: ["flutter", "android", "ios"],
         },
         {
-            title: "DevConnect",
+            title: "TPOSS: Reimagined",
             description:
-                "Social platform for developers to collaborate on projects and share resources. Built with React, Node.js, and MongoDB.",
+                "A modernised version of Temasek Polytechnic's Online Student Services (TPOSS).",
+            additionalDescription:
+                "It incorporates a more user friendly interface while also utilising a microservices architecture.",
             imageUrl: "https://placehold.co/300x200",
-            url: "https://devconnect.example.com",
-            icons: ["react", "typescript"],
+            url: "https://github.com/TechSupportz/tposs-reimagined-cloud",
+            icons: ["react", "cloud", "typescript"],
         },
         {
-            title: "EcoTracker",
+            title: "EmailGPT",
             description:
-                "Environmental monitoring platform tracking carbon footprint and sustainability metrics. Built with Next.js and GraphQL.",
+                "A Google Chrome extension to assist the user in writing emails inside Gmail using OpenAI's GPT-3.5 model.",
+            additionalDescription:
+                "Designed to feel like a natural extension of Gmail.",
             imageUrl: "https://placehold.co/300x200",
-            url: "https://ecotracker.example.com",
-            icons: ["angular", "typescript", "cloud"],
+            url: "https://github.com/Coeeter/EmailGPT",
+            icons: ["openAI", "extension", "typescript"],
+        },
+        {
+            title: "Portfolio Website",
+            description:
+                "My very own portfolio website to not just showcase my projects but also my design and frontend skills",
+            additionalDescription: "...and yes you're looking at it right now!",
+            imageUrl: "https://placehold.co/300x200",
+            url: "https://tnitish.com",
+            icons: ["astro", "react", "typescript"],
         },
     ],
-    personal: [
-        {
-            title: "Portfolio v2",
-            description:
-                "Personal portfolio website built with Astro and Tailwind CSS featuring dark mode and responsive design.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://portfolio.example.com",
-            icons: ["astro", "typescript", "react"],
-        },
-        {
-            title: "Weather Dashboard",
-            description:
-                "Real-time weather application with detailed forecasts and interactive maps.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://weather.example.com",
-            icons: ["react", "typescript"],
-        },
-    ],
-    hackathon: [
-        {
-            title: "MediChain",
-            description:
-                "Blockchain-based medical records system for secure patient data management. Won first place at HealthTech Hackathon 2023.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://medichain.example.com",
-            icons: ["react", "typescript"],
-        },
-        {
-            title: "SmartPark",
-            description:
-                "IoT solution for smart parking management using computer vision. Runner-up at Smart City Hackathon.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://smartpark.example.com",
-            icons: ["typescript", "cloud"],
-        },
-    ],
-    school: [
-        {
-            title: "Library Management System",
-            description:
-                "Full-stack application for managing library resources, borrowing, and returns using MERN stack.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://library.example.com",
-            icons: ["react", "typescript"],
-        },
-        {
-            title: "Algorithm Visualizer",
-            description:
-                "Interactive tool for visualizing sorting and pathfinding algorithms. Created for Data Structures course.",
-            imageUrl: "https://placehold.co/300x200",
-            url: "https://algo-viz.example.com",
-            icons: ["typescript", "react"],
-        },
-    ],
+    personal: [],
+    hackathon: [],
+    school: [],
 }

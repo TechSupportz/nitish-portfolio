@@ -7,7 +7,15 @@ type Props = TProject & {
     category: TProjectCategory
 }
 
-const { title, category, description, imageUrl, icons, url } = Astro.props
+const {
+    title,
+    category,
+    description,
+    additionalDescription,
+    imageUrl,
+    icons,
+    url,
+} = Astro.props
 ---
 
 <a
@@ -49,6 +57,7 @@ const { title, category, description, imageUrl, icons, url } = Astro.props
                 class="line-clamp-4 text-pretty text-xs sm:text-sm lg:line-clamp-[10] lg:text-base xl:text-lg"
             >
                 {description}
+                <span class="hidden lg:inline">{additionalDescription}</span>
             </p>
         </div>
     </div>

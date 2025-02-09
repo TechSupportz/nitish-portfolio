@@ -3,6 +3,7 @@ import type { TProjectIcon } from "@utils/projectIcons"
 export type TProject = {
     title: string
     description: string
+	additionalDescription?: string
     imageUrl: string
     url: string
     icons: TProjectIcon[]
