@@ -141,4 +141,8 @@ const { title, center, headerTitle, disableScroll } = Astro.props
         block-size: auto;
         block-size: calc-size(auto, size);
     }
+
+    details summary::-webkit-details-marker {
+        display: none;
+    }
 </style>
