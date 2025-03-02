@@ -20,7 +20,7 @@ export default {
                 "3/2": "3 / 2",
             },
             animation: {
-                "infinite-scroll": "scroll-up 6s infinite",
+                "infinite-scroll": "scroll-up 10s infinite",
                 "quick-spin": "quick-spin 0.35s linear",
             },
             keyframes: {
