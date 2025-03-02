@@ -4,7 +4,7 @@ export type TProject = {
     title: string
     description: string
 	additionalDescription?: string
-    imageUrl: string
+    imageUrl: ImageMetadata
     url: string
     icons: TProjectIcon[]
 }

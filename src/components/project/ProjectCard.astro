@@ -21,11 +21,11 @@ const {
 <a
     href=`${url}`
     id={title.toLowerCase()}
-    class={`${category}-project project-card`}
+    class={`${category}-project project-card group`}
 >
     <div class="relative mx-6 mb-5 lg:mr-60">
         <Image
-            class="max-w-[300px] rounded-md object-cover sm:h-auto sm:min-w-[400px] sm:max-w-[400px] lg:max-w-[450px]"
+            class="max-w-[300px] rounded-md border border-solid border-white/10 object-cover shadow-md shadow-white/5 transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-white/5 sm:h-auto sm:min-w-[400px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px]"
             src={imageUrl}
             alt="Project Image"
             width={300 * 3}
@@ -46,7 +46,7 @@ const {
             </div>
         </div>
         <div
-            class="absolute bottom-0 right-0 h-min max-w-[65%] translate-x-6 translate-y-5 rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5 lg:inset-y-0 lg:my-auto lg:max-w-[70%] lg:translate-x-3/4 lg:translate-y-0 lg:px-3 lg:py-4 xl:max-w-[75%]"
+            class="absolute bottom-0 right-0 h-min max-w-[65%] translate-x-6 translate-y-5 rounded-md border-2 border-solid border-white/10 bg-gradient-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5 transition-shadow duration-300 group-hover:shadow-lg group-hover:shadow-white/5 lg:inset-y-0 lg:my-auto lg:max-w-[75%] lg:translate-x-3/4 lg:translate-y-0 lg:p-4"
         >
             <h1
                 class="mb-1 text-sm sm:text-base md:text-lg lg:mb-2 lg:text-2xl xl:text-3xl"
@@ -54,10 +54,13 @@ const {
                 {title}
             </h1>
             <p
-                class="line-clamp-4 text-pretty text-xs sm:text-sm lg:line-clamp-[10] lg:text-base xl:text-lg"
+                class="line-clamp-4 text-pretty text-xs sm:text-sm lg:line-clamp-[10] lg:text-base"
             >
                 {description}
-                <span class="hidden lg:inline">{additionalDescription}</span>
+                <br />
+                <span class="mt-1 hidden lg:inline-block"
+                    >{additionalDescription}</span
+                >
             </p>
         </div>
     </div>
