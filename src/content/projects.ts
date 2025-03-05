@@ -19,7 +19,7 @@ export const projectContent: TProjectContent = {
             description:
                 "A cross-platform bus timing application all about giving you the info you need, fast.",
             additionalDescription:
-                "Features were cherry-picked to keep things straightforward & still be useful.",
+                "Features were cherry-picked to keep things straightforward while remaining useful.",
             imageUrl: transitoThumbnail,
             url: "https://transito.tnitish.com",
             icons: ["flutter", "android", "ios"],
@@ -29,7 +29,7 @@ export const projectContent: TProjectContent = {
             description:
                 "A modernised version of Temasek Polytechnic's Online Student Services (TPOSS).",
             additionalDescription:
-                "It incorporates a more user friendly interface while also utilising a microservices architecture.",
+                "It incorporates a more user friendly interface whilst also utilising a microservices architecture.",
             imageUrl: tpossThumbnail,
             url: "https://github.com/TechSupportz/tposs-reimagined-cloud",
             icons: ["react", "cloud", "typescript"],
@@ -37,7 +37,7 @@ export const projectContent: TProjectContent = {
         {
             title: "EmailGPT",
             description:
-                "A Google Chrome extension to assist the user in writing emails inside Gmail using OpenAI's GPT-3.5 model.",
+                "A Google Chrome extension to assist the user in writing emails within Gmail using OpenAI's GPT-3.5 model.",
             additionalDescription:
                 "Designed to feel like a natural extension of Gmail.",
             imageUrl: emailGPTThumbnail,
@@ -47,8 +47,8 @@ export const projectContent: TProjectContent = {
         {
             title: "Portfolio Website",
             description:
-                "My very own portfolio website to not just showcase my projects but also my design & frontend skills",
-            additionalDescription: "...and yes you're on it right now!",
+                "My very own portfolio website built not just showcase my projects but also my design & frontend skills",
+            additionalDescription: "...and yes, you're on it right now!",
             imageUrl: portfolioThumbnail,
             url: "https://tnitish.com",
             icons: ["astro", "react", "typescript"],
@@ -66,8 +66,8 @@ export const projectContent: TProjectContent = {
         {
             title: "QR Extension",
             description:
-                "A simple chrome extension which generate a qr code of the current tab's URL when clicked.",
-            additionalDescription: "Made this in 30mins because I was bored.",
+                "A simple chrome extension which generates a QR code of the current tab's URL when clicked.",
+            additionalDescription: "Made this in 30 minutes because I was bored.",
             imageUrl: QRExtensionThumbnail,
             url: "https://github.com/TechSupportz/qr-extension",
             icons: ["typescript", "extension"],
@@ -75,7 +75,7 @@ export const projectContent: TProjectContent = {
         {
             title: "Transito Landing",
             description:
-                "A simple yet smart landing page for Transito which detects the user's device & redirect them to their app store.",
+                "A simple yet smart landing page for Transito that detects the user's device & redirects them to their app store.",
             additionalDescription: "Making QR codes idiot-proof!",
             imageUrl: transitoLandingThumbnail,
             url: "https://transito.tnitish.com",
@@ -86,8 +86,8 @@ export const projectContent: TProjectContent = {
         {
             title: "GPABuyWat?",
             description:
-                "Calculate your GPA with ease, whether you're at home or on the go & see if you can afford chicken rice!",
-            additionalDescription: "Built during Hack&Roll 2023",
+                "Calculate your GPA with ease, whether you're at home or on the go, and see if you can afford chicken rice!",
+            additionalDescription: "Built during Hack&Roll 2023.",
             imageUrl: gpaBuyWhatThumbnail,
             url: "https://gpa-buy-wat.vercel.app/",
             icons: ["react", "typescript"],
@@ -96,7 +96,7 @@ export const projectContent: TProjectContent = {
             title: "Portfix",
             description:
                 "PortFix is a dual-application solution to keep a healthy uptime of the equipments within the PSA ports.",
-            additionalDescription: "Built during PSA Codesprint 2022",
+            additionalDescription: "Built during PSA Codesprint 2022.",
 			imageUrl: PortfixThumbnail,
 			url: "https://github.com/PuttTim/PSA-vpn2",
 			icons: ["react", "typescript", "flutter"]
