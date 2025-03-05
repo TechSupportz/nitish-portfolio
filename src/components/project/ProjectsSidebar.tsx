@@ -41,7 +41,6 @@ const ProjectsSidebar = () => {
                                 "motion-delay-100": category === "featured",
                                 "motion-delay-200": category === "personal",
                                 "motion-delay-300": category === "hackathon",
-                                "motion-delay-[400ms]": category === "school",
                             },
                         )}
                     >
