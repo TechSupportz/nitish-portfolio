@@ -102,5 +102,4 @@ export const projectContent: TProjectContent = {
 			icons: ["react", "typescript", "flutter"]
         },
     ],
-    school: [],
 }

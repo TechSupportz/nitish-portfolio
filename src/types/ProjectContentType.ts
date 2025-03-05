@@ -16,5 +16,5 @@ export type TProjectVisibility = {
     }
 }
 
-export type TProjectCategory = "featured" | "personal" | "hackathon" | "school"
+export type TProjectCategory = "featured" | "personal" | "hackathon"
 export type TProjectContent = Record<TProjectCategory, TProject[]>
