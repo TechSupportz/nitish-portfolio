@@ -8,6 +8,7 @@ import flutterIcon from "@assets/icons/Flutter.svg"
 import openAIIcon from "@assets/icons/OpenAI.svg"
 import reactIcon from "@assets/icons/React.svg"
 import typescriptIcon from "@assets/icons/TypeScript.svg"
+import nextIcon from "@assets/icons/Next.svg"
 
 export const ProjectIcons = {
     android: androidIcon,
@@ -20,6 +21,7 @@ export const ProjectIcons = {
     openAI: openAIIcon,
     react: reactIcon,
     typescript: typescriptIcon,
+	next: nextIcon,
 }
 
 export type TProjectIcon = keyof typeof ProjectIcons
