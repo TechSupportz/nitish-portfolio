@@ -64,7 +64,7 @@ const ProfileCard = ({
             </h1>
             <p
                 className={cn(
-                    "whitespace-pre text-pretty text-sm font-light transition-opacity duration-300 ease-in-out sm:text-base md:text-lg lg:text-lg",
+                    "whitespace-pre-wrap text-pretty text-sm font-light transition-opacity duration-300 ease-in-out sm:text-base md:text-lg lg:text-lg",
                     {
                         "opacity-30": !isActive,
                     },
