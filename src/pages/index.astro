@@ -150,46 +150,91 @@ import Layout from "@layouts/Layout.astro"
     const name = document.getElementById("name")
 
     if (scrollList) {
-        // FIXME - Use IntersectionObserver
-        setInterval(() => {
-            const style = window.getComputedStyle(scrollList)
-            const matrix = new DOMMatrixReadOnly(style.transform)
-            const translateY = (matrix.m42 / scrollList.clientHeight) * 100
+        const TECH_FANATIC_THRESHOLD_START = 0
+        const TECH_FANATIC_THRESHOLD_END = -25 // Becomes visible below 0%, fully visible until -25%
+        const STUDENT_THRESHOLD_START = -25
+        const STUDENT_THRESHOLD_END = -50 // Becomes visible below -25%, fully visible until -50%
+        const SOFTWARE_DEV_THRESHOLD = -55 // Visible below -50% (or -55% for buffer) OR >= 0%
 
-            let scrollListItemVisibility: TScrollListItemVisibility = {
-                softwareDeveloper: false,
-                techFanatic: false,
-                student: false,
+        let lastCheckTime = 0
+        const checkInterval = 500
+
+        const checkScrollPosition = (timestamp: number) => {
+            if (!scrollList) {
+                requestAnimationFrame(checkScrollPosition)
+                return
             }
 
-            if (translateY < 0 && translateY >= -25) {
-                // "Tech Fanatic" is visible
-                scrollListItemVisibility = {
-                    softwareDeveloper: false,
-                    techFanatic: true,
-                    student: false,
+            // Only run the check logic at the desired interval
+            if (timestamp - lastCheckTime >= checkInterval) {
+                lastCheckTime = timestamp
+
+                const style = window.getComputedStyle(scrollList)
+                // Ensure transform style is valid before creating DOMMatrix
+                if (!style.transform || style.transform === "none") {
+                    requestAnimationFrame(checkScrollPosition) // Schedule next check
+                    return
                 }
-            } else if (translateY <= -25 && translateY >= -50) {
-                // "Student" is visible
-                scrollListItemVisibility = {
-                    softwareDeveloper: false,
-                    techFanatic: false,
-                    student: true,
+
+                const matrix = new DOMMatrixReadOnly(style.transform)
+
+                const clientHeight = scrollList.clientHeight
+                // Avoid division by zero if clientHeight is 0
+                if (clientHeight === 0) {
+                    requestAnimationFrame(checkScrollPosition) // Schedule next check
+                    return
                 }
-            } else if (translateY < -55 || translateY >= 0) {
-                // "Software Developer" is visible
-                scrollListItemVisibility = {
+
+                // Calculate translateY as a percentage of the element's height
+                const translateY = (matrix.m42 / clientHeight) * 100
+
+                let nextScrollListItemVisibility: TScrollListItemVisibility = {
                     softwareDeveloper: true,
                     techFanatic: false,
                     student: false,
                 }
+
+                // Determine visibility based on translateY percentage
+                if (
+                    translateY < TECH_FANATIC_THRESHOLD_START &&
+                    translateY >= TECH_FANATIC_THRESHOLD_END
+                ) {
+                    // "Tech Fanatic" is visible
+                    nextScrollListItemVisibility = {
+                        softwareDeveloper: false,
+                        techFanatic: true,
+                        student: false,
+                    }
+                } else if (
+                    translateY < STUDENT_THRESHOLD_START &&
+                    translateY >= STUDENT_THRESHOLD_END
+                ) {
+                    // "Student" is visible
+                    nextScrollListItemVisibility = {
+                        softwareDeveloper: false,
+                        techFanatic: false,
+                        student: true,
+                    }
+                } else if (
+                    translateY < SOFTWARE_DEV_THRESHOLD ||
+                    translateY >= TECH_FANATIC_THRESHOLD_START
+                ) {
+                    // "Software Developer" is visible (includes initial state and wrap-around)
+                    nextScrollListItemVisibility = {
+                        softwareDeveloper: true,
+                        techFanatic: false,
+                        student: false,
+                    }
+                }
+
+                // Update the store with the new visibility state
+                $scrollListItemVisibility.set(nextScrollListItemVisibility)
             }
 
-            // Use lodash isEqual or smt similar
-            if (scrollListItemVisibility !== $scrollListItemVisibility.value) {
-                $scrollListItemVisibility.set(scrollListItemVisibility)
-            }
-        }, 150)
+            requestAnimationFrame(checkScrollPosition) // Schedule the next frame check
+        }
+
+        requestAnimationFrame(checkScrollPosition) // Start the loop
     }
 
     if (dotMatrix && pointerGlow && name) {
