@@ -45,14 +45,14 @@ const ProjectsSidebar = () => {
                         )}
                     >
                         <summary
-                            className="cursor-pointer list-none font-display text-2xl font-bold xl:text-3xl"
+                            className="font-display cursor-pointer list-none text-2xl font-bold xl:text-3xl"
                             onClick={() => {
                                 scrollToCategory(category)
                             }}
                         >
                             {category}
                         </summary>
-                        <ul className="list-['\00B7\00B7\00B7'] pl-4 pt-1">
+                        <ul className="list-['\\00B7\\00B7\\00B7'] pt-1 pl-4">
                             {projectContent[category].map(project => (
                                 <li
                                     key={project.title}
@@ -62,7 +62,7 @@ const ProjectsSidebar = () => {
                                         )
                                     }
                                     className={cn(
-                                        "cursor-pointer text-balance pl-1.5 text-lg font-extralight transition-all duration-300 ease-out xl:text-xl",
+                                        "cursor-pointer pl-1.5 text-lg font-extralight text-balance transition-all duration-300 ease-out xl:text-xl",
                                         {
                                             "font-medium":
                                                 currentProject ===

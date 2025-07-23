@@ -16,7 +16,7 @@ const Drawer = () => {
             <div
                 onClick={closeDrawer}
                 className={cn(
-                    "fixed inset-0 z-40 h-screen w-full bg-black bg-opacity-45 backdrop-blur-md transition-all duration-500 ease-in-out",
+                    "fixed inset-0 z-40 h-screen w-full bg-black/45 backdrop-blur-md transition-all duration-500 ease-in-out",
                     {
                         "pointer-events-none opacity-0": !$isDrawerOpen,
                     },
@@ -24,7 +24,7 @@ const Drawer = () => {
             ></div>
             <div
                 className={cn(
-                    "fixed right-0 top-0 z-50 h-dvh w-3/4 translate-x-full transform-gpu rounded-l-[2rem] bg-charcoal shadow-lg transition-all duration-500 ease-in-out",
+                    "bg-charcoal fixed top-0 right-0 z-50 h-dvh w-3/4 translate-x-full transform-gpu rounded-l-4xl shadow-lg transition-all duration-500 ease-in-out",
                     {
                         "translate-x-0": $isDrawerOpen,
                     },
@@ -42,7 +42,7 @@ const Drawer = () => {
                         <X size={"2rem"} onClick={closeDrawer} />
                     </header>
                     <div className="flex-1">
-                        <div className="flex h-full flex-col items-center justify-center gap-10 font-display text-5xl font-extrabold text-white">
+                        <div className="font-display flex h-full flex-col items-center justify-center gap-10 text-5xl font-extrabold text-white">
                             <a
                                 href="/about"
                                 className="group transition duration-300"

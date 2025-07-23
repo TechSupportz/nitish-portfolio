@@ -8,7 +8,7 @@ import Layout from "@layouts/Layout.astro"
 
 <Layout title="Nitish" disableScroll>
     <div
-        class="dot-matrix absolute inset-x-0 h-[45%] max-h-[1024px] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-1/2 lg:h-4/6"
+        class="dot-matrix xs:h-1/2 absolute inset-x-0 h-[45%] max-h-[1024px] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 lg:h-4/6"
         style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
     >
     </div>
@@ -17,10 +17,10 @@ import Layout from "@layouts/Layout.astro"
     >
     </div>
     <div class="relative h-dvh w-full">
-        <div class="h-[40%] xs:h-[45%] lg:h-[60%]">
+        <div class="xs:h-[45%] h-[40%] lg:h-[60%]">
             <div class="z-10 flex h-full items-center">
                 <div
-                    class="flex w-full flex-col gap-1 px-4 xs:px-6 sm:gap-2 md:px-8 lg:px-12 xl:px-16"
+                    class="xs:px-6 flex w-full flex-col gap-1 px-4 sm:gap-2 md:px-8 lg:px-12 xl:px-16"
                 >
                     <p
                         class="text-md motion-preset-blur-right-md motion-duration-1000 xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
@@ -29,16 +29,16 @@ import Layout from "@layouts/Layout.astro"
                     </p>
                     <h1
                         id="name"
-                        class="motion-preset-blur-right-md mb-0.5 text-5xl motion-duration-1000 motion-delay-75 xs:text-6xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
+                        class="motion-preset-blur-right-md motion-duration-1000 motion-delay-75 xs:text-6xl mb-0.5 text-5xl sm:text-7xl lg:text-[5rem] 2xl:text-8xl"
                     >
                         Nitish
                     </h1>
                     <div
-                        class="motion-preset-blur-right-md flex flex-col flex-wrap items-baseline gap-2 text-5xl motion-duration-1000 motion-delay-100 xs:text-6xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
+                        class="motion-preset-blur-right-md motion-duration-1000 motion-delay-100 xs:text-6xl flex flex-col flex-wrap items-baseline gap-2 text-5xl sm:text-7xl lg:flex-row xl:text-[5rem] 2xl:text-8xl"
                     >
                         <h1>I am a&nbsp;</h1>
                         <div
-                            class="h-[1.55ch] overflow-hidden font-display font-bold"
+                            class="font-display h-[1.55ch] overflow-hidden font-bold"
                         >
                             <ul
                                 id="scroll-list"
@@ -46,32 +46,32 @@ import Layout from "@layouts/Layout.astro"
                                 style="animation-delay: 1200ms;"
                             >
                                 <li
-                                    class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                                    class="hidden bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
                                 >
                                     Software Developer
                                 </li>
                                 <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                                    class="bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
                                 >
                                     Software Dev
                                 </li>
                                 <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                    class="bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
                                 >
                                     Tech Fanatic
                                 </li>
                                 <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+                                    class="bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
                                 >
                                     Student
                                 </li>
                                 <li
-                                    class="hidden bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
+                                    class="hidden bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:block"
                                 >
                                     Software Developer
                                 </li>
                                 <li
-                                    class="bg-gradient-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
+                                    class="bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent lg:hidden"
                                 >
                                     Software Dev
                                 </li>
@@ -80,7 +80,7 @@ import Layout from "@layouts/Layout.astro"
                     </div>
                     <div class="relative mt-2 lg:static lg:-mx-16">
                         <div
-                            class="motion-preset-blur-right-md flex gap-4 motion-duration-1000 motion-delay-150 lg:mx-16 2xl:gap-6"
+                            class="motion-preset-blur-right-md motion-duration-1000 motion-delay-150 flex gap-4 lg:mx-16 2xl:gap-6"
                         >
                             <IconButton
                                 href="https://github.tnitish.com/"

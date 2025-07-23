@@ -7,13 +7,14 @@
         "paths": {
             "@components/*": ["src/components/*"],
             "@assets/*": ["src/assets/*"],
-			"@icons/*": ["src/assets/icons/*"],
+            "@icons/*": ["src/assets/icons/*"],
             "@pages/*": ["src/pages/*"],
             "@store/*": ["src/store/*"],
             "@src/types/*": ["src/types/*"],
             "@utils/*": ["src/utils/*"],
             "@layouts/*": ["src/layouts/*"],
-            "@content/*": ["src/content/*"]
+            "@content/*": ["src/content/*"],
+            "@styles/*": ["src/styles/*"]
         }
     }
 }

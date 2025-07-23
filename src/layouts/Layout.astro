@@ -1,4 +1,6 @@
 ---
+import "@styles/global.css"
+
 import Drawer from "@components/Drawer"
 import Header from "@components/layout/Header.astro"
 import Navbar from "@components/layout/Navbar.astro"
@@ -96,7 +98,7 @@ const { title, center, headerTitle, disableScroll } = Astro.props
                 "m-auto h-full max-w-screen-2xl",
                 {
                     "mt-[72px]": !center && !headerTitle,
-                    "mt-[calc(8rem+72px)] xs:mt-[calc(9rem+72px)] md:mt-[calc(12rem+72px)]":
+                    "xs:mt-[calc(9rem+72px)] mt-[calc(8rem+72px)] md:mt-[calc(12rem+72px)]":
                         !!headerTitle,
                     "flex flex-col items-center justify-center": center,
                 },
@@ -106,43 +108,3 @@ const { title, center, headerTitle, disableScroll } = Astro.props
         </div>
     </body>
 </html>
-
-<style is:global>
-    html,
-    body {
-        height: 100%;
-        width: 100%;
-        @apply bg-charcoal text-white;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply font-display font-bold;
-    }
-
-    p {
-        @apply font-light;
-    }
-
-    details::details-content {
-        block-size: 0;
-        overflow: hidden;
-        transition:
-            block-size 0.35s ease,
-            content-visibility 0.35s ease;
-        transition-behavior: allow-discrete;
-    }
-
-    details[open]::details-content {
-        block-size: auto;
-        block-size: calc-size(auto, size);
-    }
-
-    details summary::-webkit-details-marker {
-        display: none;
-    }
-</style>
