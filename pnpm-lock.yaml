@@ -20,6 +20,9 @@ importers:
       '@fontsource/poppins':
         specifier: ^5.1.0
         version: 5.1.0
+      '@lucide/astro':
+        specifier: ^0.525.0
+        version: 0.525.0(astro@5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0))
       '@nanostores/react':
         specifier: ^0.8.0
         version: 0.8.0(nanostores@0.11.3)(react@18.3.1)
@@ -38,9 +41,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      lucide-astro:
-        specifier: ^0.453.0
-        version: 0.453.0(astro@5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0))
       lucide-react:
         specifier: ^0.453.0
         version: 0.453.0(react@18.3.1)
@@ -556,6 +556,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.29':
     resolution: {integrity: sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ==}
+
+  '@lucide/astro@0.525.0':
+    resolution: {integrity: sha512-CjX9aJlmHg5/Io6mRSrSi3TbwRXtrV/6kwsRjv6eVhBymAA8ogq3j8YrV1PsXn1EHK9HFyzeJOhaXGm00acVLg==}
+    peerDependencies:
+      astro: ^4 || ^5
 
   '@nanostores/react@0.8.0':
     resolution: {integrity: sha512-MhbVB7NQLboq/Z9fRTDen9zib/YCffe6mn+3Xg5MOYByMX5Xx98SOZjk/Nd3yvOd/g7GjlQqwXj0KF2lPb6CEQ==}
@@ -1444,11 +1449,6 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
-
-  lucide-astro@0.453.0:
-    resolution: {integrity: sha512-RSbCNNSspnCmqsMrJV9CuZXcMYACEOWdhNj0k1NBND0xdv6oruBBSkbkOOFHSZJgnFVLUevpSOU14xmGsrN+KQ==}
-    peerDependencies:
-      astro: '>=2.7.1'
 
   lucide-react@0.453.0:
     resolution: {integrity: sha512-kL+RGZCcJi9BvJtzg2kshO192Ddy9hv3ij+cPrVPWSRzgCWCVazoQJxOjAwgK53NomL07HB7GPHW120FimjNhQ==}
@@ -2892,6 +2892,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@lucide/astro@0.525.0(astro@5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0))':
+    dependencies:
+      astro: 5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0)
+
   '@nanostores/react@0.8.0(nanostores@0.11.3)(react@18.3.1)':
     dependencies:
       nanostores: 0.11.3
@@ -3845,10 +3849,6 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
-
-  lucide-astro@0.453.0(astro@5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0)):
-    dependencies:
-      astro: 5.12.2(@types/node@24.1.0)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.45.1)(typescript@5.6.3)(yaml@2.6.0)
 
   lucide-react@0.453.0(react@18.3.1):
     dependencies:

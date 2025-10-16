@@ -52,7 +52,7 @@ const ProjectsSidebar = () => {
                         >
                             {category}
                         </summary>
-                        <ul className="list-['\\00B7\\00B7\\00B7'] pt-1 pl-4">
+                        <ul className="list-['···'] pt-1 pl-4">
                             {projectContent[category].map(project => (
                                 <li
                                     key={project.title}
