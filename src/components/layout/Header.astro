@@ -6,17 +6,18 @@ type Props = {
 const { title } = Astro.props
 ---
 
-<div
-    class="to-charcoal xs:h-36 flex h-32 w-full flex-col justify-center bg-linear-to-t from-transparent to-20% backdrop-blur-md backdrop-brightness-95 md:h-48 lg:backdrop-brightness-100"
->
+<div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
     <div
-        class="dot-matrix absolute inset-x-0 h-full bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
-        style="mask-image: linear-gradient(to bottom,transparent,15%,white,80%,transparent)"
+        class="bg-progressive-blur-to-b absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80%"
     >
+        <div
+            class="dot-matrix h-32 xs:h-36 md:h-56 bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+        >
+        </div>
     </div>
     <div class="m-auto max-w-[1600px]">
         <h1
-            class="motion-preset-blur-right-md motion-duration-1000 xs:px-6 xs:text-6xl w-screen px-4 text-5xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
+            class="w-screen mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
         >
             {title}
         </h1>

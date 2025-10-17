@@ -67,7 +67,8 @@ export const projectContent: TProjectContent = {
             title: "QR Extension",
             description:
                 "A simple chrome extension which generates a QR code of the current tab's URL when clicked.",
-            additionalDescription: "Made this in 30 minutes because I was bored.",
+            additionalDescription:
+                "Made this in 30 minutes because I was bored.",
             imageUrl: QRExtensionThumbnail,
             url: "https://github.com/TechSupportz/qr-extension",
             icons: ["typescript", "extension"],
@@ -97,9 +98,9 @@ export const projectContent: TProjectContent = {
             description:
                 "PortFix is a dual-application solution to keep a healthy uptime of the equipments within the PSA ports.",
             additionalDescription: "Built during PSA Codesprint 2022.",
-			imageUrl: PortfixThumbnail,
-			url: "https://github.com/PuttTim/PSA-vpn2",
-			icons: ["react", "typescript", "flutter"]
+            imageUrl: PortfixThumbnail,
+            url: "https://github.com/PuttTim/PSA-vpn2",
+            icons: ["react", "typescript", "flutter"],
         },
     ],
 }

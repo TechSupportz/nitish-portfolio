@@ -1,6 +1,6 @@
 ---
 import ProjectCard from "@components/project/ProjectCard.astro"
-import StickyTitle from "@components/project/StickyTitle.astro"
+import StickyProjectTitle from "@components/project/StickyProjectTitle"
 import Layout from "@layouts/Layout.astro"
 import { projectContent } from "@content/projects"
 import ProjectsSidebar from "@components/project/ProjectsSidebar"
@@ -10,11 +10,11 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
 <Layout title="Projects" headerTitle="Projects">
     <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
         <div
-            class="wmax:max-w-[400px] fixed hidden h-5/6 justify-between lg:flex lg:w-[25vw]"
+            class="fixed hidden h-5/6 justify-between wmax:max-w-[400px] lg:flex lg:w-[25vw]"
         >
             <ProjectsSidebar client:load />
             <div
-                class="motion-preset-fade-lg motion-duration-1500 motion-delay-500 mr-12 h-full w-[4px] overflow-clip"
+                class="mr-12 h-full w-[4px] motion-preset-fade-lg overflow-clip motion-delay-500 motion-duration-1500"
                 style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
             >
                 <div
@@ -24,17 +24,14 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                 </div>
             </div>
         </div>
-        <div class="wmax:ml-[400px] w-full pb-4 lg:mb-32 lg:ml-[25vw] lg:w-3/4">
+        <div
+            class="w-full pb-48 wmax:ml-[400px] lg:mb-32 lg:ml-[25vw] lg:w-3/4 lg:pb-24"
+        >
             {
                 (Object.keys(projectContent) as TProjectCategory[]).map(
                     category => (
-                        <div class="lg:mb-24">
-                            <StickyTitle
-                                title={category}
-                                count={projectContent[category].length}
-                                class="motion-preset-focus motion-duration-1000 motion-delay-75 lg:motion-duration-1500 lg:hidden"
-                            />
-                            <div class="motion-preset-focus motion-duration-1000 motion-delay-75 lg:motion-duration-1500 my-4 grid place-items-center gap-7 sm:gap-8 lg:place-items-center lg:gap-24">
+                        <div class="mb-16 lg:mb-24">
+								<div class="my-2 grid motion-preset-focus place-items-center gap-7 motion-delay-75 motion-duration-1000 sm:gap-8 lg:place-items-center lg:gap-24 lg:motion-duration-1500">
                                 {projectContent[category].map(project => (
                                     <ProjectCard
                                         title={project.title}
@@ -54,6 +51,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                 )
             }
         </div>
+        <StickyProjectTitle client:load />
     </div>
 </Layout>
 <script>

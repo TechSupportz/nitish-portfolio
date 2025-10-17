@@ -12,6 +12,13 @@
     --breakpoint-xs: 456px;
     --breakpoint-wmax: 1600px;
 
+    --text-shadow-xl: 0 0 50px black;
+
+    --progressive-blur-to-t: to top;
+    --progressive-blur-to-b: to bottom;
+    --progressive-blur-to-l: to left;
+    --progressive-blur-to-r: to right;
+
     --animate-infinite-scroll: scroll-up 10s infinite;
     @keyframes scroll-up {
         16.5%,
@@ -40,6 +47,25 @@
             transform: scale(1) rotate(360deg);
         }
     }
+}
+
+@utility bg-progressive-blur-to-* {
+    mask: linear-gradient(
+        --value(--progressive-blur-to- *),
+        oklch(0% 0 0),
+        oklch(0% 0 0 / 80%) 50%,
+        transparent
+    );
+    backdrop-filter: blur(var(--blur-md)) brightness(0.5);
+}
+
+@utility grid-overlap {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+	> * {
+		grid-area: 1 / 1 / 2 / 2;
+	}
 }
 
 html,

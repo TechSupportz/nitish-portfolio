@@ -45,7 +45,7 @@ const ProjectsSidebar = () => {
                         )}
                     >
                         <summary
-                            className="font-display cursor-pointer list-none text-2xl font-bold xl:text-3xl"
+                            className="cursor-pointer list-none font-display text-2xl font-bold xl:text-3xl"
                             onClick={() => {
                                 scrollToCategory(category)
                             }}
