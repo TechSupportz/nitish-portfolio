@@ -1,9 +1,7 @@
 import { projectContent } from "@content/projects"
 import { useStore } from "@nanostores/react"
-import type { TProjectCategory } from "@src/types/ProjectContentType"
 import { $currentProject, $currentProjectCategory } from "@store/projectsStore"
 import { cn } from "@utils/cn"
-import { useEffect, useState } from "react"
 
 type Props = {
     class?: string
