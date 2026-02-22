@@ -8,16 +8,16 @@ const { title } = Astro.props
 
 <div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
     <div
-        class="bg-progressive-blur-to-b absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80%"
+        class="absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80% bg-progressive-blur-to-b"
     >
         <div
-            class="dot-matrix h-32 xs:h-36 md:h-56 bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+            class="dot-matrix h-32 bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-36 md:h-56"
         >
         </div>
     </div>
     <div class="m-auto max-w-[1600px]">
         <h1
-            class="w-screen mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
+            class="mb-2 w-screen motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
         >
             {title}
         </h1>

@@ -11,16 +11,16 @@
             (e.init = function (i, s, a) {
                 function g(t, e) {
                     var o = e.split(".")
-                    2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                    ;(2 == o.length && ((t = t[o[0]]), (e = o[1])),
                         (t[e] = function () {
                             t.push(
                                 [e].concat(
                                     Array.prototype.slice.call(arguments, 0),
                                 ),
                             )
-                        })
+                        }))
                 }
-                ;((p = t.createElement("script")).type = "text/javascript"),
+                ;(((p = t.createElement("script")).type = "text/javascript"),
                     (p.crossOrigin = "anonymous"),
                     (p.async = !0),
                     (p.src =
@@ -31,7 +31,7 @@
                     (r =
                         t.getElementsByTagName(
                             "script",
-                        )[0]).parentNode.insertBefore(p, r)
+                        )[0]).parentNode.insertBefore(p, r))
                 var u = e
                 for (
                     void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
@@ -66,7 +66,10 @@
         person_profiles: "always", // or 'always' to create profiles for anonymous users as well
     })
 
-	if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-		posthog.opt_out_capturing()
-	}
+    if (
+        location.hostname === "localhost" ||
+        location.hostname === "127.0.0.1"
+    ) {
+        posthog.opt_out_capturing()
+    }
 </script>

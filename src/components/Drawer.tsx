@@ -24,7 +24,7 @@ const Drawer = () => {
             ></div>
             <div
                 className={cn(
-                    "bg-charcoal fixed top-0 right-0 z-50 h-dvh w-3/4 translate-x-full transform-gpu rounded-l-4xl shadow-lg transition-all duration-500 ease-in-out",
+                    "fixed top-0 right-0 z-50 h-dvh w-3/4 translate-x-full transform-gpu rounded-l-4xl bg-charcoal shadow-lg transition-all duration-500 ease-in-out",
                     {
                         "translate-x-0": $isDrawerOpen,
                     },
@@ -42,7 +42,7 @@ const Drawer = () => {
                         <X size={"2rem"} onClick={closeDrawer} />
                     </header>
                     <div className="flex-1">
-                        <div className="font-display flex h-full flex-col items-center justify-center gap-10 text-5xl font-extrabold text-white">
+                        <div className="flex h-full flex-col items-center justify-center gap-10 font-display text-5xl font-extrabold text-white">
                             <a
                                 href="/about"
                                 className="group transition duration-300"

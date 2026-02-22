@@ -31,7 +31,7 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
                 (Object.keys(projectContent) as TProjectCategory[]).map(
                     category => (
                         <div class="mb-16 lg:mb-24">
-								<div class="my-2 grid motion-preset-focus place-items-center gap-7 motion-delay-75 motion-duration-1000 sm:gap-8 lg:place-items-center lg:gap-24 lg:motion-duration-1500">
+                            <div class="my-2 grid motion-preset-focus place-items-center gap-7 motion-delay-75 motion-duration-1000 sm:gap-8 lg:place-items-center lg:gap-24 lg:motion-duration-1500">
                                 {projectContent[category].map(project => (
                                     <ProjectCard
                                         title={project.title}

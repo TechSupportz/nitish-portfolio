@@ -2,7 +2,8 @@
 @plugin "tailwindcss-motion";
 
 @theme {
-    --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif,
+    --font-sans:
+        "DM Sans Variable", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
     --font-display: "Poppins", sans-serif;
@@ -67,7 +68,7 @@
 
 @utility bg-progressive-blur-to-* {
     mask: linear-gradient(
-        --value(--progressive-blur-to- *),
+        --value(--progressive-blur-to-*),
         oklch(0% 0 0),
         oklch(0% 0 0 / 80%) 50%,
         transparent

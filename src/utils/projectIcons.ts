@@ -21,7 +21,7 @@ export const ProjectIcons = {
     openAI: openAIIcon,
     react: reactIcon,
     typescript: typescriptIcon,
-	next: nextIcon,
+    next: nextIcon,
 }
 
 export type TProjectIcon = keyof typeof ProjectIcons
