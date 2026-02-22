@@ -74,13 +74,6 @@ const Drawer = () => {
                                 className="size-10"
                             />
                         </a>
-                        <a href="mailto:contact@tnitish.com">
-                            <img
-                                src={emailIcon.src}
-                                alt="Email"
-                                className="size-10"
-                            />
-                        </a>
                         <a href="https://linkedin.tnitish.com/">
                             <img
                                 src={linkedInIcon.src}

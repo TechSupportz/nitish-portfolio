@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets"
 import Menu from "@lucide/astro/icons/menu"
+const currentPath = Astro.url.pathname
 ---
 
 <nav class="navbar z-20 w-full bg-charcoal font-display shadow-charcoal">
@@ -26,19 +27,38 @@ import Menu from "@lucide/astro/icons/menu"
             class="hidden flex-row items-center gap-6 text-xl text-white lg:flex"
         >
             <a href="/about" class="group transition duration-300">
-                about
+                about<span
+                    class:list={[
+                        "text-2xl",
+                        {
+                            "opacity-0":
+                                currentPath !== "/about" && currentPath !== "/",
+                        },
+                    ]}
+                    >.
+                </span>
                 <span
                     class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
                 ></span>
             </a>
             <a href="/projects" class="group transition duration-300">
-                projects
+                projects<span
+                    class:list={[
+                        "text-2xl",
+                        { "opacity-0": currentPath !== "/projects" },
+                    ]}>.</span
+                >
                 <span
                     class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
                 ></span>
             </a>
             <a href="/contact" class="group transition duration-300">
-                contact
+                contact<span
+                    class:list={[
+                        "text-2xl",
+                        { "opacity-0": currentPath !== "/contact" },
+                    ]}>.</span
+                >
                 <span
                     class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
                 ></span>

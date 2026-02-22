@@ -1,7 +1,7 @@
 export const ProfileCardTitles = {
-    SoftwareDeveloper: "Software Developer 👨🏾‍💻",
-    TechFanatic: "Tech Fanatic 📱",
-    Student: "Student 🎓",
+    SoftwareDeveloper: "👨🏾‍💻 software developer.",
+    TechFanatic: "📱 tech fanatic.",
+    Student: "🎓 student.",
 } as const
 
 export type ProfileCardTitle =
