@@ -101,6 +101,8 @@ const { title, center, headerTitle, disableScroll } = Astro.props
                     "mt-[calc(8rem+72px)] xs:mt-[calc(9rem+72px)] md:mt-[calc(12rem+72px)]":
                         !!headerTitle,
                     "flex flex-col items-center justify-center": center,
+                    "pt-[8rem] xs:pt-[9rem] md:pt-[12rem]":
+                        center && !!headerTitle,
                 },
             ]}
         >

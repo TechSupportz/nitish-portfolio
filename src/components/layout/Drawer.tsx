@@ -1,4 +1,3 @@
-import emailIcon from "@assets/email.svg"
 import githubIcon from "@assets/github.svg"
 import linkedInIcon from "@assets/linkedIn.svg"
 import { useStore } from "@nanostores/react"

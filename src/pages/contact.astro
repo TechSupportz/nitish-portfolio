@@ -1,8 +1,69 @@
 ---
-import InProgress from "@components/InProgress.astro"
 import Layout from "@layouts/Layout.astro"
+import { Image } from "astro:assets"
+import profilePicCircle from "@assets/profile-pic-circle.webp"
+import emailIcon from "@assets/email-alt.svg"
+import githubIcon from "@assets/github-alt.svg"
+import linkedInIcon from "@assets/linkedin-alt.svg"
 ---
 
-<Layout title="Contact" center>
-    <InProgress />
+<Layout title="contact." headerTitle="contact." disableScroll center>
+    <div class="items-top flex gap-24">
+        <div class="relative">
+            <Image
+                src={profilePicCircle}
+                alt="Profile Picture"
+                class="relative z-10 size-96 object-cover"
+            />
+            <div
+                class="dot-matrix absolute top-1/3 right-1/3 z-0 size-80 bg-[url('/dot-matrix.svg')] bg-repeat opacity-30"
+            >
+            </div>
+        </div>
+        <div class="mt-4 flex flex-col gap-12">
+            <div>
+                <h2 class="text-4xl">lets talk.</h2>
+                <p class="text-2xl font-light">
+                    Got an opportunity or found a bug in something I built?
+                </p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <a
+                    href="mailto:contact@tnitish.com"
+                    class="group flex items-center gap-2"
+                >
+                    <Image src={emailIcon} alt="Email" class="size-4xl" />
+                    <p class="-mt-1 align-top text-3xl">
+                        contact@tnitish.com <span
+                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                        ></span>
+                    </p>
+                </a>
+                <a
+                    href="https://github.tnitish.com/"
+                    target="_blank"
+                    class="group flex items-center gap-2"
+                >
+                    <Image src={githubIcon} alt="GitHub" class="size-4xl" />
+                    <p class="-mt-1 align-top text-3xl">
+                        techsupportz <span
+                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                        ></span>
+                    </p>
+                </a>
+                <a
+                    href="https://linkedin.tnitish.com/"
+                    target="_blank"
+                    class="group flex items-center gap-2"
+                >
+                    <Image src={linkedInIcon} alt="LinkedIn" class="size-4xl" />
+                    <p class="align-top text-3xl">
+                        Nitish Thiyagarajan <span
+                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
+                        ></span>
+                    </p>
+                </a>
+            </div>
+        </div>
+    </div>
 </Layout>
