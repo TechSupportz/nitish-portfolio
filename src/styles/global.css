@@ -144,3 +144,50 @@ details summary::-webkit-details-marker {
 @utility emoji-particle-dim {
     --max-opacity: 0.4;
 }
+
+/*
+ * Tailwind breakpoint markers — for Chrome DevTools "Show media queries" visibility only.
+ * These are NOT used in the codebase. Do not reference these in any component styles.
+ *   xs:   456px   (custom)
+ *   sm:   640px   (tailwind default)
+ *   md:   768px   (tailwind default)
+ *   lg:   1024px  (tailwind default)
+ *   xl:   1280px  (tailwind default)
+ *   2xl:  1536px  (tailwind default)
+ *   wmax: 1600px  (custom)
+ */
+@media (min-width: 456px) {
+    :root {
+        --breakpoint: xs;
+    }
+}
+@media (min-width: 640px) {
+    :root {
+        --breakpoint: sm;
+    }
+}
+@media (min-width: 768px) {
+    :root {
+        --breakpoint: md;
+    }
+}
+@media (min-width: 1024px) {
+    :root {
+        --breakpoint: lg;
+    }
+}
+@media (min-width: 1280px) {
+    :root {
+        --breakpoint: xl;
+    }
+}
+@media (min-width: 1536px) {
+    :root {
+        --breakpoint: 2xl;
+    }
+}
+@media (min-width: 1600px) {
+    :root {
+        --breakpoint: wmax;
+    }
+}

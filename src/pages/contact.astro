@@ -9,13 +9,13 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
 
 <Layout title="contact." headerTitle="contact." disableScroll>
     <div
-        class="flex h-full flex-col justify-between gap-10 px-6 pb-8 md:gap-12 md:px-10 md:pb-10 lg:h-2/3 lg:flex-row lg:items-center lg:justify-evenly lg:gap-16 lg:px-0 lg:pb-0"
+        class="flex max-h-2/3 flex-col justify-evenly gap-10 px-6 md:px-8 lg:h-2/3 lg:flex-row lg:items-center lg:justify-evenly lg:gap-0 lg:px-4"
     >
         <div class="mt-2 flex flex-col gap-8 md:mt-4 md:gap-10 lg:gap-12">
             <div class="flex flex-col gap-1">
-                <h2 class="text-5xl md:text-6xl lg:text-5xl">lets talk.</h2>
+                <h2 class="text-3xl xs:text-4xl lg:text-5xl">lets talk.</h2>
                 <p
-                    class="max-w-[24ch] text-xl font-light xs:text-2xl md:text-3xl lg:text-3xl"
+                    class="text-xl font-light text-balance xs:text-2xl lg:max-w-[24ch] xl:max-w-full"
                 >
                     Got an opportunity or found a bug in something I built?
                 </p>
@@ -28,10 +28,10 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                     <Image
                         src={emailIcon}
                         alt="Email"
-                        class="md:size-4xl size-8 xs:size-10"
+                        class="size-7 xs:size-8 md:size-9"
                     />
                     <p
-                        class="-mt-1 align-top text-xl xs:text-2xl md:text-3xl lg:text-3xl"
+                        class="-mt-1 align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
                     >
                         contact@tnitish.com <span
                             class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
@@ -46,10 +46,10 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                     <Image
                         src={githubIcon}
                         alt="GitHub"
-                        class="md:size-4xl size-8 xs:size-10"
+                        class="size-7 xs:size-8 md:size-9"
                     />
                     <p
-                        class="-mt-1 align-top text-xl xs:text-2xl md:text-3xl lg:text-3xl"
+                        class="-mt-1 align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
                     >
                         techsupportz <span
                             class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
@@ -64,10 +64,10 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                     <Image
                         src={linkedInIcon}
                         alt="LinkedIn"
-                        class="md:size-4xl size-8 xs:size-10"
+                        class="size-7 xs:size-8 md:size-9"
                     />
                     <p
-                        class="align-top text-xl xs:text-2xl md:text-3xl lg:text-3xl"
+                        class="align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
                     >
                         Nitish Thiyagarajan <span
                             class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
@@ -76,14 +76,15 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                 </a>
             </div>
         </div>
-        <div class="relative mx-auto mt-2 w-fit md:mt-6 lg:mx-0 lg:mt-0">
+        <div class="relative mr-16 ml-auto w-fit md:mr-20 lg:mx-0 lg:mt-0">
             <Image
                 src={profilePicCircle}
+                loading={"eager"}
                 alt="Profile Picture"
-                class="relative z-10 size-[260px] object-cover xs:size-[280px] md:size-[320px] lg:size-[396px]"
+                class="relative z-10 size-[260px] object-contain xs:size-[300px] md:size-[348px] lg:size-[364px] xl:size-[396px]"
             />
             <div
-                class="dot-matrix absolute top-[25%] left-[25%] z-0 size-[240px] bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:top-[25%] xs:left-[25%] xs:size-[260px] md:top-1/3 md:left-[42%] md:size-[300px] lg:top-1/4 lg:left-1/3 lg:size-[348px]"
+                class="dot-matrix absolute top-1/4 left-1/3 z-0 size-[240px] bg-[url('/dot-matrix.svg')] bg-repeat object-contain opacity-30 xs:size-[252px] md:size-[300px] lg:size-[316px] xl:size-[348px]"
             >
             </div>
         </div>
