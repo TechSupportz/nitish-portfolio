@@ -40,7 +40,7 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                             class="copy-icon absolute inset-0 motion-scale-out-50 motion-blur-out-md opacity-0 transition-opacity motion-duration-200 group-hover:motion-scale-in-50 group-hover:motion-blur-in-md group-hover:opacity-100"
                         />
                         <ClipboardCheck
-                            class="copy-success-icon absolute inset-0 opacity-0 motion-duration-150"
+                            class="copy-success-icon absolute inset-0 opacity-0 transition-opacity motion-duration-150"
                         />
                     </div>
                 </div>
@@ -124,6 +124,32 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
     ]
 
     let copying = false
+    let resetTimeout: ReturnType<typeof setTimeout> | null = null
+    let exitTimeout: ReturnType<typeof setTimeout> | null = null
+
+    function reset() {
+        // Animate ClipboardCheck out (reverse of entry)
+        if (copySuccessIcon) {
+            copySuccessIcon.classList.remove(...successIconInClasses)
+            copySuccessIcon.classList.add(...successIconOutClasses)
+        }
+
+        if (exitTimeout) clearTimeout(exitTimeout)
+        exitTimeout = setTimeout(() => {
+            // After exit animation completes, restore Copy icon hover-ready state
+            if (copySuccessIcon) {
+                copySuccessIcon.classList.remove(...successIconOutClasses)
+                copySuccessIcon.classList.add("opacity-0")
+            }
+
+            if (copyIcon) {
+                copyIcon.classList.remove(...copyIconOutClasses)
+                copyIcon.classList.add(...copyIconHoverClasses)
+            }
+
+            copying = false
+        }, 75)
+    }
 
     copyEmail?.addEventListener("click", () => {
         if (copying) return
@@ -143,26 +169,13 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
             copySuccessIcon.classList.add(...successIconInClasses)
         }
 
-        // Reset after 1s — animate ClipboardCheck out, then restore Copy hover-ready state
-        setTimeout(() => {
-            // Animate ClipboardCheck out (reverse of entry)
-            if (copySuccessIcon) {
-                copySuccessIcon.classList.remove(...successIconInClasses)
-                copySuccessIcon.classList.add(...successIconOutClasses)
-            }
+        // Auto-reset after 1s
+        resetTimeout = setTimeout(reset, 1000)
+    })
 
-            // After exit animation completes, restore Copy icon hover-ready state
-            if (copySuccessIcon) {
-                copySuccessIcon.classList.remove(...successIconOutClasses)
-                copySuccessIcon.classList.add("opacity-0")
-            }
-
-            if (copyIcon) {
-                copyIcon.classList.remove(...copyIconOutClasses)
-                copyIcon.classList.add(...copyIconHoverClasses)
-            }
-
-            copying = false
-        }, 1000)
+    copyEmail?.addEventListener("mouseleave", () => {
+        if (!copying) return
+        if (resetTimeout) clearTimeout(resetTimeout)
+        reset()
     })
 </script>
