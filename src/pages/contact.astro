@@ -13,17 +13,19 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
         class="flex max-h-2/3 flex-col justify-evenly gap-10 px-6 md:px-8 lg:h-2/3 lg:flex-row lg:items-center lg:justify-evenly lg:gap-0 lg:px-4"
     >
         <div class="mt-2 flex flex-col gap-8 md:mt-4 md:gap-10 lg:gap-12">
-            <div class="flex flex-col gap-1">
+            <div
+                class="flex motion-preset-blur-down-md flex-col gap-1 motion-delay-100 motion-duration-1500"
+            >
                 <h2 class="text-3xl xs:text-4xl lg:text-5xl">lets talk.</h2>
                 <p
-                    class="text-xl font-light text-balance xs:text-2xl lg:max-w-[24ch] xl:max-w-full"
+                    class="text-xl font-light text-balance motion-delay-75 xs:text-2xl lg:max-w-[24ch] xl:max-w-full"
                 >
                     Got an opportunity or found a bug in something I built?
                 </p>
             </div>
             <div class="flex flex-col gap-3 md:gap-4">
                 <div
-                    class="group copy-email flex cursor-pointer items-center gap-2"
+                    class="group copy-email flex motion-preset-blur-down-md cursor-pointer items-center gap-2 motion-delay-200 motion-duration-1500"
                 >
                     <Image
                         src={emailIcon}
@@ -47,7 +49,7 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                 <a
                     href="https://github.tnitish.com/"
                     target="_blank"
-                    class="group flex items-center gap-2"
+                    class="group flex motion-preset-blur-down-md items-center gap-2 motion-delay-300 motion-duration-1500"
                 >
                     <Image
                         src={githubIcon}
@@ -65,7 +67,7 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                 <a
                     href="https://linkedin.tnitish.com/"
                     target="_blank"
-                    class="group flex items-center gap-2"
+                    class="group flex motion-preset-blur-down-md items-center gap-2 motion-delay-400 motion-duration-1500"
                 >
                     <Image
                         src={linkedInIcon}
@@ -82,7 +84,9 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                 </a>
             </div>
         </div>
-        <div class="relative mr-16 ml-auto w-fit md:mr-20 lg:mx-0 lg:mt-0">
+        <div
+            class="relative mr-16 ml-auto w-fit motion-preset-focus-lg motion-delay-75 motion-duration-1000 md:mr-20 lg:mx-0 lg:mt-0"
+        >
             <Image
                 src={profilePicCircle}
                 loading={"eager"}
