@@ -5,6 +5,7 @@ import profilePicCircle from "@assets/profile-pic-circle.webp"
 import emailIcon from "@assets/email-alt.svg"
 import githubIcon from "@assets/github-alt.svg"
 import linkedInIcon from "@assets/linkedin-alt.svg"
+import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
 ---
 
 <Layout title="contact." headerTitle="contact." disableScroll>
@@ -21,9 +22,8 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                 </p>
             </div>
             <div class="flex flex-col gap-3 md:gap-4">
-                <a
-                    href="mailto:contact@tnitish.com"
-                    class="group flex items-center gap-2"
+                <div
+                    class="group copy-email flex cursor-pointer items-center gap-2"
                 >
                     <Image
                         src={emailIcon}
@@ -33,11 +33,17 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
                     <p
                         class="-mt-1 align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
                     >
-                        contact@tnitish.com <span
-                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                        ></span>
+                        contact@tnitish.com
                     </p>
-                </a>
+                    <div class="relative size-6 self-center">
+                        <Copy
+                            class="copy-icon absolute inset-0 motion-scale-out-50 motion-blur-out-md opacity-0 transition-opacity motion-duration-200 group-hover:motion-scale-in-50 group-hover:motion-blur-in-md group-hover:opacity-100"
+                        />
+                        <ClipboardCheck
+                            class="copy-success-icon absolute inset-0 opacity-0 motion-duration-150"
+                        />
+                    </div>
+                </div>
                 <a
                     href="https://github.tnitish.com/"
                     target="_blank"
@@ -90,3 +96,73 @@ import linkedInIcon from "@assets/linkedin-alt.svg"
         </div>
     </div>
 </Layout>
+
+<script>
+    const copyEmail = document.querySelector(".copy-email")
+    const copySuccessIcon =
+        document.querySelector<HTMLElement>(".copy-success-icon")
+    const copyIcon = document.querySelector<HTMLElement>(".copy-icon")
+
+    // Class groups for Copy icon states
+    const copyIconHoverClasses = [
+        "group-hover:motion-scale-in-50",
+        "group-hover:motion-blur-in-md",
+        "group-hover:opacity-100",
+    ]
+    const copyIconOutClasses = [
+        "motion-scale-out-50",
+        "motion-blur-out-md",
+        "!opacity-0",
+    ]
+
+    // Class groups for ClipboardCheck icon states
+    const successIconInClasses = ["motion-scale-in-50", "motion-opacity-in-0"]
+    const successIconOutClasses = [
+        "motion-scale-out-50",
+        "motion-opacity-out-0",
+        "motion-duration-200",
+    ]
+
+    let copying = false
+
+    copyEmail?.addEventListener("click", () => {
+        if (copying) return
+        copying = true
+
+        navigator.clipboard.writeText("contact@tnitish.com")
+
+        // Animate Copy icon out
+        if (copyIcon) {
+            copyIcon.classList.remove(...copyIconHoverClasses)
+            copyIcon.classList.add(...copyIconOutClasses)
+        }
+
+        // Animate ClipboardCheck icon in
+        if (copySuccessIcon) {
+            copySuccessIcon.classList.remove("opacity-0")
+            copySuccessIcon.classList.add(...successIconInClasses)
+        }
+
+        // Reset after 1s — animate ClipboardCheck out, then restore Copy hover-ready state
+        setTimeout(() => {
+            // Animate ClipboardCheck out (reverse of entry)
+            if (copySuccessIcon) {
+                copySuccessIcon.classList.remove(...successIconInClasses)
+                copySuccessIcon.classList.add(...successIconOutClasses)
+            }
+
+            // After exit animation completes, restore Copy icon hover-ready state
+            if (copySuccessIcon) {
+                copySuccessIcon.classList.remove(...successIconOutClasses)
+                copySuccessIcon.classList.add("opacity-0")
+            }
+
+            if (copyIcon) {
+                copyIcon.classList.remove(...copyIconOutClasses)
+                copyIcon.classList.add(...copyIconHoverClasses)
+            }
+
+            copying = false
+        }, 1000)
+    })
+</script>
