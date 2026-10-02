@@ -15,6 +15,8 @@ type TRect = { x0: number; y0: number; x1: number; y1: number }
 const PITCH = 11
 const OFFSET = 6
 const DOT_RADIUS = 1.5
+// Phone pixels are physically smaller, so dots get a touch bigger to read as bright
+const DOT_RADIUS_MOBILE = 1.6
 const BASE_ALPHA = 0.3
 
 const ICON_ALPHA = 0.72
@@ -30,6 +32,12 @@ const ICON_MATRIX_FILL_X = 0.63
 const ICON_MATRIX_FILL_Y = 0.455
 // Time for the diagonal sweep to cross the icon, whatever its size
 const ICON_SWEEP_MS = 250
+// Mobile only: the lit icon dots are also drawn as an HDR image (~4x SDR white,
+// public/hdr-glow.avif) masked to the dots, so HDR screens show them glowing.
+// Two layers crossfade between icons in step with the canvas sweep
+const HDR_GLOW_FADE_MS = ICON_FADE_MS + ICON_SWEEP_MS
+// Ripples get the same HDR glow, dimmer, as a CSS-masked ring over the grid dots
+const RIPPLE_HDR_ALPHA = 0.45
 
 // Desktop only: dots behind text are dimmed where the icon overlaps the copy
 const TEXT_DIM = 0.6
@@ -72,6 +80,8 @@ const fadeMask = (progress: number) =>
 
 const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const glowRefs = useRef<(HTMLDivElement | null)[]>([])
+    const rippleGlowRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -97,13 +107,19 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         let iconSets: Uint8Array[] = []
         // Icon footprint on the grid; `fill` spans the whole matrix (mobile)
         let icon = { c0: 0, r0: 0, size: 0, fill: false }
+        let dotRadius = DOT_RADIUS
 
         let active = $activeRole.get()
         let changedAt = performance.now()
         let frame = 0
         let lastFrame = 0
         const pointer = { x: -1e4, y: -1e4 }
-        const ripples: { x: number; y: number; t: number }[] = []
+        const ripples: {
+            x: number
+            y: number
+            t: number
+            glow?: HTMLDivElement
+        }[] = []
         const timers = new Set<ReturnType<typeof setTimeout>>()
         const later = (callback: () => void, ms: number) => {
             const id = setTimeout(() => {
@@ -273,6 +289,170 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             if (!frame) frame = requestAnimationFrame(draw)
         }
 
+        const glowLayers = glowRefs.current.filter(
+            (layer): layer is HTMLDivElement => layer !== null,
+        )
+        let glowMasks: string[] = []
+        let glowFront = 0
+        // SDR screens would clip the glow to flat white, losing the icon's gradient
+        const hdrQuery = window.matchMedia("(dynamic-range: high)")
+        let hdrEnabled = true
+
+        // One mask per icon, cropped to the icon's footprint
+        const buildGlowMasks = () => {
+            glowMasks = []
+            if (!icon.fill || icon.size <= 0 || !hdrQuery.matches) return
+            if (!hdrEnabled) return
+
+            const dpr = canvas.width / Math.max(1, box.width)
+            const left = OFFSET + (icon.c0 - 1) * PITCH - PITCH / 2
+            const top = OFFSET + (icon.r0 - 1) * PITCH - PITCH / 2
+            const span = (icon.size + 2) * PITCH
+            glowMasks = iconSets.map(set => {
+                const maskCanvas = document.createElement("canvas")
+                maskCanvas.width = Math.ceil(span * dpr)
+                maskCanvas.height = Math.ceil(span * dpr)
+                const maskCtx = maskCanvas.getContext("2d")
+                if (!maskCtx) return "none"
+
+                maskCtx.setTransform(dpr, 0, 0, dpr, -left * dpr, -top * dpr)
+                set.forEach((on, id) => {
+                    if (!on) return
+                    maskCtx.globalAlpha = ICON_ALPHA
+                    maskCtx.beginPath()
+                    maskCtx.arc(
+                        OFFSET + (id % cols) * PITCH,
+                        OFFSET + Math.floor(id / cols) * PITCH,
+                        dotRadius * (1 + ICON_GROWTH),
+                        0,
+                        Math.PI * 2,
+                    )
+                    maskCtx.fill()
+                })
+                return `url(${maskCanvas.toDataURL()}) ${left}px ${top}px / ${span}px ${span}px no-repeat`
+            })
+        }
+
+        const showGlow = (layer: HTMLDivElement, index: number) => {
+            const value = glowMasks[index] ?? "none"
+            layer.style.setProperty("mask", value)
+            layer.style.setProperty("-webkit-mask", value)
+        }
+
+        const glowTransition = () =>
+            reduceMotion
+                ? "none"
+                : `opacity ${HDR_GLOW_FADE_MS}ms cubic-bezier(0.65, 0, 0.35, 1)`
+
+        // Sets a layer's opacity instantly, skipping its transition
+        const snapOpacity = (layer: HTMLDivElement, opacity: string) => {
+            layer.style.transition = "none"
+            layer.style.opacity = opacity
+            void layer.offsetWidth
+            layer.style.transition = glowTransition()
+        }
+
+        // Snaps to a clean state: the front layer shows the current icon, the back is hidden
+        const resetGlow = () => {
+            const on = glowMasks.length > 0
+            glowLayers.forEach((layer, i) => {
+                layer.style.display = on ? "block" : "none"
+                if (i === glowFront) showGlow(layer, active)
+                snapOpacity(layer, on && i === glowFront ? "1" : "0")
+            })
+        }
+
+        const fadeInGlow = () => {
+            const layer = glowLayers[glowFront]
+            if (!layer || glowMasks.length === 0) return
+            snapOpacity(layer, "0")
+            layer.style.opacity = "1"
+        }
+
+        const crossfadeGlow = (index: number) => {
+            if (glowMasks.length === 0 || glowLayers.length < 2) return
+            const next = 1 - glowFront
+            // It may still be fading out after a quick previous change, so clear
+            // it before reuse rather than swapping in a half-visible mask
+            snapOpacity(glowLayers[next], "0")
+            showGlow(glowLayers[next], index)
+            glowLayers[next].style.opacity = "1"
+            glowLayers[glowFront].style.opacity = "0"
+            glowFront = next
+        }
+
+        const glowAllowed = () =>
+            icon.fill && hdrEnabled && hdrQuery.matches && !reduceMotion
+
+        // Ripple glow is two nested masks, which multiply: the host is masked
+        // once per layout to every grid dot (with the grid's fade), and each
+        // ripple inside it is masked to its expanding ring
+        const rippleHost = rippleGlowRef.current
+        const buildRippleDotsMask = () => {
+            if (!rippleHost) return
+            // Skip the full-matrix mask entirely when ripples can't glow
+            if (!glowAllowed()) {
+                rippleHost.style.display = "none"
+                return
+            }
+            const scale = Math.min(2, window.devicePixelRatio || 1)
+            const dotsCanvas = document.createElement("canvas")
+            dotsCanvas.width = Math.ceil(box.width * scale)
+            dotsCanvas.height = Math.ceil(box.height * scale)
+            const dotsCtx = dotsCanvas.getContext("2d")
+            if (!dotsCtx) return
+
+            dotsCtx.setTransform(scale, 0, 0, scale, 0, 0)
+            for (let r = 0; r < rows; r++) {
+                if (mask[r] < 0.02) continue
+                dotsCtx.globalAlpha = mask[r]
+                dotsCtx.beginPath()
+                for (let c = 0; c < cols; c++) {
+                    const x = OFFSET + c * PITCH
+                    const y = OFFSET + r * PITCH
+                    dotsCtx.moveTo(x + dotRadius * 1.3, y)
+                    dotsCtx.arc(x, y, dotRadius * 1.3, 0, Math.PI * 2)
+                }
+                dotsCtx.fill()
+            }
+            const value = `url(${dotsCanvas.toDataURL()}) 0 0 / 100% 100% no-repeat`
+            rippleHost.style.setProperty("mask", value)
+            rippleHost.style.setProperty("-webkit-mask", value)
+            rippleHost.style.display = "block"
+        }
+
+        const ringMask = (x: number, y: number, radius: number) => {
+            const inner = Math.max(0, radius - RIPPLE_WIDTH)
+            return `radial-gradient(circle at ${x}px ${y}px, transparent ${inner}px, #000 ${radius}px, transparent ${radius + RIPPLE_WIDTH}px)`
+        }
+
+        const addRipple = (x: number, y: number) => {
+            const wave: (typeof ripples)[number] = {
+                x,
+                y,
+                t: performance.now(),
+            }
+            if (glowAllowed() && rippleHost) {
+                const glow = document.createElement("div")
+                Object.assign(glow.style, {
+                    position: "absolute",
+                    inset: "0",
+                    backgroundImage: "url('/hdr-glow.avif')",
+                    backgroundSize: "cover",
+                    opacity: "0",
+                })
+                rippleHost.append(glow)
+                wave.glow = glow
+            }
+            ripples.push(wave)
+            schedule()
+        }
+
+        const clearRipples = () => {
+            ripples.forEach(wave => wave.glow?.remove())
+            ripples.length = 0
+        }
+
         const layout = () => {
             box = canvas.getBoundingClientRect()
             const dpr = window.devicePixelRatio || 1
@@ -286,6 +466,9 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 fadeMask(clamp((OFFSET + r * PITCH) / box.height)),
             )
 
+            placeIcon()
+            dotRadius = icon.fill ? DOT_RADIUS_MOBILE : DOT_RADIUS
+
             baseLayer.width = canvas.width
             baseLayer.height = canvas.height
             if (baseCtx) {
@@ -298,15 +481,17 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     for (let c = 0; c < cols; c++) {
                         const x = OFFSET + c * PITCH
                         const y = OFFSET + r * PITCH
-                        baseCtx.moveTo(x + DOT_RADIUS, y)
-                        baseCtx.arc(x, y, DOT_RADIUS, 0, Math.PI * 2)
+                        baseCtx.moveTo(x + dotRadius, y)
+                        baseCtx.arc(x, y, dotRadius, 0, Math.PI * 2)
                     }
                     baseCtx.fill()
                 }
             }
 
-            placeIcon()
             iconSets = icons.map(rasterize)
+            buildGlowMasks()
+            resetGlow()
+            buildRippleDotsMask()
             // Snap straight to the current icon so resizing never replays the sweep
             lit = Float32Array.from(iconSets[active] ?? [])
             from = Float32Array.from(lit)
@@ -331,7 +516,20 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             lastFrame = now
 
             for (let i = ripples.length - 1; i >= 0; i--) {
-                if (now - ripples[i].t > RIPPLE_LIFE_MS) ripples.splice(i, 1)
+                if (now - ripples[i].t > RIPPLE_LIFE_MS) {
+                    ripples[i].glow?.remove()
+                    ripples.splice(i, 1)
+                }
+            }
+            for (const wave of ripples) {
+                if (!wave.glow) continue
+                const age = now - wave.t
+                const ring = ringMask(wave.x, wave.y, age * RIPPLE_SPEED)
+                wave.glow.style.setProperty("mask-image", ring)
+                wave.glow.style.setProperty("-webkit-mask-image", ring)
+                wave.glow.style.opacity = String(
+                    RIPPLE_HDR_ALPHA * Math.pow(1 - age / RIPPLE_LIFE_MS, 1.5),
+                )
             }
 
             const since = now - changedAt
@@ -452,10 +650,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         }
                     }
 
-                    const level =
-                        (lit[id] ?? 0) *
-                        (icon.fill ? 0.5 + 0.5 * Math.sqrt(m) : 1) *
-                        (dim[id] ?? 1)
+                    const level = (lit[id] ?? 0) * (dim[id] ?? 1)
 
                     let spot = 0
                     const toPointer = Math.hypot(x - pointer.x, y - pointer.y)
@@ -512,7 +707,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     ctx.arc(
                         x,
                         y,
-                        DOT_RADIUS *
+                        dotRadius *
                             (1 + level * ICON_GROWTH + ripple * 0.3 * m),
                         0,
                         Math.PI * 2,
@@ -578,8 +773,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             const row = Math.round((y - OFFSET) / PITCH)
             if (x < 0 || x > box.width || row < 0 || row >= rows) return
             if (mask[row] < 0.05) return
-            ripples.push({ x, y, t: performance.now() })
-            schedule()
+            addRipple(x, y)
         }
 
         // Pulse from a random dot along the edge of the visible grid, so the
@@ -646,8 +840,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             }
 
             lastPulse = spot
-            ripples.push({ ...spot, t: performance.now() })
-            schedule()
+            addRipple(spot.x, spot.y)
         }
 
         const unsubscribe = $activeRole.subscribe(index => {
@@ -655,6 +848,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             from = Float32Array.from(lit)
             active = index
             changedAt = performance.now()
+            crossfadeGlow(index)
             // Text widths change with the scroller, so re-measure once it settles
             iconUnsettled = true
             later(measureText, 0)
@@ -684,17 +878,62 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
         const onMotionChange = (event: MediaQueryListEvent) => {
             reduceMotion = event.matches
-            if (reduceMotion) ripples.length = 0
+            if (reduceMotion) clearRipples()
+            resetGlow()
+            buildRippleDotsMask()
             iconUnsettled = true
             schedule()
         }
         motionQuery.addEventListener("change", onMotionChange)
+
+        // e.g. the window moves between an HDR and an SDR display
+        const onHdrChange = () => {
+            ripples.forEach(wave => {
+                wave.glow?.remove()
+                wave.glow = undefined
+            })
+            buildGlowMasks()
+            resetGlow()
+            buildRippleDotsMask()
+            fadeInGlow()
+        }
+        hdrQuery.addEventListener("change", onHdrChange)
+
+        // Testing aid: add ?hdr-debug to the URL for an on-screen HDR toggle
+        let debugToggle: HTMLButtonElement | null = null
+        if (new URLSearchParams(window.location.search).has("hdr-debug")) {
+            debugToggle = document.createElement("button")
+            const label = () => {
+                debugToggle!.textContent = `HDR glow: ${hdrEnabled ? "on" : "off"} · screen: ${hdrQuery.matches ? "HDR" : "SDR"}`
+            }
+            Object.assign(debugToggle.style, {
+                position: "fixed",
+                right: "12px",
+                bottom: "calc(env(safe-area-inset-bottom) + 12px)",
+                zIndex: "60",
+                padding: "8px 12px",
+                borderRadius: "999px",
+                border: "1px solid rgba(255,255,255,0.25)",
+                background: "rgba(18,18,18,0.85)",
+                color: "#fff",
+                font: "12px system-ui, sans-serif",
+            })
+            debugToggle.addEventListener("click", () => {
+                hdrEnabled = !hdrEnabled
+                onHdrChange()
+                label()
+            })
+            label()
+            document.body.append(debugToggle)
+        }
 
         layout()
         laidOutSize = `${box.width}x${box.height}`
         // First paint sweeps the starting icon in
         from = new Float32Array(cols * rows)
         changedAt = performance.now()
+        // Fade the first glow in alongside the first sweep
+        fadeInGlow()
 
         window.addEventListener("pointermove", onPointerMove)
         document.documentElement.addEventListener(
@@ -705,8 +944,11 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
         return () => {
             cancelAnimationFrame(frame)
+            clearRipples()
             timers.forEach(clearTimeout)
             motionQuery.removeEventListener("change", onMotionChange)
+            hdrQuery.removeEventListener("change", onHdrChange)
+            debugToggle?.remove()
             unsubscribe()
             resizeObserver.disconnect()
             window.removeEventListener("pointermove", onPointerMove)
@@ -719,14 +961,27 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
     }, [])
 
     return (
-        <canvas
-            ref={canvasRef}
-            aria-hidden
-            className={cn(
-                "pointer-events-none opacity-0 transition-opacity duration-700",
-                className,
-            )}
-        />
+        <div aria-hidden className={cn("pointer-events-none", className)}>
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 size-full opacity-0 transition-opacity duration-700"
+            />
+            <div
+                ref={rippleGlowRef}
+                className="absolute inset-0"
+                style={{ display: "none" }}
+            />
+            {[0, 1].map(i => (
+                <div
+                    key={i}
+                    ref={el => {
+                        glowRefs.current[i] = el
+                    }}
+                    className="absolute inset-0 bg-[url('/hdr-glow.avif')] bg-cover opacity-0"
+                    style={{ display: "none" }}
+                />
+            ))}
+        </div>
     )
 }
 
