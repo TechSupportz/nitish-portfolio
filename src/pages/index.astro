@@ -18,13 +18,13 @@ const scrollItemClass =
         <DotMatrix
             client:load
             icons={profileRoles.map(role => role.icon)}
-            className="fixed inset-x-0 top-[72px] h-[calc((100dvh_-_72px)*0.5)] max-h-[1024px] w-full xs:h-[calc((100dvh_-_72px)*0.55)] lg:h-[calc((100dvh_-_72px)*2/3)]"
+            className="fixed inset-x-0 top-[72px] h-[calc((100dvh_-_72px)*0.8)] max-h-[1024px] w-full lg:h-[calc((100dvh_-_72px)*2/3)]"
         />
         <div
             class="relative flex h-full flex-col px-4 xs:px-6 md:px-8 lg:px-12 xl:px-16"
         >
             <div
-                class="relative flex min-h-[45%] items-end pt-6 pb-[5vh] xs:min-h-[50%] lg:h-[60%] lg:pt-0 lg:pb-[5vh]"
+                class="relative flex min-h-[62%] items-end pt-6 pb-[5vh] lg:h-[60%] lg:pt-0 lg:pb-[5vh]"
             >
                 <div
                     class="relative flex min-w-0 flex-1 flex-col gap-1 sm:gap-2"
@@ -127,16 +127,13 @@ const scrollItemClass =
                 </ol>
             </div>
 
-            <div class="flex flex-1 items-center pb-[8vh] lg:hidden">
+            <div class="flex flex-1 items-center pb-[3vh] lg:hidden">
                 <button
                     id="role-cycle"
                     type="button"
-                    class="flex motion-preset-blur-up-md gap-4 text-left motion-delay-300 motion-duration-1000"
+                    class="flex w-full motion-preset-blur-up-md flex-col gap-3 text-left motion-delay-300 motion-duration-1000"
                 >
-                    <span
-                        class="flex flex-col gap-1.5 pt-2.5"
-                        aria-hidden="true"
-                    >
+                    <span class="flex gap-1.5" aria-hidden="true">
                         {
                             profileRoles.map(() => (
                                 <span
@@ -152,7 +149,7 @@ const scrollItemClass =
                                 <span
                                     data-role-block
                                     aria-hidden="true"
-                                    class="block translate-y-2.5 opacity-0 blur-[6px] transition-[opacity,filter,translate] duration-[550ms] ease-out data-[state=in]:translate-y-0 data-[state=in]:opacity-100 data-[state=in]:blur-[0px] data-[state=out]:-translate-y-2 data-[state=out]:duration-[350ms] data-[state=out]:ease-in motion-reduce:transition-none"
+                                    class="block -translate-x-2.5 opacity-0 blur-[6px] transition-[opacity,filter,translate] duration-[550ms] ease-out data-[state=in]:translate-x-0 data-[state=in]:opacity-100 data-[state=in]:blur-[0px] data-[state=out]:translate-x-2 data-[state=out]:duration-[350ms] data-[state=out]:ease-in motion-reduce:transition-none"
                                 >
                                     <span class="block font-display text-xl font-bold sm:text-2xl">
                                         {role.title}
@@ -238,7 +235,7 @@ const scrollItemClass =
             column.dataset.active = String(i === index)
         })
 
-        // Mobile: blur the old role up and out, then blur the new one up in
+        // Mobile: blur the old role out to the right, then blur the new one in from the left
         const outgoing = blocks[previous]
         if (outgoing && previous !== index) {
             const leaving = previous
@@ -266,7 +263,7 @@ const scrollItemClass =
             )
         }
 
-        // Count dots fade in one by one, extra ones fade out from the bottom
+        // Count dots fade in one by one, extra ones fade out from the end
         const shown = previous + 1
         const wanted = index + 1
         dots.forEach((dot, i) => {

@@ -25,11 +25,13 @@ const ICON_MAX_DOTS = 52
 // so the icon sits top-right and only overlaps the copy slightly
 const ICON_SLOT_FILL_X = 0.48
 const ICON_SLOT_FILL_Y = 0.76
-const ICON_MATRIX_FILL = 0.9
+// The mobile matrix is tall, so height gets a smaller share to keep the icon in the top part
+const ICON_MATRIX_FILL_X = 0.63
+const ICON_MATRIX_FILL_Y = 0.455
 // Time for the diagonal sweep to cross the icon, whatever its size
 const ICON_SWEEP_MS = 250
 
-// Dots behind text are dimmed so the icon never fights the copy
+// Desktop only: dots behind text are dimmed where the icon overlaps the copy
 const TEXT_DIM = 0.6
 const TEXT_PAD = 4
 const TEXT_SOFTNESS = 11
@@ -142,9 +144,9 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 Math.floor(
                     Math.min(
                         area.width *
-                            (fill ? ICON_MATRIX_FILL : ICON_SLOT_FILL_X),
+                            (fill ? ICON_MATRIX_FILL_X : ICON_SLOT_FILL_X),
                         area.height *
-                            (fill ? ICON_MATRIX_FILL : ICON_SLOT_FILL_Y),
+                            (fill ? ICON_MATRIX_FILL_Y : ICON_SLOT_FILL_Y),
                     ) / PITCH,
                 ),
             )
@@ -153,8 +155,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             )
             const firstRow = Math.ceil((area.top - OFFSET) / PITCH)
             // Margin (in dots) keeping the icon in from the top-right corner
-            const insetCols = fill ? 2 : 4
-            const insetRows = fill ? 2 : 4
+            const insetCols = fill ? 1 : 4
+            const insetRows = fill ? 1 : 4
             icon = {
                 c0: Math.min(lastCol, cols - 1) - insetCols - size + 1,
                 r0: Math.max(firstRow, 0) + insetRows,
@@ -205,6 +207,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
         const measureText = () => {
             dimTarget.fill(1)
+            // The full-matrix icon on mobile sits behind the copy undimmed
+            if (icon.fill) return
             const rects: DOMRect[] = []
             const range = document.createRange()
 
@@ -336,7 +340,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
             // Everything that changes this frame, plus what last frame drew
             const changed: TRect[] = []
-            for (const spot of [pointer, lastPointer]) {
+            // A resting pointer's spotlight is already painted, so only a move counts
+            const pointerMoved =
+                pointer.x !== lastPointer.x || pointer.y !== lastPointer.y
+            for (const spot of pointerMoved ? [pointer, lastPointer] : []) {
                 if (isNearGrid(spot.x, spot.y)) {
                     changed.push({
                         x0: spot.x - SPOT_RADIUS,
@@ -516,9 +523,16 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
             fullRedraw = false
             iconUnsettled = iconSweeping || dimMoving
+            // Remember the raw changed area (not the snapped one) so the region
+            // doesn't creep outward by a cell every frame
             previousRegion =
                 changed.length > 0
-                    ? { x0: left, y0: top, x1: right, y1: bottom }
+                    ? {
+                          x0: Math.min(...changed.map(r => r.x0)),
+                          y0: Math.min(...changed.map(r => r.y0)),
+                          x1: Math.max(...changed.map(r => r.x1)),
+                          y1: Math.max(...changed.map(r => r.y1)),
+                      }
                     : null
             lastPointer.x = pointer.x
             lastPointer.y = pointer.y
@@ -573,6 +587,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         // length, and a spot too close to the last pulse is re-rolled
         let lastPulse: { x: number; y: number } | null = null
         const pulseFromEdge = () => {
+            // Reduced motion may have been switched on while this was queued
+            if (reduceMotion) return
             const visibleRows = [...mask.keys()].filter(
                 r => mask[r] >= ROLE_PULSE_MIN_MASK,
             )
