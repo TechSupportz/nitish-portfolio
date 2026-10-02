@@ -899,9 +899,13 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         }
         hdrQuery.addEventListener("change", onHdrChange)
 
-        // Testing aid: add ?hdr-debug to the URL for an on-screen HDR toggle
+        // Testing aid: add ?hdr-debug to the URL for an on-screen HDR toggle.
+        // Dev server only; production builds strip this block
         let debugToggle: HTMLButtonElement | null = null
-        if (new URLSearchParams(window.location.search).has("hdr-debug")) {
+        if (
+            import.meta.env.DEV &&
+            new URLSearchParams(window.location.search).has("hdr-debug")
+        ) {
             debugToggle = document.createElement("button")
             const label = () => {
                 debugToggle!.textContent = `HDR glow: ${hdrEnabled ? "on" : "off"} · screen: ${hdrQuery.matches ? "HDR" : "SDR"}`
