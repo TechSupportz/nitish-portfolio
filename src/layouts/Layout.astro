@@ -97,7 +97,7 @@ const { title, center, headerTitle, disableScroll } = Astro.props
             class:list={[
                 "m-auto h-full max-w-screen-2xl",
                 {
-                    "mt-[72px]": !center && !headerTitle,
+                    "pt-[72px]": !center && !headerTitle,
                     "mt-[calc(8rem+72px)] xs:mt-[calc(9rem+72px)] md:mt-[calc(12rem+72px)]":
                         !!headerTitle,
                     "flex flex-col items-center justify-center": center,

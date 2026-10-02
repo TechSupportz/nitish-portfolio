@@ -20,22 +20,6 @@
     --progressive-blur-to-l: to left;
     --progressive-blur-to-r: to right;
 
-    --animate-infinite-scroll: scroll-up 10s infinite;
-    @keyframes scroll-up {
-        16.5%,
-        33% {
-            transform: translateY(-25%);
-        }
-        49.5%,
-        66% {
-            transform: translateY(-50%);
-        }
-        82.5%,
-        100% {
-            transform: translateY(-75%);
-        }
-    }
-
     --animate-quick-spin: quick-spin 0.35s linear;
     @keyframes quick-spin {
         0% {
@@ -46,22 +30,6 @@
         }
         100% {
             transform: scale(1) rotate(360deg);
-        }
-    }
-
-    --animate-emoji-fly: emoji-fly var(--duration, 600ms) ease-out forwards;
-    @keyframes emoji-fly {
-        0% {
-            opacity: 0;
-            transform: translate(0, 0) scale(0.8);
-        }
-        40% {
-            opacity: var(--max-opacity, 1);
-        }
-        100% {
-            opacity: 0;
-            transform: translate(var(--dx), var(--dy)) rotate(var(--rotate))
-                scale(var(--scale));
         }
     }
 }
@@ -123,26 +91,6 @@ details[open]::details-content {
 
 details summary::-webkit-details-marker {
     display: none;
-}
-
-@utility emoji-particle {
-    position: fixed;
-    pointer-events: none;
-    font-size: 1.75rem;
-    opacity: 0;
-    transform: translate(0, 0) scale(0.6);
-    animation: var(--animate-emoji-fly);
-    will-change: transform, opacity;
-    z-index: 9999;
-
-    @media (prefers-reduced-motion: reduce) {
-        animation: none;
-        opacity: 0;
-    }
-}
-
-@utility emoji-particle-dim {
-    --max-opacity: 0.4;
 }
 
 /*
