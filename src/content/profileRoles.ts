@@ -6,13 +6,13 @@ export const profileRoles: TProfileRole[] = [
         role: "software developer",
         shortRole: "software dev",
         title: "software developer.",
-        body: "Full-stack web & mobile dev who loves solving problems and building cool stuff.",
+        body: "I love building stuff <em>(sometimes even useful)</em>, especially when I can make something simpler, smoother, or less annoying to use.",
         icon: ["m18 16 4-4-4-4", "m6 8-4 4 4 4", "m14.5 4-5 16"],
     },
     {
-        role: "tech fanatic",
-        title: "tech fanatic.",
-        body: "Always keeping up with the latest in tech, from new gadgets to the wild innovations in F1.",
+        role: "techie",
+        title: "techie.",
+        body: "Always curious about what’s new and how things work, <em>probably</em> how I ended up spending way too much time on F1.",
         icon: [
             "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
         ],
@@ -20,7 +20,7 @@ export const profileRoles: TProfileRole[] = [
     {
         role: "student",
         title: "student.",
-        body: "Computer Science student at NUS. Temasek Poly graduate, 2024 IT Gold Medallist and Lee Kuan Yew Award winner.",
+        body: "Studying Computer Science at NUS after Temasek Poly. Still figuring things out, and side questing along the way.",
         icon: [
             "M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z",
             "M22 10v6",

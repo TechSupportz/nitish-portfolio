@@ -115,12 +115,10 @@ const scrollItemClass =
                                         <span class="size-1.5 rounded-full bg-white" />
                                     ))}
                                 </span>
-                                <h2 class="mt-3 text-xl xl:text-2xl">
+                                <h2 class="mt-3 text-2xl xl:text-3xl">
                                     {role.title}
                                 </h2>
-                                <p class="mt-1.5 text-base text-pretty xl:text-lg">
-                                    {role.body}
-                                </p>
+                                <p class="mt-1.5 text-base text-pretty xl:text-lg" set:html={role.body} />
                             </li>
                         ))
                     }
@@ -151,12 +149,10 @@ const scrollItemClass =
                                     aria-hidden="true"
                                     class="block -translate-x-2.5 opacity-0 blur-[6px] transition-[opacity,filter,translate] duration-[550ms] ease-out data-[state=in]:translate-x-0 data-[state=in]:opacity-100 data-[state=in]:blur-[0px] data-[state=out]:translate-x-2 data-[state=out]:duration-[350ms] data-[state=out]:ease-in motion-reduce:transition-none"
                                 >
-                                    <span class="block font-display text-xl font-bold sm:text-2xl">
+                                    <span class="block font-display text-2xl font-bold sm:text-3xl">
                                         {role.title}
                                     </span>
-                                    <span class="mt-1.5 block font-light text-pretty sm:text-lg">
-                                        {role.body}
-                                    </span>
+                                    <span class="mt-1.5 block font-light text-pretty sm:text-lg" set:html={role.body} />
                                 </span>
                             ))
                         }
@@ -172,7 +168,7 @@ const scrollItemClass =
     import { profileRoles } from "@content/profileRoles"
     import { $activeRole } from "@store/uiStore"
 
-    const ROLE_DURATION_MS = 3600
+    const ROLE_DURATION_MS = 4000
     const BLOCK_OUT_MS = 380
     const BLOCK_IN_DELAY_MS = 160
     const DOT_IN_STAGGER_MS = 120
