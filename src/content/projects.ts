@@ -53,7 +53,7 @@ export const projectContent: TProjectContent = {
             icons: ["flutter", "swift", "ios"],
         },
         {
-            title: "smpl. widgets",
+            title: "smpl.widgets",
             mobileDescription:
                 "Widgets that look nice the second you add them. No home screen design project needed.",
             description:
