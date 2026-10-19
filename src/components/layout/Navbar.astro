@@ -1,14 +1,16 @@
 ---
 import { Image } from "astro:assets"
 import Menu from "@lucide/astro/icons/menu"
-const currentPath = Astro.url.pathname
+import { getNavLinks } from "@utils/navLinks"
+
+const navLinks = getNavLinks(Astro.url.pathname)
 ---
 
 <nav class="navbar z-20 w-full bg-charcoal font-display shadow-charcoal">
     <div
         class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
     >
-        <a href="/" class="logo size-12 md:size-14">
+        <a href="/" class="logo size-12 md:size-14" transition:persist="navbar-logo">
             <Image
                 src="/logo.svg"
                 alt="logo"
@@ -26,64 +28,62 @@ const currentPath = Astro.url.pathname
         <div
             class="hidden flex-row items-center gap-6 text-xl text-white lg:flex"
         >
-            <a href="/about" class="group transition duration-300">
-                about<span
-                    class:list={[
-                        "text-2xl",
-                        {
-                            "opacity-0":
-                                currentPath !== "/about" && currentPath !== "/",
-                        },
-                    ]}
-                    >.
-                </span>
-                <span
-                    class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                ></span>
-            </a>
-            <a href="/projects" class="group transition duration-300">
-                projects<span
-                    class:list={[
-                        "text-2xl",
-                        { "opacity-0": currentPath !== "/projects" },
-                    ]}>.</span
-                >
-                <span
-                    class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                ></span>
-            </a>
-            <a href="/contact" class="group transition duration-300">
-                contact<span
-                    class:list={[
-                        "text-2xl",
-                        { "opacity-0": currentPath !== "/contact" },
-                    ]}>.</span
-                >
-                <span
-                    class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                ></span>
-            </a>
+            {
+                navLinks.map(({ href, label, isActive }) => (
+                    <a href={href} class="group transition duration-300">
+                        {label}
+                        <span
+                            class:list={[
+                                "text-2xl",
+                                { "nav-dot": isActive, "opacity-0": !isActive },
+                            ]}
+                        >
+                            {"."}
+                        </span>
+                        <span class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
+                    </a>
+                ))
+            }
         </div>
     </div>
 </nav>
 <script>
     import { isDrawerOpen } from "@store/uiStore"
+    import { onPageLoad } from "@utils/pageLifecycle"
 
-    document.getElementById("menu-button")!.addEventListener("click", () => {
-        isDrawerOpen.set(true)
-    })
+    onPageLoad(signal => {
+        document.getElementById("menu-button")?.addEventListener(
+            "click",
+            () => {
+                isDrawerOpen.set(true)
+            },
+            { signal },
+        )
 
-    const logo = document.querySelector(".logo")
+        const logo = document.querySelector(".logo")
+        if (!logo) return
 
-    window.addEventListener("load", () => {
-        logo?.classList.add("animate-quick-spin")
-    })
+        // The same logo DOM node survives internal navigation.
+        logo.classList.remove("animate-quick-spin")
+        if (!sessionStorage.getItem("logo-spun")) {
+            sessionStorage.setItem("logo-spun", "true")
+            logo.classList.add("animate-quick-spin")
+        }
 
-    logo?.addEventListener("mouseenter", () => {
-        logo?.classList.add("animate-quick-spin")
-    })
+        logo.addEventListener(
+            "mouseenter",
+            () => {
+                logo.classList.add("animate-quick-spin")
+            },
+            { signal },
+        )
 
-    logo?.addEventListener("animationend", () => {
-        logo?.classList.remove("animate-quick-spin")
+        logo.addEventListener(
+            "animationend",
+            () => {
+                logo.classList.remove("animate-quick-spin")
+            },
+            { signal },
+        )
     })
 </script>

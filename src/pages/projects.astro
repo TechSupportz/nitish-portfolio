@@ -61,40 +61,50 @@ import type { TProjectCategory } from "@src/types/ProjectContentType"
     import { $projectVisibility } from "@store/projectsStore"
     import type { TProjectCategory } from "@src/types/ProjectContentType"
 
-    const projectCards = document.querySelectorAll(".project-card")
+    import { onPageLoad } from "@utils/pageLifecycle"
 
-    window.onbeforeunload = function () {
-        window.scrollTo(0, 0)
-    }
+    onPageLoad(signal => {
+        const projectCards = document.querySelectorAll(".project-card")
 
-    // Function to animate the divider
-    window.addEventListener("scroll", () => {
-        const divider = document.getElementById("divider")
-        if (!divider) return
+        if (!projectCards.length) return
+        $projectVisibility.set({
+            transito: { category: "featured", isVisible: true },
+        })
 
-        divider.style.transform = `translateY(-${window.scrollY / 50}px)`
-    })
+        // Function to animate the divider
+        window.addEventListener(
+            "scroll",
+            () => {
+                const divider = document.getElementById("divider")
+                if (!divider) return
 
-    const observer = new IntersectionObserver(
-        entries => {
-            entries.forEach(entry => {
-                const { target, isIntersecting } = entry
+                divider.style.transform = `translateY(-${window.scrollY / 50}px)`
+            },
+            { signal, passive: true },
+        )
 
-                $projectVisibility.setKey(target.id, {
-                    category: target.classList[0].split(
-                        "-",
-                    )[0] as TProjectCategory,
-                    isVisible: isIntersecting,
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    const { target, isIntersecting } = entry
+
+                    $projectVisibility.setKey(target.id, {
+                        category: target.classList[0].split(
+                            "-",
+                        )[0] as TProjectCategory,
+                        isVisible: isIntersecting,
+                    })
                 })
-            })
-        },
-        {
-            rootMargin: "-264px 0px 0px 0px",
-            threshold: 0.5,
-        },
-    )
+            },
+            {
+                rootMargin: "-264px 0px 0px 0px",
+                threshold: 0.5,
+            },
+        )
 
-    projectCards.forEach(card => {
-        observer.observe(card)
+        projectCards.forEach(card => {
+            observer.observe(card)
+        })
+        return () => observer.disconnect()
     })
 </script>

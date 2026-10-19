@@ -1,22 +1,12 @@
 ---
 import "@styles/global.css"
 
-import Drawer from "@components/layout/Drawer"
+import Drawer from "@components/layout/Drawer.astro"
 import Header from "@components/layout/Header.astro"
 import Navbar from "@components/layout/Navbar.astro"
 import Posthog from "@components/layout/Posthog.astro"
-import "@fontsource-variable/dm-sans"
-import dmSans from "@fontsource-variable/dm-sans/files/dm-sans-latin-standard-normal.woff2"
-import "@fontsource/poppins/100.css"
-import "@fontsource/poppins/200.css"
-import "@fontsource/poppins/300.css"
-import "@fontsource/poppins/400.css"
-import "@fontsource/poppins/500.css"
-import "@fontsource/poppins/600.css"
-import "@fontsource/poppins/700.css"
-import "@fontsource/poppins/800.css"
-import "@fontsource/poppins/900.css"
-import poppinsBold from "@fontsource/poppins/files/poppins-latin-700-normal.woff2"
+import { Font } from "astro:assets"
+import { ClientRouter } from "astro:transitions"
 
 type Props = {
     title: string
@@ -31,6 +21,7 @@ const { title, center, headerTitle, disableScroll } = Astro.props
 <!doctype html>
 <html lang="en">
     <head>
+        <ClientRouter fallback="swap" />
         <meta charset="UTF-8" />
         <meta name="title" content="Nitish Thiyagarajan" />
         <meta
@@ -39,20 +30,8 @@ const { title, center, headerTitle, disableScroll } = Astro.props
         />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link
-            rel="preload"
-            as="font"
-            type="font/woff2"
-            href={poppinsBold}
-            crossorigin="anonymous"
-        />
-        <link
-            rel="preload"
-            as="font"
-            type="font/woff2"
-            href={dmSans}
-            crossorigin="anonymous"
-        />
+        <Font cssVariable="--font-dm-sans" preload />
+        <Font cssVariable="--font-poppins" preload />
         <meta name="generator" content={Astro.generator} />
 
         <!-- Open Graph / Facebook -->
@@ -88,7 +67,7 @@ const { title, center, headerTitle, disableScroll } = Astro.props
     </head>
     <body class:list={[{ "lg:overflow-hidden": disableScroll }]}>
         <Posthog />
-        <Drawer client:load />
+        <Drawer />
         <div class="fixed top-0 z-20 w-full">
             <Navbar />
             {headerTitle && <Header title={headerTitle} />}

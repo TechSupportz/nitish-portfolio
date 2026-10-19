@@ -1,0 +1,42 @@
+---
+import Layout from "@layouts/Layout.astro"
+import { getNavLinks } from "@utils/navLinks"
+
+const navLinks = getNavLinks(Astro.url.pathname)
+---
+
+<Layout title="404." headerTitle="404." disableScroll>
+    <div
+        class="mt-2 flex flex-col gap-8 px-4 xs:px-6 md:mt-4 md:gap-10 md:px-8 lg:gap-12 lg:px-12 xl:px-16"
+    >
+        <div
+            class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-100 md:gap-4 motion-duration-1500"
+        >
+            <h2 class="text-3xl xs:text-4xl lg:text-5xl">you seem lost.</h2>
+            <p
+                class="text-xl font-light text-balance xs:text-2xl lg:max-w-[32ch]"
+            >
+                This page doesn't exist, or it did and I forgot about it.
+            </p>
+        </div>
+        <div
+            class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-200 motion-duration-1500 md:gap-4"
+        >
+            <p class="text-lg text-white/50 xs:text-xl md:text-2xl">
+                try one of these instead
+            </p>
+            <div
+                class="flex flex-col gap-2 font-display text-2xl font-bold xs:text-3xl lg:text-4xl"
+            >
+                {
+                    navLinks.map(({ href, label }) => (
+                        <a href={href} class="group w-fit">
+                            {label}.
+                            <span class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+    </div>
+</Layout>

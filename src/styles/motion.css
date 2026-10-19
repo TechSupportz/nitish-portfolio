@@ -1,0 +1,277 @@
+/*
+ * Trimmed, CSS-only port of tailwindcss-motion (https://github.com/romboHQ/tailwindcss-motion)
+ * covering only the utilities this site uses.
+ *
+ * Every element can stack enter (or exit) animations for scale, translate,
+ * filter and opacity. Utilities set the per-animation vars below, and the
+ * `animation` shorthand stitches whichever ones are set together.
+ *
+ * The vars are registered as non-inheriting so a parent's motion-duration or
+ * motion-delay never leaks into a nested animated element. They have no
+ * initial value, so the fallbacks in var() supply the defaults. A
+ * motion-duration-* beats a preset's duration, which beats the 700ms default.
+ */
+
+@property --motion-duration {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-preset-duration {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-delay {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-origin-scale {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-end-scale {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-origin-translate-x {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-origin-translate-y {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-origin-blur {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-end-blur {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-origin-opacity {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-end-opacity {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-scale-in-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-scale-out-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-translate-in-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-filter-in-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-filter-out-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-opacity-in-animation {
+    syntax: "*";
+    inherits: false;
+}
+@property --motion-opacity-out-animation {
+    syntax: "*";
+    inherits: false;
+}
+
+/* Transform keyframes are skipped entirely for reduced motion */
+@media screen and (prefers-reduced-motion: no-preference) {
+    @keyframes motion-scale-in {
+        0% {
+            scale: var(--motion-origin-scale, 100%);
+        }
+        100% {
+            scale: 1;
+        }
+    }
+    @keyframes motion-scale-out {
+        0% {
+            scale: 1;
+        }
+        100% {
+            scale: var(--motion-end-scale, 100%);
+        }
+    }
+    @keyframes motion-translate-in {
+        0% {
+            translate: var(--motion-origin-translate-x, 0%)
+                var(--motion-origin-translate-y, 0%);
+        }
+        100% {
+            translate: 0 0;
+        }
+    }
+}
+
+@keyframes motion-filter-in {
+    0% {
+        filter: blur(var(--motion-origin-blur, 0px));
+    }
+    100% {
+        filter: blur(0);
+    }
+}
+@keyframes motion-filter-out {
+    0% {
+        filter: blur(0);
+    }
+    100% {
+        filter: blur(var(--motion-end-blur, 0px));
+    }
+}
+@keyframes motion-opacity-in {
+    0% {
+        opacity: var(--motion-origin-opacity, 100%);
+    }
+}
+@keyframes motion-opacity-out {
+    100% {
+        opacity: var(--motion-end-opacity, 100%);
+    }
+}
+
+/* SECTION - Shared animation stacks */
+@utility motion-enter {
+    animation:
+        var(--motion-scale-in-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both,
+        var(--motion-translate-in-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both,
+        var(--motion-filter-in-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both,
+        var(--motion-opacity-in-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both;
+}
+
+@utility motion-exit {
+    animation:
+        var(--motion-scale-out-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both,
+        var(--motion-filter-out-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both,
+        var(--motion-opacity-out-animation, none)
+            var(--motion-duration, var(--motion-preset-duration, 700ms))
+            var(--motion-timing, cubic-bezier(0.165, 0.84, 0.44, 1))
+            var(--motion-delay, 0ms) both;
+}
+/* !SECTION */
+
+/* SECTION - Base animations */
+@utility motion-scale-in-* {
+    --motion-origin-scale: calc(--value(integer) * 1%);
+    --motion-scale-in-animation: motion-scale-in;
+    @apply motion-enter;
+}
+
+@utility motion-scale-out-* {
+    --motion-end-scale: calc(--value(integer) * 1%);
+    --motion-scale-out-animation: motion-scale-out;
+    @apply motion-exit;
+}
+
+@utility motion-blur-in-* {
+    --motion-origin-blur: --value(--blur-*, [length]);
+    --motion-filter-in-animation: motion-filter-in;
+    @apply motion-enter;
+}
+
+@utility motion-blur-out-* {
+    --motion-end-blur: --value(--blur-*, [length]);
+    --motion-filter-out-animation: motion-filter-out;
+    @apply motion-exit;
+}
+
+/* 0 maps to 0.001 like the original, so the element never fully "disappears" */
+@utility motion-opacity-in-* {
+    --motion-origin-opacity: max(calc(--value(integer) * 1%), 0.1%);
+    --motion-opacity-in-animation: motion-opacity-in;
+    @apply motion-enter;
+}
+
+@utility motion-opacity-out-* {
+    --motion-end-opacity: max(calc(--value(integer) * 1%), 0.1%);
+    --motion-opacity-out-animation: motion-opacity-out;
+    @apply motion-exit;
+}
+/* !SECTION */
+
+/* SECTION - Modifiers */
+@utility motion-duration-* {
+    --motion-duration: calc(--value(integer) * 1ms);
+    --motion-duration: --value([*]);
+}
+
+@utility motion-delay-* {
+    --motion-delay: calc(--value(integer) * 1ms);
+    --motion-delay: --value([*]);
+}
+/* !SECTION */
+
+/* SECTION - Presets */
+@utility motion-preset-fade-lg {
+    --motion-origin-opacity: 0;
+    --motion-preset-duration: 800ms;
+    --motion-opacity-in-animation: motion-opacity-in;
+    @apply motion-enter;
+}
+
+@utility motion-preset-focus {
+    --motion-origin-blur: 5px;
+    --motion-origin-opacity: 0;
+    --motion-filter-in-animation: motion-filter-in;
+    --motion-opacity-in-animation: motion-opacity-in;
+    @apply motion-enter;
+}
+
+@utility motion-preset-focus-lg {
+    @apply motion-preset-focus;
+    --motion-origin-blur: 10px;
+}
+
+@utility motion-preset-blur-md {
+    --motion-origin-blur: 5px;
+    --motion-origin-opacity: 0;
+    --motion-filter-in-animation: motion-filter-in;
+    --motion-opacity-in-animation: motion-opacity-in;
+    --motion-translate-in-animation: motion-translate-in;
+    @apply motion-enter;
+}
+
+@utility motion-preset-blur-right-md {
+    @apply motion-preset-blur-md;
+    --motion-origin-translate-x: -5%;
+}
+
+@utility motion-preset-blur-up-md {
+    @apply motion-preset-blur-md;
+    --motion-origin-translate-y: 5%;
+}
+
+@utility motion-preset-blur-down-md {
+    @apply motion-preset-blur-md;
+    --motion-origin-translate-y: -5%;
+}
+/* !SECTION */

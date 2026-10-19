@@ -1,12 +1,11 @@
 @import "tailwindcss";
-@plugin "tailwindcss-motion";
+@import "./motion.css";
 
 @theme {
     --font-sans:
-        "DM Sans Variable", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
-    --font-display: "Poppins", sans-serif;
+        var(--font-dm-sans), "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
+    --font-display: var(--font-poppins);
 
     --color-charcoal: #121212;
 
@@ -91,6 +90,58 @@ details[open]::details-content {
 
 details summary::-webkit-details-marker {
     display: none;
+}
+
+/* The client router swaps content without reloading the document. Keep the
+   page and navbar stationary; only the active full stop travels. Existing
+   content entry animations run independently of the header backdrop. */
+
+.navbar {
+    view-transition-name: navbar;
+}
+
+.nav-dot {
+    display: inline-block;
+    view-transition-name: nav-dot;
+}
+
+::view-transition-group(root),
+::view-transition-group(navbar) {
+    animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-old(navbar) {
+    animation: none;
+    display: none;
+}
+
+::view-transition-new(root),
+::view-transition-new(navbar) {
+    animation: none;
+}
+
+::view-transition-group(nav-dot) {
+    animation-duration: 0.4s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Let the persistent mobile drawer's live CSS transition remain visible
+   while the new page enters underneath it. */
+@media (width < 1024px) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
 }
 
 /*

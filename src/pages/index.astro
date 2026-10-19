@@ -168,113 +168,146 @@ const scrollItemClass =
     import { profileRoles } from "@content/profileRoles"
     import { $activeRole } from "@store/uiStore"
 
-    const ROLE_DURATION_MS = 4000
-    const BLOCK_OUT_MS = 380
-    const BLOCK_IN_DELAY_MS = 160
-    const DOT_IN_STAGGER_MS = 120
-    const DOT_OUT_STAGGER_MS = 90
+    import { onPageLoad } from "@utils/pageLifecycle"
 
-    const roleCount = profileRoles.length
-    const scrollList = document.getElementById("scroll-list")
-    const columns = document.querySelectorAll<HTMLElement>("[data-role-column]")
-    const blocks = document.querySelectorAll<HTMLElement>("[data-role-block]")
-    const dots = document.querySelectorAll<HTMLElement>("[data-role-dot]")
-    const roleCycle = document.getElementById("role-cycle")
-
-    let roleStartedAt = performance.now()
-
-    const setRole = (index: number) => {
-        roleStartedAt = performance.now()
-        $activeRole.set(index)
-    }
-
-    setInterval(() => {
-        if (performance.now() - roleStartedAt < ROLE_DURATION_MS) return
-        setRole(($activeRole.get() + 1) % roleCount)
-    }, 100)
-
-    // Scroller: one step per role, wrapping through the trailing duplicate
-    if (scrollList) {
-        const step = 100 / (roleCount + 1)
-        let position = 0
-
-        const moveTo = (nextPosition: number) => {
-            position = nextPosition
-            scrollList.style.transform = `translateY(-${position * step}%)`
+    onPageLoad(signal => {
+        if (!document.getElementById("scroll-list")) return
+        const subscriptions: (() => void)[] = []
+        const timers = new Set<ReturnType<typeof setTimeout>>()
+        const later = (callback: () => void, delay: number) => {
+            const timer = setTimeout(() => {
+                timers.delete(timer)
+                callback()
+            }, delay)
+            timers.add(timer)
         }
 
-        // After scrolling onto the trailing duplicate, snap back to the real first item
-        scrollList.addEventListener("transitionend", () => {
-            if (position !== roleCount) return
-            scrollList.style.transition = "none"
-            moveTo(0)
-            scrollList.getBoundingClientRect()
-            scrollList.style.transition = ""
-        })
+        const ROLE_DURATION_MS = 4000
+        const BLOCK_OUT_MS = 380
+        const BLOCK_IN_DELAY_MS = 160
+        const DOT_IN_STAGGER_MS = 120
+        const DOT_OUT_STAGGER_MS = 90
 
-        $activeRole.subscribe(index => {
-            moveTo(
-                index === 0 && position === roleCount - 1 ? roleCount : index,
-            )
-        })
-    }
+        const roleCount = profileRoles.length
+        const scrollList = document.getElementById("scroll-list")
+        const columns = document.querySelectorAll<HTMLElement>("[data-role-column]")
+        const blocks = document.querySelectorAll<HTMLElement>("[data-role-block]")
+        const dots = document.querySelectorAll<HTMLElement>("[data-role-dot]")
+        const roleCycle = document.getElementById("role-cycle")
 
-    roleCycle?.addEventListener("click", () =>
-        setRole(($activeRole.get() + 1) % roleCount),
-    )
+        let roleStartedAt = performance.now()
 
-    let previous = -1
-    // Bumped on every state change so a stale timeout never undoes a newer one
-    const blockGeneration = Array.from(blocks, () => 0)
-    $activeRole.subscribe(index => {
-        columns.forEach((column, i) => {
-            column.dataset.active = String(i === index)
-        })
-
-        // Mobile: blur the old role out to the right, then blur the new one in from the left
-        const outgoing = blocks[previous]
-        if (outgoing && previous !== index) {
-            const leaving = previous
-            const generation = ++blockGeneration[leaving]
-            outgoing.dataset.state = "out"
-            outgoing.setAttribute("aria-hidden", "true")
-            setTimeout(() => {
-                if (blockGeneration[leaving] === generation) {
-                    delete outgoing.dataset.state
-                }
-            }, BLOCK_OUT_MS)
-        }
-        const incoming = blocks[index]
-        if (incoming) {
-            const generation = ++blockGeneration[index]
-            delete incoming.dataset.state
-            incoming.removeAttribute("aria-hidden")
-            setTimeout(
-                () => {
-                    if (blockGeneration[index] === generation) {
-                        incoming.dataset.state = "in"
-                    }
-                },
-                previous < 0 ? 0 : BLOCK_IN_DELAY_MS,
-            )
+        const setRole = (index: number) => {
+            roleStartedAt = performance.now()
+            $activeRole.set(index)
         }
 
-        // Count dots fade in one by one, extra ones fade out from the end
-        const shown = previous + 1
-        const wanted = index + 1
-        dots.forEach((dot, i) => {
-            if (i < wanted && i >= shown) {
-                dot.style.transitionDelay = `${(i - shown) * DOT_IN_STAGGER_MS}ms`
-                dot.style.opacity = "1"
-            } else if (i >= wanted) {
-                dot.style.transitionDelay = `${Math.max(0, shown - 1 - i) * DOT_OUT_STAGGER_MS}ms`
-                dot.style.opacity = "0"
-            } else {
-                dot.style.transitionDelay = "0ms"
-                dot.style.opacity = "1"
+        const roleTimer = setInterval(() => {
+            if (performance.now() - roleStartedAt < ROLE_DURATION_MS) return
+            setRole(($activeRole.get() + 1) % roleCount)
+        }, 100)
+
+        // Scroller: one step per role, wrapping through the trailing duplicate
+        if (scrollList) {
+            const step = 100 / (roleCount + 1)
+            let position = 0
+
+            const moveTo = (nextPosition: number) => {
+                position = nextPosition
+                scrollList.style.transform = `translateY(-${position * step}%)`
             }
-        })
 
-        previous = index
+            // After scrolling onto the trailing duplicate, snap back to the real first item
+            scrollList.addEventListener(
+                "transitionend",
+                () => {
+                    if (position !== roleCount) return
+                    scrollList.style.transition = "none"
+                    moveTo(0)
+                    scrollList.getBoundingClientRect()
+                    scrollList.style.transition = ""
+                },
+                { signal },
+            )
+
+            subscriptions.push(
+                $activeRole.subscribe(index => {
+                    moveTo(
+                        index === 0 && position === roleCount - 1
+                            ? roleCount
+                            : index,
+                    )
+                }),
+            )
+        }
+
+        roleCycle?.addEventListener(
+            "click",
+            () => setRole(($activeRole.get() + 1) % roleCount),
+            { signal },
+        )
+
+        let previous = -1
+        // Bumped on every state change so a stale timeout never undoes a newer one
+        const blockGeneration = Array.from(blocks, () => 0)
+        subscriptions.push(
+            $activeRole.subscribe(index => {
+                columns.forEach((column, i) => {
+                    column.dataset.active = String(i === index)
+                })
+
+                // Mobile: blur the old role out to the right, then blur the new one in from the left
+                const outgoing = blocks[previous]
+                if (outgoing && previous !== index) {
+                    const leaving = previous
+                    const generation = ++blockGeneration[leaving]
+                    outgoing.dataset.state = "out"
+                    outgoing.setAttribute("aria-hidden", "true")
+                    later(() => {
+                        if (blockGeneration[leaving] === generation) {
+                            delete outgoing.dataset.state
+                        }
+                    }, BLOCK_OUT_MS)
+                }
+                const incoming = blocks[index]
+                if (incoming) {
+                    const generation = ++blockGeneration[index]
+                    delete incoming.dataset.state
+                    incoming.removeAttribute("aria-hidden")
+                    later(
+                        () => {
+                            if (blockGeneration[index] === generation) {
+                                incoming.dataset.state = "in"
+                            }
+                        },
+                        previous < 0 ? 0 : BLOCK_IN_DELAY_MS,
+                    )
+                }
+
+                // Count dots fade in one by one, extra ones fade out from the end
+                const shown = previous + 1
+                const wanted = index + 1
+                dots.forEach((dot, i) => {
+                    if (i < wanted && i >= shown) {
+                        dot.style.transitionDelay = `${(i - shown) * DOT_IN_STAGGER_MS}ms`
+                        dot.style.opacity = "1"
+                    } else if (i >= wanted) {
+                        dot.style.transitionDelay = `${Math.max(0, shown - 1 - i) * DOT_OUT_STAGGER_MS}ms`
+                        dot.style.opacity = "0"
+                    } else {
+                        dot.style.transitionDelay = "0ms"
+                        dot.style.opacity = "1"
+                    }
+                })
+
+                previous = index
+            }),
+        )
+
+        return () => {
+            clearInterval(roleTimer)
+            timers.forEach(clearTimeout)
+            subscriptions.forEach(unsubscribe => unsubscribe())
+        }
     })
 </script>

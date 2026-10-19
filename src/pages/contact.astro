@@ -102,84 +102,102 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
 </Layout>
 
 <script>
-    const copyEmail = document.querySelector(".copy-email")
-    const copySuccessIcon =
-        document.querySelector<HTMLElement>(".copy-success-icon")
-    const copyIcon = document.querySelector<HTMLElement>(".copy-icon")
+    import { onPageLoad } from "@utils/pageLifecycle"
 
-    // Class groups for Copy icon states
-    const copyIconHoverClasses = [
-        "group-hover:motion-scale-in-50",
-        "group-hover:motion-blur-in-md",
-        "group-hover:opacity-100",
-    ]
-    const copyIconOutClasses = [
-        "motion-scale-out-50",
-        "motion-blur-out-md",
-        "!opacity-0",
-    ]
+    onPageLoad(signal => {
+        const copyEmail = document.querySelector(".copy-email")
+        const copySuccessIcon =
+            document.querySelector<HTMLElement>(".copy-success-icon")
+        const copyIcon = document.querySelector<HTMLElement>(".copy-icon")
 
-    // Class groups for ClipboardCheck icon states
-    const successIconInClasses = ["motion-scale-in-50", "motion-opacity-in-0"]
-    const successIconOutClasses = [
-        "motion-scale-out-50",
-        "motion-opacity-out-0",
-        "motion-duration-200",
-    ]
+        if (!copyEmail) return
 
-    let copying = false
-    let resetTimeout: ReturnType<typeof setTimeout> | null = null
-    let exitTimeout: ReturnType<typeof setTimeout> | null = null
+        // Class groups for Copy icon states
+        const copyIconHoverClasses = [
+            "group-hover:motion-scale-in-50",
+            "group-hover:motion-blur-in-md",
+            "group-hover:opacity-100",
+        ]
+        const copyIconOutClasses = [
+            "motion-scale-out-50",
+            "motion-blur-out-md",
+            "!opacity-0",
+        ]
 
-    function reset() {
-        // Animate ClipboardCheck out (reverse of entry)
-        if (copySuccessIcon) {
-            copySuccessIcon.classList.remove(...successIconInClasses)
-            copySuccessIcon.classList.add(...successIconOutClasses)
-        }
+        // Class groups for ClipboardCheck icon states
+        const successIconInClasses = ["motion-scale-in-50", "motion-opacity-in-0"]
+        const successIconOutClasses = [
+            "motion-scale-out-50",
+            "motion-opacity-out-0",
+            "motion-duration-200",
+        ]
 
-        if (exitTimeout) clearTimeout(exitTimeout)
-        exitTimeout = setTimeout(() => {
-            // After exit animation completes, restore Copy icon hover-ready state
+        let copying = false
+        let resetTimeout: ReturnType<typeof setTimeout> | null = null
+        let exitTimeout: ReturnType<typeof setTimeout> | null = null
+
+        function reset() {
+            // Animate ClipboardCheck out (reverse of entry)
             if (copySuccessIcon) {
-                copySuccessIcon.classList.remove(...successIconOutClasses)
-                copySuccessIcon.classList.add("opacity-0")
+                copySuccessIcon.classList.remove(...successIconInClasses)
+                copySuccessIcon.classList.add(...successIconOutClasses)
             }
 
-            if (copyIcon) {
-                copyIcon.classList.remove(...copyIconOutClasses)
-                copyIcon.classList.add(...copyIconHoverClasses)
-            }
+            if (exitTimeout) clearTimeout(exitTimeout)
+            exitTimeout = setTimeout(() => {
+                // After exit animation completes, restore Copy icon hover-ready state
+                if (copySuccessIcon) {
+                    copySuccessIcon.classList.remove(...successIconOutClasses)
+                    copySuccessIcon.classList.add("opacity-0")
+                }
 
-            copying = false
-        }, 75)
-    }
+                if (copyIcon) {
+                    copyIcon.classList.remove(...copyIconOutClasses)
+                    copyIcon.classList.add(...copyIconHoverClasses)
+                }
 
-    copyEmail?.addEventListener("click", () => {
-        if (copying) return
-        copying = true
-
-        navigator.clipboard.writeText("contact@tnitish.com")
-
-        // Animate Copy icon out
-        if (copyIcon) {
-            copyIcon.classList.remove(...copyIconHoverClasses)
-            copyIcon.classList.add(...copyIconOutClasses)
+                copying = false
+            }, 75)
         }
 
-        // Animate ClipboardCheck icon in
-        if (copySuccessIcon) {
-            copySuccessIcon.classList.remove("opacity-0")
-            copySuccessIcon.classList.add(...successIconInClasses)
+        copyEmail?.addEventListener(
+            "click",
+            () => {
+                if (copying) return
+                copying = true
+
+                navigator.clipboard.writeText("contact@tnitish.com")
+
+                // Animate Copy icon out
+                if (copyIcon) {
+                    copyIcon.classList.remove(...copyIconHoverClasses)
+                    copyIcon.classList.add(...copyIconOutClasses)
+                }
+
+                // Animate ClipboardCheck icon in
+                if (copySuccessIcon) {
+                    copySuccessIcon.classList.remove("opacity-0")
+                    copySuccessIcon.classList.add(...successIconInClasses)
+                }
+
+                // Auto-reset after 1s
+                resetTimeout = setTimeout(reset, 1000)
+            },
+            { signal },
+        )
+
+        copyEmail?.addEventListener(
+            "mouseleave",
+            () => {
+                if (!copying) return
+                if (resetTimeout) clearTimeout(resetTimeout)
+                reset()
+            },
+            { signal },
+        )
+        return () => {
+            if (resetTimeout) clearTimeout(resetTimeout)
+            if (exitTimeout) clearTimeout(exitTimeout)
         }
-
-        // Auto-reset after 1s
-        resetTimeout = setTimeout(reset, 1000)
-    })
-
-    copyEmail?.addEventListener("mouseleave", () => {
-        if (!copying) return
-        if (resetTimeout) clearTimeout(resetTimeout)
-        reset()
     })
 </script>
