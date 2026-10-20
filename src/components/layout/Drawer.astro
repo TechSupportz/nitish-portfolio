@@ -3,6 +3,7 @@ import githubIcon from "@assets/github.svg"
 import linkedInIcon from "@assets/linkedIn.svg"
 import X from "@lucide/astro/icons/x"
 import { getNavLinks } from "@utils/navLinks"
+import Highlight from "@components/Highlight.astro"
 
 const navLinks = getNavLinks(Astro.url.pathname)
 ---
@@ -40,11 +41,13 @@ const navLinks = getNavLinks(Astro.url.pathname)
                 {
                     navLinks.map(({ href, label, isActive }) => (
                         <a href={href} class="group transition duration-300">
-                            {label}
-                            <span class:list={[{ "opacity-0": !isActive }]}>
+                            <Highlight>{label}</Highlight>
+                            <span
+                                data-nav-dot
+                                class:list={[{ "opacity-0": !isActive }]}
+                            >
                                 {"."}
                             </span>
-                            <span class="block h-1.25 max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
                         </a>
                     ))
                 }
@@ -81,7 +84,7 @@ const navLinks = getNavLinks(Astro.url.pathname)
     document.addEventListener("astro:after-swap", () => {
         // Persisting the drawer also preserves its markup; refresh its dot.
         for (const { href, isActive } of getNavLinks(location.pathname)) {
-            drawer?.querySelector(`a[href="${href}"] > span`)
+            drawer?.querySelector(`a[href="${href}"] > [data-nav-dot]`)
                 ?.classList.toggle("opacity-0", !isActive)
         }
         // Flush the persisted drawer's open position after reparenting it.

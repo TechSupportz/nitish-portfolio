@@ -33,7 +33,7 @@
     const active = () => {
         const expected = location.pathname === '/' ? '/about' : location.pathname;
         check('active desktop dot', document.querySelector('.nav-dot')?.parentElement.getAttribute('href') === expected);
-        check('active drawer dot', [...drawer.querySelectorAll('a > span:first-child')].filter(s => !s.classList.contains('opacity-0')).every(s => s.parentElement.getAttribute('href') === expected));
+        check('active drawer dot', [...drawer.querySelectorAll('a > [data-nav-dot]')].filter(s => !s.classList.contains('opacity-0')).every(s => s.parentElement.getAttribute('href') === expected));
     };
     let metrics;
     try {
