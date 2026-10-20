@@ -2,6 +2,7 @@
 import { Image } from "astro:assets"
 import Menu from "@lucide/astro/icons/menu"
 import { getNavLinks } from "@utils/navLinks"
+import Highlight from "@components/Highlight.astro"
 
 const navLinks = getNavLinks(Astro.url.pathname)
 ---
@@ -31,7 +32,7 @@ const navLinks = getNavLinks(Astro.url.pathname)
             {
                 navLinks.map(({ href, label, isActive }) => (
                     <a href={href} class="group transition duration-300">
-                        {label}
+                        <Highlight>{label}</Highlight>
                         <span
                             class:list={[
                                 "text-2xl",
@@ -40,7 +41,6 @@ const navLinks = getNavLinks(Astro.url.pathname)
                         >
                             {"."}
                         </span>
-                        <span class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
                     </a>
                 ))
             }

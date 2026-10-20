@@ -32,7 +32,7 @@ const navLinks = getNavLinks(Astro.url.pathname)
                     navLinks.map(({ href, label }) => (
                         <a href={href} class="group w-fit">
                             {label}.
-                            <span class="block h-[3px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
+                            <span class="block h-0.75 max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full" />
                         </a>
                     ))
                 }

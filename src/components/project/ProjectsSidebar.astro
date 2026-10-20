@@ -1,0 +1,115 @@
+---
+import { projectContent } from "@content/projects"
+import type { TProjectCategory } from "@src/types/ProjectContentType"
+---
+
+<div data-project-sidebar class="flex flex-col gap-6 pr-12">
+    {(Object.keys(projectContent) as TProjectCategory[]).map(category => (
+        <details
+            id={`details-${category}`}
+            data-project-category={category}
+            open={category === "featured"}
+            class:list={[
+                "motion-preset-blur-down-md motion-duration-1500",
+                {
+                    "motion-delay-100": category === "featured",
+                    "motion-delay-200": category === "personal",
+                    "motion-delay-300": category === "hackathon",
+                },
+            ]}
+        >
+            <summary class="cursor-pointer list-none font-display text-2xl font-bold xl:text-3xl">
+                {category}
+            </summary>
+            <ul class="list-['···'] pt-1 pl-4">
+                {projectContent[category].map(project => (
+                    <li
+                        data-project-target={project.title.toLowerCase()}
+                        class:list={[
+                            "cursor-pointer pl-1.5 text-lg font-extralight text-balance transition-all duration-300 ease-out xl:text-xl",
+                            {
+                                "font-medium":
+                                    project.title.toLowerCase() === "transito",
+                            },
+                        ]}
+                    >
+                        {project.title.toLowerCase()}
+                    </li>
+                ))}
+            </ul>
+        </details>
+    ))}
+</div>
+
+<script>
+    import {
+        $currentProject,
+        $currentProjectCategory,
+    } from "@store/projectsStore"
+    import { onPageLoad } from "@utils/pageLifecycle"
+
+    onPageLoad(signal => {
+        const sidebar = document.querySelector<HTMLElement>(
+            "[data-project-sidebar]",
+        )
+        if (!sidebar) return
+        const items = sidebar.querySelectorAll<HTMLElement>(
+            "[data-project-target]",
+        )
+        const categories = sidebar.querySelectorAll<HTMLDetailsElement>(
+            "[data-project-category]",
+        )
+        const scrollTo = (element: Element | null) =>
+            element?.scrollIntoView({
+                block: "center",
+                behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                    ? "instant"
+                    : "smooth",
+            })
+
+        items.forEach(item =>
+            item.addEventListener(
+                "click",
+                () => {
+                    scrollTo(
+                        document.getElementById(item.dataset.projectTarget!),
+                    )
+                },
+                { signal },
+            ),
+        )
+        categories.forEach(category =>
+            category.querySelector("summary")?.addEventListener(
+                "click",
+                () => {
+                    scrollTo(
+                        document.querySelector(
+                            `.${category.dataset.projectCategory}-project`,
+                        ),
+                    )
+                },
+                { signal },
+            ),
+        )
+
+        const unsubscribeProject = $currentProject.subscribe(project => {
+            items.forEach(item =>
+                item.classList.toggle(
+                    "font-medium",
+                    item.dataset.projectTarget === project,
+                ),
+            )
+        })
+        const unsubscribeCategory = $currentProjectCategory.subscribe(
+            category => {
+                categories.forEach(item => {
+                    item.open = item.dataset.projectCategory === category
+                })
+            },
+        )
+        return () => {
+            unsubscribeProject()
+            unsubscribeCategory()
+        }
+    })
+</script>

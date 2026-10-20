@@ -18,7 +18,7 @@ const scrollItemClass =
         <DotMatrix
             client:load
             icons={profileRoles.map(role => role.icon)}
-            className="fixed inset-x-0 top-[72px] h-[calc((100dvh_-_72px)*0.8)] max-h-[1024px] w-full lg:h-[calc((100dvh_-_72px)*2/3)]"
+            className="fixed inset-x-0 top-18 h-[calc((100dvh-72px)*0.8)] max-h-256 w-full lg:h-[calc((100dvh-72px)*2/3)]"
         />
         <div
             class="relative flex h-full flex-col px-4 xs:px-6 md:px-8 lg:px-12 xl:px-16"
@@ -136,7 +136,7 @@ const scrollItemClass =
                             profileRoles.map(() => (
                                 <span
                                     data-role-dot
-                                    class="size-1.5 rounded-full bg-white opacity-0 transition-opacity duration-[350ms] ease-out motion-reduce:transition-none"
+                                    class="size-1.5 rounded-full bg-white opacity-0 transition-opacity duration-350 ease-out motion-reduce:transition-none"
                                 />
                             ))
                         }
@@ -147,7 +147,7 @@ const scrollItemClass =
                                 <span
                                     data-role-block
                                     aria-hidden="true"
-                                    class="block -translate-x-2.5 opacity-0 blur-[6px] transition-[opacity,filter,translate] duration-[550ms] ease-out data-[state=in]:translate-x-0 data-[state=in]:opacity-100 data-[state=in]:blur-[0px] data-[state=out]:translate-x-2 data-[state=out]:duration-[350ms] data-[state=out]:ease-in motion-reduce:transition-none"
+                                    class="block -translate-x-2.5 opacity-0 blur-[6px] transition-[opacity,filter,translate] duration-550 ease-out data-[state=in]:translate-x-0 data-[state=in]:opacity-100 data-[state=in]:blur-[0px] data-[state=out]:translate-x-2 data-[state=out]:duration-350 data-[state=out]:ease-in motion-reduce:transition-none"
                                 >
                                     <span class="block font-display text-2xl font-bold sm:text-3xl">
                                         {role.title}
@@ -195,17 +195,22 @@ const scrollItemClass =
         const dots = document.querySelectorAll<HTMLElement>("[data-role-dot]")
         const roleCycle = document.getElementById("role-cycle")
 
-        let roleStartedAt = performance.now()
+        let roleTimer: ReturnType<typeof setTimeout>
 
-        const setRole = (index: number) => {
-            roleStartedAt = performance.now()
-            $activeRole.set(index)
+        const queueNextRole = () => {
+            clearTimeout(roleTimer)
+            roleTimer = setTimeout(() => {
+                setRole(($activeRole.get() + 1) % roleCount)
+            }, ROLE_DURATION_MS)
         }
 
-        const roleTimer = setInterval(() => {
-            if (performance.now() - roleStartedAt < ROLE_DURATION_MS) return
-            setRole(($activeRole.get() + 1) % roleCount)
-        }, 100)
+        const setRole = (index: number) => {
+            $activeRole.set(index)
+            // Manual selection gets the same full reading time as an auto step.
+            queueNextRole()
+        }
+
+        queueNextRole()
 
         // Scroller: one step per role, wrapping through the trailing duplicate
         if (scrollList) {
@@ -305,7 +310,7 @@ const scrollItemClass =
         )
 
         return () => {
-            clearInterval(roleTimer)
+            clearTimeout(roleTimer)
             timers.forEach(clearTimeout)
             subscriptions.forEach(unsubscribe => unsubscribe())
         }

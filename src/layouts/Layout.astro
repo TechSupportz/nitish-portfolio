@@ -76,11 +76,11 @@ const { title, center, headerTitle, disableScroll } = Astro.props
             class:list={[
                 "m-auto h-full max-w-screen-2xl",
                 {
-                    "pt-[72px]": !center && !headerTitle,
-                    "mt-[calc(8rem+72px)] xs:mt-[calc(9rem+72px)] md:mt-[calc(12rem+72px)]":
+                    "pt-18": !center && !headerTitle,
+                    "mt-50 xs:mt-54 md:mt-66":
                         !!headerTitle,
                     "flex flex-col items-center justify-center": center,
-                    "pt-[8rem] xs:pt-[9rem] md:pt-[12rem]":
+                    "pt-32 xs:pt-36 md:pt-48":
                         center && !!headerTitle,
                 },
             ]}
@@ -89,3 +89,23 @@ const { title, center, headerTitle, disableScroll } = Astro.props
         </div>
     </body>
 </html>
+
+<script>
+    // Astro cancels superseded transitions, but leaves native `ready`
+    // unobserved. A skipped animation rejects it even when the swap succeeds.
+    // Handle that cancellation only; keep callback/configuration failures visible.
+    const startViewTransition = document.startViewTransition?.bind(document)
+    if (startViewTransition) {
+        document.startViewTransition = (...args) => {
+            const transition = startViewTransition(...args)
+            transition.ready.catch(error => {
+                if (!(
+                    error instanceof DOMException && error.name === "AbortError"
+                )) {
+                    throw error
+                }
+            })
+            return transition
+        }
+    }
+</script>

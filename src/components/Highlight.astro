@@ -1,0 +1,26 @@
+---
+// Renders the slot twice: the visible content, and an inverted copy that a
+// hover on the parent `.group` reveals with a left-to-right sweep. Clipping
+// the copy makes the colours flip exactly where the block has reached.
+type Props = {
+    class?: string
+}
+
+const { class: className } = Astro.props
+const content = await Astro.slots.render("default")
+---
+
+<span class:list={["relative mx-[-0.2em] px-[0.2em]", className]}>
+    <Fragment set:html={content} />
+    <span
+        class:list={[
+            "pointer-events-none absolute inset-0  bg-white px-[inherit] whitespace-nowrap text-charcoal [&_img]:invert",
+            "[clip-path:inset(0_100%_0_0_round_var(--radius-xs))] transition-[clip-path] duration-200 ease-out motion-reduce:transition-none",
+            "group-hover:[clip-path:inset(0_round_var(--radius-xs))] group-focus-visible:[clip-path:inset(0_round_var(--radius-xs))]",
+            className,
+        ]}
+        aria-hidden="true"
+    >
+        <Fragment set:html={content} />
+    </span>
+</span>

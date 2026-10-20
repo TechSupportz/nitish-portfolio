@@ -1,0 +1,92 @@
+---
+import { projectContent } from "@content/projects"
+import type { TProjectCategory } from "@src/types/ProjectContentType"
+---
+
+<div data-sticky-project-title>
+    <div class="fixed bottom-0 z-10 h-20 w-full bg-progressive-blur-to-t lg:hidden motion-preset-focus motion-delay-75 motion-duration-1000"></div>
+    <div class="fixed bottom-0 z-20 flex w-full items-center justify-between px-4 py-2 lg:hidden motion-preset-focus motion-delay-75 motion-duration-1000">
+        <div class="grid-overlap lg:hidden">
+            {Object.keys(projectContent).map(category => (
+                <h2
+                    data-sticky-category={category}
+                    class:list={[
+                        "text-2xl font-bold transition-opacity duration-300",
+                        category === "featured" ? "opacity-100" : "opacity-0",
+                    ]}
+                >
+                    {category}
+                </h2>
+            ))}
+        </div>
+        {(Object.keys(projectContent) as TProjectCategory[]).map(category => (
+            <div
+                data-sticky-project-group={category}
+                class="grid-overlap lg:hidden"
+                style={category === "featured" ? undefined : "display: none"}
+            >
+                {projectContent[category].map(project => (
+                    <p
+                        data-sticky-project={project.title.toLowerCase()}
+                        class:list={[
+                            "justify-self-end font-sans font-light transition-opacity duration-300",
+                            project.title.toLowerCase() === "transito"
+                                ? "opacity-100"
+                                : "opacity-0",
+                        ]}
+                    >
+                        {project.title.toLowerCase()}
+                    </p>
+                ))}
+            </div>
+        ))}
+    </div>
+</div>
+
+<script>
+    import {
+        $currentProject,
+        $currentProjectCategory,
+    } from "@store/projectsStore"
+    import { onPageLoad } from "@utils/pageLifecycle"
+
+    onPageLoad(() => {
+        const title = document.querySelector("[data-sticky-project-title]")
+        if (!title) return
+        const projects = title.querySelectorAll<HTMLElement>(
+            "[data-sticky-project]",
+        )
+        const categories = title.querySelectorAll<HTMLElement>(
+            "[data-sticky-category]",
+        )
+        const groups = title.querySelectorAll<HTMLElement>(
+            "[data-sticky-project-group]",
+        )
+        const unsubscribeProject = $currentProject.subscribe(project => {
+            projects.forEach(item => {
+                const active = item.dataset.stickyProject === project
+                item.classList.toggle("opacity-100", active)
+                item.classList.toggle("opacity-0", !active)
+            })
+        })
+        const unsubscribeCategory = $currentProjectCategory.subscribe(
+            category => {
+                categories.forEach(item => {
+                    const active = item.dataset.stickyCategory === category
+                    item.classList.toggle("opacity-100", active)
+                    item.classList.toggle("opacity-0", !active)
+                })
+                groups.forEach(item => {
+                    item.style.display =
+                        item.dataset.stickyProjectGroup === category
+                            ? ""
+                            : "none"
+                })
+            },
+        )
+        return () => {
+            unsubscribeProject()
+            unsubscribeCategory()
+        }
+    })
+</script>

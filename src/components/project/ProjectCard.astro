@@ -27,11 +27,13 @@ const {
 >
     <div class="relative mx-6 mb-5 lg:mr-60">
         <Image
-            class="max-w-[min(300px,calc(100vw-48px))] rounded-md object-cover shadow-md shadow-white/5 outline-2 outline-white/10 transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-blue-300/10 sm:h-auto sm:max-w-[400px] sm:min-w-[400px] lg:max-w-[450px] xl:max-w-[500px]"
+            class="max-w-[min(300px,calc(100vw-48px))] rounded-md object-cover shadow-md shadow-white/5 outline-2 outline-white/10 transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-blue-300/10 sm:h-auto sm:max-w-100 sm:min-w-100 lg:max-w-112.5 xl:max-w-125"
             src={imageUrl}
             alt="Project Image"
             width={300 * 3}
             height={200 * 3}
+            widths={[300, 450, 600, 800, 900, 1000, 1500]}
+            sizes="(min-width: 1280px) 500px, (min-width: 1024px) 450px, (min-width: 640px) 400px, min(300px, calc(100vw - 48px))"
         />
         <div
             class="absolute bottom-0 left-0 h-min w-fit -translate-x-6 translate-y-5 rounded-md bg-linear-to-br from-[#202020] to-charcoal to-35% p-2 shadow-md shadow-white/5 outline-2 outline-white/10"

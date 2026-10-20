@@ -6,6 +6,7 @@ import emailIcon from "@assets/email-alt.svg"
 import githubIcon from "@assets/github-alt.svg"
 import linkedInIcon from "@assets/linkedin-alt.svg"
 import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
+import Highlight from "@components/Highlight.astro"
 ---
 
 <Layout title="contact." headerTitle="contact." disableScroll>
@@ -51,36 +52,36 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                     target="_blank"
                     class="group flex motion-preset-blur-down-md items-center gap-2 motion-delay-300 motion-duration-1500"
                 >
-                    <Image
-                        src={githubIcon}
-                        alt="GitHub"
-                        class="size-7 xs:size-8 md:size-9"
-                    />
-                    <p
-                        class="-mt-1 align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
-                    >
-                        techsupportz <span
-                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                        ></span>
-                    </p>
+                    <Highlight class="flex items-center gap-2">
+                        <Image
+                            src={githubIcon}
+                            alt="GitHub"
+                            class="size-7 xs:size-8 md:size-9"
+                        />
+                        <p
+                            class="-mt-1 align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
+                        >
+                            techsupportz
+                        </p>
+                    </Highlight>
                 </a>
                 <a
                     href="https://linkedin.tnitish.com/"
                     target="_blank"
                     class="group flex motion-preset-blur-down-md items-center gap-2 motion-delay-400 motion-duration-1500"
                 >
-                    <Image
-                        src={linkedInIcon}
-                        alt="LinkedIn"
-                        class="size-7 xs:size-8 md:size-9"
-                    />
-                    <p
-                        class="align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
-                    >
-                        Nitish Thiyagarajan <span
-                            class="-mt-0.5 block h-[2px] max-w-0 rounded-sm bg-white transition-all duration-300 group-hover:max-w-full"
-                        ></span>
-                    </p>
+                    <Highlight class="flex items-center gap-2">
+                        <Image
+                            src={linkedInIcon}
+                            alt="LinkedIn"
+                            class="size-7 xs:size-8 md:size-9"
+                        />
+                        <p
+                            class="align-top text-lg xs:text-xl md:text-2xl lg:text-3xl"
+                        >
+                            Nitish Thiyagarajan
+                        </p>
+                    </Highlight>
                 </a>
             </div>
         </div>
@@ -91,10 +92,10 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
                 src={profilePicCircle}
                 loading={"eager"}
                 alt="Profile Picture"
-                class="relative z-10 size-[260px] object-contain xs:size-[300px] md:size-[348px] lg:size-[364px] xl:size-[396px]"
+                class="relative z-10 size-65 object-contain xs:size-75 md:size-87 lg:size-91 xl:size-99"
             />
             <div
-                class="dot-matrix absolute top-1/4 left-1/3 z-0 size-[240px] bg-[url('/dot-matrix.svg')] bg-repeat object-contain opacity-30 xs:size-[252px] md:size-[300px] lg:size-[316px] xl:size-[348px]"
+                class="dot-matrix absolute top-1/4 left-1/3 z-0 size-60 bg-[url('/dot-matrix.svg')] bg-repeat object-contain opacity-30 xs:size-63 md:size-75 lg:size-79 xl:size-87"
             >
             </div>
         </div>
@@ -121,7 +122,7 @@ import { ClipboardCheck, Copy, CopyCheck } from "@lucide/astro"
         const copyIconOutClasses = [
             "motion-scale-out-50",
             "motion-blur-out-md",
-            "!opacity-0",
+            "opacity-0!",
         ]
 
         // Class groups for ClipboardCheck icon states
