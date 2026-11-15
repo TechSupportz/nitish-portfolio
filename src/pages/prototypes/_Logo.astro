@@ -1,0 +1,40 @@
+---
+// The brand-guide mark: stem, shoulder, leg and the accent dot, on the
+// 132 x 120 grid from the guide (x = 30). Three stacked copies of each
+// segment: the unlit LED, a blurred glow, and the lit face. The glow layer
+// also carries the dot's resting halo, which breathes inside a wrapper the
+// hover chase can fade. Only opacity ever animates.
+type Props = {
+    class?: string
+    tone?: "light" | "dark"
+}
+
+const { class: className, tone = "light" } = Astro.props
+const layers = ["off", "g", "l"]
+---
+
+<svg
+    class:list={["nlogo", tone === "dark" && "nlogo-dark", className]}
+    viewBox="0 0 132 120"
+    role="img"
+    aria-label="nitish"
+>
+    {
+        layers.map(layer => (
+            <g class={`layer-${layer}`}>
+                <rect class={`${layer} s1`} x="0" y="0" width="30" height="120" rx="15" />
+                <path
+                    class={`${layer} s2`}
+                    d="M51,0 A51,51 0 0 1 102,51 A15,15 0 0 1 72,51 A21,21 0 0 0 51,30 A15,15 0 0 1 51,0 Z"
+                />
+                <rect class={`${layer} s3`} x="72" y="72" width="30" height="48" rx="15" />
+                <circle class={`${layer} dot`} cx="120" cy="108" r="12" />
+                {layer === "g" && (
+                    <g class="p-halo">
+                        <circle class="halo" cx="120" cy="108" r="12" />
+                    </g>
+                )}
+            </g>
+        ))
+    }
+</svg>

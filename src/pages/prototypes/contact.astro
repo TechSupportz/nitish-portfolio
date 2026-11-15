@@ -1,0 +1,719 @@
+---
+import emailIcon from "@assets/email-alt.svg"
+import githubIcon from "@assets/github-alt.svg"
+import linkedInIcon from "@assets/linkedin-alt.svg"
+import profilePicCircle from "@assets/profile-pic-circle.webp"
+import Highlight from "@components/Highlight.astro"
+import { Image } from "astro:assets"
+import Logo from "./_Logo.astro"
+import Picker from "./_Picker.astro"
+import Shell from "./_Shell.astro"
+
+const EMAIL = "contact@tnitish.com"
+const links = [
+    {
+        key: "github",
+        label: "GitHub",
+        value: "techsupportz",
+        href: "https://github.tnitish.com/",
+        icon: githubIcon,
+    },
+    {
+        key: "linkedin",
+        label: "LinkedIn",
+        value: "Nitish Thiyagarajan",
+        href: "https://linkedin.tnitish.com/",
+        icon: linkedInIcon,
+    },
+]
+---
+
+<Shell title="contact · prototype" headerTitle="contact" active="contact">
+    <div id="stage" class="min-h-[60dvh] pb-28"></div>
+
+    <!-- 1 · Card: the business-card front as a live object, details set beside it. -->
+    <template data-proto-variant>
+        <div class="p-c flex flex-col gap-10 px-6 md:px-8 lg:flex-row lg:items-center lg:gap-16 lg:px-12 lg:pt-2 xl:gap-24 xl:px-16">
+            <div
+                data-tilt
+                class="p-card-host w-full max-w-80 motion-preset-blur-up-md motion-duration-700 lg:w-auto lg:max-w-none lg:shrink-0"
+            >
+                <div class="p-card relative flex flex-col overflow-hidden rounded-lg p-6">
+                    <div
+                        class="p-dotgrid absolute inset-x-0 top-0 h-3/5"
+                        style="mask-image: linear-gradient(to bottom, white, transparent)"
+                    />
+                    <button
+                        type="button"
+                        data-logo="lit"
+                        class="p-logo-host relative w-fit"
+                        aria-label="Replay the logo light-up"
+                    >
+                        <Logo class="w-9" />
+                    </button>
+                    <div class="relative flex flex-1 items-center justify-end pr-1">
+                        <Image
+                            src={profilePicCircle}
+                            width={320}
+                            height={320}
+                            loading="eager"
+                            alt="Nitish, smiling, holding a laptop"
+                            class="p-card-photo"
+                        />
+                    </div>
+                    <div class="relative">
+                        <p class="text-sm text-white/80">hello, my name is</p>
+                        <div class="mt-1 font-display text-[1.75rem] leading-[1.08] font-bold">
+                            Nitish
+                            <br />
+                            Thiyagarajan
+                        </div>
+                        <p class="mt-1.5 text-sm text-white/60">software developer &amp; student</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full max-w-md min-w-0 motion-preset-blur-right-md motion-delay-150 motion-duration-700">
+                <h2 class="text-3xl lg:text-4xl">lets talk<span class="p-stop">.</span></h2>
+                <p class="mt-1.5 text-lg text-balance text-white/80 lg:text-xl">
+                    Got an opportunity or found a bug in something I built?
+                </p>
+                <ul class="mt-7">
+                    <li data-copy-scope>
+                        <div class="p-rule" />
+                        <button
+                            type="button"
+                            data-copy={EMAIL}
+                            class="group flex w-full items-center gap-4 py-3.5 text-left"
+                        >
+                            <Image src={emailIcon} alt="Email" class="size-6 shrink-0" />
+                            <span class="min-w-0 flex-1">
+                                <span class="font-code block text-xs text-white/50">email</span>
+                                <span class="font-code text-base lg:text-lg">
+                                    <Highlight>
+                                        <!--email_off-->{EMAIL}<!--/email_off-->
+                                    </Highlight>
+                                    <span class="p-enddot" aria-hidden="true" />
+                                </span>
+                            </span>
+                            <span
+                                data-copy-label
+                                data-idle="copy"
+                                data-done="copied."
+                                class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white"
+                            >
+                                copy
+                            </span>
+                        </button>
+                    </li>
+                    {
+                        links.map(link => (
+                            <li>
+                                <div class="p-rule" />
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    class="group flex items-center gap-4 py-3.5"
+                                >
+                                    <Image src={link.icon} alt={link.label} class="size-6 shrink-0" />
+                                    <span class="min-w-0 flex-1">
+                                        <span class="font-code block text-xs text-white/50">
+                                            {link.key}
+                                        </span>
+                                        <span class="font-code text-base lg:text-lg">
+                                            <Highlight>{link.value.toLowerCase()}</Highlight>
+                                            <span class="p-enddot" aria-hidden="true" />
+                                        </span>
+                                    </span>
+                                    <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
+                                        open ↗
+                                    </span>
+                                </a>
+                            </li>
+                        ))
+                    }
+                    <li class="p-rule" aria-hidden="true" />
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <!-- 2 · Halftone: the portrait dissolves into a field of dots that light up;
+         the ways to reach me are set as the headlines. -->
+    <template data-proto-variant>
+        <div class="p-c overflow-x-clip px-6 md:px-8 lg:px-12 xl:px-16">
+            <div class="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-16">
+                <div class="p-ht relative my-16 size-56 self-center motion-preset-focus motion-duration-700 xs:size-64 lg:order-2 lg:my-0 lg:mr-14 lg:size-72 xl:mr-20 xl:size-80">
+                    <div class="p-ht-field p-ht-unlit" aria-hidden="true" />
+                    <div class="p-ht-field p-ht-lit" aria-hidden="true" />
+                    <Image
+                        src={profilePicCircle}
+                        width={640}
+                        height={640}
+                        loading="eager"
+                        alt="Nitish, smiling, holding a laptop"
+                        class="p-ht-photo relative size-full"
+                    />
+                </div>
+                <div class="min-w-0 motion-preset-blur-right-md motion-delay-100 motion-duration-700 lg:order-1">
+                    <h2 class="text-2xl xs:text-3xl">lets talk<span class="p-stop">.</span></h2>
+                    <p class="mt-1 max-w-[34ch] text-lg text-balance text-white/70">
+                        Got an opportunity or found a bug in something I built?
+                    </p>
+                    <ul class="mt-8 flex flex-col gap-5 lg:gap-6">
+                        <li data-copy-scope>
+                            <div class="font-code flex gap-3 text-xs text-white/50">
+                                <span>01 · email</span>
+                                <span
+                                    data-copy-label
+                                    data-idle="click to copy"
+                                    data-done="copied to clipboard."
+                                    class="text-white/35"
+                                >
+                                    click to copy
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                data-copy={EMAIL}
+                                class="group mt-1 text-left font-display text-2xl leading-tight font-bold xs:text-3xl lg:text-4xl"
+                            >
+                                <Highlight>
+                                    <!--email_off-->contact@tnitish<span class="p-stop">.</span>com<!--/email_off-->
+                                </Highlight>
+                            </button>
+                        </li>
+                        {
+                            links.map((link, i) => (
+                                <li>
+                                    <div class="font-code text-xs text-white/50">
+                                        0{i + 2} · {link.key} ↗
+                                    </div>
+                                    <a
+                                        href={link.href}
+                                        target="_blank"
+                                        aria-label={`${link.label}: ${link.value}`}
+                                        class="group mt-1 inline-block font-display text-2xl leading-tight font-bold xs:text-3xl lg:text-4xl"
+                                    >
+                                        <Highlight>
+                                            {link.value.toLowerCase()}
+                                            <span class="p-stop">.</span>
+                                        </Highlight>
+                                    </a>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 3 · Matrix: the photo on the home page's LED panel. Whichever way to
+         reach me you point at lights up beside it, drawn in dots. -->
+    <template data-proto-variant>
+        <div class="p-c flex flex-col gap-12 px-6 md:px-8 lg:flex-row-reverse lg:items-center lg:justify-evenly lg:gap-10 lg:px-12 xl:px-16">
+            <div class="p-mx relative mx-auto motion-preset-focus motion-duration-700 lg:mx-0">
+                <svg
+                    data-matrix
+                    class="p-mx-panel"
+                    viewBox="0 0 320 320"
+                    aria-hidden="true"
+                />
+                <Image
+                    src={profilePicCircle}
+                    width={640}
+                    height={640}
+                    loading="eager"
+                    alt="Nitish, smiling, holding a laptop"
+                    class="p-mx-photo"
+                />
+            </div>
+            <div class="w-full max-w-md min-w-0 motion-preset-blur-right-md motion-delay-100 motion-duration-700">
+                <h2 class="text-3xl lg:text-4xl">lets talk<span class="p-stop">.</span></h2>
+                <p class="mt-1.5 text-lg text-balance text-white/80 lg:text-xl">
+                    Got an opportunity or found a bug in something I built?
+                </p>
+                <ul class="mt-7" data-matrix-rows>
+                    <li data-copy-scope>
+                        <div class="p-rule" />
+                        <button
+                            type="button"
+                            data-copy={EMAIL}
+                            data-matrix-icon={emailIcon.src}
+                            class="group flex w-full items-center gap-4 py-3.5 text-left"
+                        >
+                            <span class="min-w-0 flex-1">
+                                <span class="font-code block text-xs text-white/50">email</span>
+                                <span class="text-lg lg:text-xl">
+                                    <Highlight>
+                                        <!--email_off-->{EMAIL}<!--/email_off-->
+                                    </Highlight>
+                                </span>
+                            </span>
+                            <span
+                                data-copy-label
+                                data-idle="copy"
+                                data-done="copied."
+                                class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white"
+                            >
+                                copy
+                            </span>
+                        </button>
+                    </li>
+                    {
+                        links.map(link => (
+                            <li>
+                                <div class="p-rule" />
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    data-matrix-icon={link.icon.src}
+                                    class="group flex items-center gap-4 py-3.5"
+                                >
+                                    <span class="min-w-0 flex-1">
+                                        <span class="font-code block text-xs text-white/50">
+                                            {link.key}
+                                        </span>
+                                        <span class="text-lg lg:text-xl">
+                                            <Highlight>{link.value}</Highlight>
+                                        </span>
+                                    </span>
+                                    <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
+                                        open ↗
+                                    </span>
+                                </a>
+                            </li>
+                        ))
+                    }
+                    <li class="p-rule" aria-hidden="true" />
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <!-- 4 · Resume: the guide's resume header and sections, set for the screen. -->
+    <template data-proto-variant>
+        <div class="p-c mx-auto max-w-5xl px-6 md:px-8 lg:px-12">
+            <header class="flex motion-preset-blur-right-md items-center gap-5 motion-duration-700 sm:gap-8">
+                <Image
+                    src={profilePicCircle}
+                    width={320}
+                    height={320}
+                    loading="eager"
+                    alt="Nitish, smiling, holding a laptop"
+                    class="size-24 shrink-0 object-contain sm:size-32 lg:size-40"
+                />
+                <div class="min-w-0">
+                    <p class="text-sm sm:text-base">hello, my name is</p>
+                    <div class="font-display text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl">
+                        Nitish Thiyagarajan<span class="p-stop">.</span>
+                    </div>
+                    <p class="mt-1 text-sm text-white/60 sm:text-base">software developer &amp; student</p>
+                </div>
+            </header>
+            <div class="mt-10 grid motion-preset-blur-up-md gap-10 motion-delay-100 motion-duration-700 lg:mt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
+                <section data-copy-scope>
+                    <div class="flex items-end justify-between gap-4">
+                        <h2 class="text-2xl">lets talk<span class="p-stop">.</span></h2>
+                        <svg data-doticon={emailIcon.src} class="p-doticon" viewBox="0 0 36 36" aria-hidden="true" />
+                    </div>
+                    <div class="p-rule mt-2" />
+                    <p class="mt-4 text-pretty text-white/80">
+                        Got an opportunity or found a bug in something I built? Email's the best way to reach me.
+                    </p>
+                    <button type="button" data-copy={EMAIL} class="group mt-4 block text-left">
+                        <span class="font-code block text-xs text-[var(--accent)]">
+                            <span data-copy-label data-idle="email · click to copy" data-done="copied to clipboard.">
+                                email · click to copy
+                            </span>
+                        </span>
+                        <span class="mt-1 block text-xl sm:text-2xl">
+                            <Highlight>
+                                <!--email_off-->{EMAIL}<!--/email_off-->
+                            </Highlight>
+                        </span>
+                    </button>
+                </section>
+                <section>
+                    <div class="flex items-end justify-between gap-4">
+                        <h2 class="text-2xl">elsewhere<span class="p-stop">.</span></h2>
+                        <svg data-doticon={githubIcon.src} class="p-doticon" viewBox="0 0 36 36" aria-hidden="true" />
+                    </div>
+                    <div class="p-rule mt-2" />
+                    <ul class="mt-4 space-y-4">
+                        {
+                            links.map(link => (
+                                <li>
+                                    <a href={link.href} target="_blank" class="group block">
+                                        <span class="font-code block text-xs text-[var(--accent)]">
+                                            {link.key} ↗
+                                        </span>
+                                        <span class="mt-0.5 block text-lg">
+                                            <Highlight>{link.value}</Highlight>
+                                        </span>
+                                    </a>
+                                </li>
+                            ))
+                        }
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </template>
+
+    <Picker names={["Card", "Halftone", "Matrix", "Resume"]} replay />
+</Shell>
+
+<style is:global>
+    .p-c :is(a, button):focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+    }
+
+    /* Resume detail: every contact line ends in a blue dot. */
+    .p-enddot {
+        display: inline-block;
+        width: 0.3em;
+        height: 0.3em;
+        margin-left: 0.4em;
+        border-radius: 50%;
+        background: var(--accent);
+        vertical-align: 0.1em;
+    }
+
+    /* ---------- 1 · Card ---------- */
+
+    .p-card-host {
+        perspective: 1000px;
+    }
+
+    .p-card {
+        aspect-ratio: 5 / 7;
+        width: 100%;
+        background: #191919;
+        box-shadow:
+            0 0 0 1px rgb(255 255 255 / 0.08) inset,
+            0 24px 48px -12px rgb(0 0 0 / 0.6),
+            0 4px 12px rgb(0 0 0 / 0.3);
+        transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+            translateY(var(--lift, 0px));
+        transform-origin: center;
+        transition: transform 220ms var(--ease-out-strong);
+    }
+
+    .p-card-host[data-lift] {
+        --lift: -4px;
+    }
+
+    @media (min-width: 1024px) {
+        .p-card {
+            width: auto;
+            height: clamp(22rem, calc(100dvh - 23rem), 30rem);
+        }
+    }
+
+    .p-card-photo {
+        width: 50%;
+        aspect-ratio: 1;
+        object-fit: contain;
+    }
+
+    /* ---------- 2 · Halftone ---------- */
+
+    /* The field is 1.6x the photo, centred on it, so both dot grids line up. */
+    .p-ht-field {
+        position: absolute;
+        inset: -30%;
+        pointer-events: none;
+        mask-image:
+            radial-gradient(circle, #000 1.3px, transparent 1.8px),
+            radial-gradient(circle closest-side, transparent 58%, #000 66%, transparent 100%);
+        mask-size:
+            var(--pitch, 7px) var(--pitch, 7px),
+            100% 100%;
+        mask-position: center;
+        mask-repeat: repeat, no-repeat;
+        mask-composite: intersect;
+    }
+
+    .p-ht-unlit {
+        background: rgb(255 255 255 / 0.14);
+    }
+
+    .p-ht-lit {
+        background: linear-gradient(135deg, var(--grad-a, #e0f2fe), var(--grad-b, #3b82f6));
+        animation: p-ht-sweep 1100ms var(--ease-out-strong) 250ms both;
+    }
+
+    /* Lit from the portrait outwards. */
+    @keyframes p-ht-sweep {
+        from {
+            clip-path: circle(30% at 50% 50%);
+        }
+        to {
+            clip-path: circle(50% at 50% 50%);
+        }
+    }
+
+    /* Solid core, then the photo's own edge breaks into larger dots. */
+    .p-ht-photo {
+        object-fit: contain;
+        mask-image:
+            radial-gradient(circle closest-side, #000 74%, transparent 84%),
+            radial-gradient(circle, #000 2.3px, transparent 2.8px),
+            radial-gradient(circle closest-side, transparent 66%, #000 78%, #000 94%, transparent 100%);
+        mask-size:
+            100% 100%,
+            var(--pitch, 7px) var(--pitch, 7px),
+            100% 100%;
+        mask-position: center;
+        mask-repeat: no-repeat, repeat, no-repeat;
+        mask-composite: add, intersect, add;
+    }
+
+    /* ---------- 3 · Matrix ---------- */
+
+    /* Photo top-left, LED panel offset behind it like the production page.
+       The lit icon sits in the panel's bottom-right corner, clear of the photo. */
+    .p-mx {
+        --w: 14rem;
+        width: calc(var(--w) * 4 / 3);
+        height: calc(var(--w) * 5 / 4);
+    }
+
+    @media (min-width: 456px) {
+        .p-mx {
+            --w: 17rem;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .p-mx {
+            --w: 21rem;
+        }
+    }
+
+    .p-mx-photo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: var(--w);
+        height: var(--w);
+        object-fit: contain;
+    }
+
+    .p-mx-panel {
+        position: absolute;
+        top: calc(var(--w) / 4);
+        left: calc(var(--w) / 3);
+        width: var(--w);
+        height: var(--w);
+        overflow: visible;
+    }
+
+    .p-mx-panel .u {
+        fill: rgb(255 255 255 / 0.14);
+    }
+
+    .p-mx-panel .on {
+        opacity: 0;
+        transition: opacity 120ms ease-out;
+    }
+
+    .p-mx-panel .on[data-on] {
+        opacity: 1;
+        transition-duration: 180ms;
+    }
+
+    .p-mx-panel .lit {
+        filter: drop-shadow(0 0 3px rgb(96 165 250 / 0.55));
+    }
+
+    /* ---------- 4 · Resume ---------- */
+
+    .p-doticon {
+        width: 2.5rem;
+        height: 2.5rem;
+        flex-shrink: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .p-card,
+        .p-mx-panel .on {
+            transition: none !important;
+        }
+
+        .p-card-host {
+            --rx: 0deg !important;
+            --ry: 0deg !important;
+            --lift: 0px !important;
+        }
+
+        .p-ht-lit {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    // Card: a small tilt toward the pointer, measured on the untransformed host.
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+    const initTilt = () => {
+        document
+            .querySelectorAll<HTMLElement>("[data-tilt]:not([data-tilt-ready])")
+            .forEach(host => {
+                host.dataset.tiltReady = ""
+                host.addEventListener("pointermove", event => {
+                    if (event.pointerType !== "mouse" || reduce.matches) return
+                    const box = host.getBoundingClientRect()
+                    const x = (event.clientX - box.left) / box.width - 0.5
+                    const y = (event.clientY - box.top) / box.height - 0.5
+                    host.style.setProperty("--ry", `${(x * 8).toFixed(2)}deg`)
+                    host.style.setProperty("--rx", `${(y * -6).toFixed(2)}deg`)
+                    host.toggleAttribute("data-lift", true)
+                })
+                host.addEventListener("pointerleave", () => {
+                    host.style.removeProperty("--rx")
+                    host.style.removeProperty("--ry")
+                    host.removeAttribute("data-lift")
+                })
+            })
+    }
+
+    // --- dot icons: rasterise a line icon onto an n x n grid of dots ---
+    // Drawn at 4x then max-pooled, so thin strokes still land on whole dots.
+    const SVG_NS = "http://www.w3.org/2000/svg"
+    const rasters = new Map<string, Promise<boolean[]>>()
+
+    const raster = (src: string, n: number) => {
+        const key = `${src}@${n}`
+        if (!rasters.has(key)) {
+            rasters.set(
+                key,
+                new Promise<boolean[]>((resolve, reject) => {
+                    const img = new Image()
+                    img.onload = () => {
+                        const s = n * 4
+                        const canvas = document.createElement("canvas")
+                        canvas.width = canvas.height = s
+                        const ctx = canvas.getContext("2d")!
+                        ctx.drawImage(img, 0, 0, s, s)
+                        const alpha = ctx.getImageData(0, 0, s, s).data
+                        const cells: boolean[] = []
+                        for (let r = 0; r < n; r++)
+                            for (let c = 0; c < n; c++) {
+                                let max = 0
+                                for (let y = 0; y < 4; y++)
+                                    for (let x = 0; x < 4; x++)
+                                        max = Math.max(max, alpha[((r * 4 + y) * s + c * 4 + x) * 4 + 3])
+                                cells.push(max > 110)
+                            }
+                        resolve(cells)
+                    }
+                    img.onerror = reject
+                    img.src = src
+                }),
+            )
+        }
+        return rasters.get(key)!
+    }
+
+    // Brand gradient, sky-100 bottom-left to blue-500 top-right.
+    const mix = (a: number, b: number, t: number) => Math.round(a + (b - a) * t)
+    const gradient = (r: number, c: number, n: number) => {
+        const t = (c + (n - 1 - r)) / (2 * (n - 1))
+        return `rgb(${mix(224, 59, t)} ${mix(242, 130, t)} ${mix(254, 246, t)})`
+    }
+
+    const circle = (cx: number, cy: number, radius: number, fill?: string) => {
+        const el = document.createElementNS(SVG_NS, "circle")
+        el.setAttribute("cx", String(cx))
+        el.setAttribute("cy", String(cy))
+        el.setAttribute("r", String(radius))
+        if (fill) el.setAttribute("fill", fill)
+        return el
+    }
+
+    // Resume: one small gradient icon per section heading (guide pitch 3, dot 2).
+    const initDotIcons = () => {
+        document
+            .querySelectorAll<SVGSVGElement>("svg[data-doticon]:not([data-ready])")
+            .forEach(svg => {
+                svg.dataset.ready = ""
+                const n = 12
+                raster(svg.dataset.doticon!, n)
+                    .then(cells =>
+                        cells.forEach((on, i) => {
+                            if (!on) return
+                            const r = Math.floor(i / n)
+                            const c = i % n
+                            svg.append(circle(c * 3 + 1.5, r * 3 + 1.5, 1.05, gradient(r, c, n)))
+                        }),
+                    )
+                    .catch(() => {})
+            })
+    }
+
+    // Matrix: a 32 x 32 panel (pitch 10). Pointing at a contact row lights its
+    // icon in the bottom-right 13 x 13 cells, sweeping in on the diagonal.
+    const PANEL = 32
+    const ICON = 13
+    const ORIGIN = PANEL - ICON - 1
+
+    const initMatrix = () => {
+        const svg = document.querySelector<SVGSVGElement>("svg[data-matrix]:not([data-ready])")
+        if (!svg) return
+        svg.dataset.ready = ""
+        const lit: SVGCircleElement[] = []
+        const unlit = document.createElementNS(SVG_NS, "g")
+        unlit.setAttribute("class", "u")
+        const glow = document.createElementNS(SVG_NS, "g")
+        glow.setAttribute("class", "lit")
+        for (let r = 0; r < PANEL; r++)
+            for (let c = 0; c < PANEL; c++) unlit.append(circle(c * 10 + 5, r * 10 + 5, 2.15))
+        for (let r = 0; r < ICON; r++)
+            for (let c = 0; c < ICON; c++) {
+                const dot = circle((ORIGIN + c) * 10 + 5, (ORIGIN + r) * 10 + 5, 3.4, gradient(r, c, ICON))
+                dot.setAttribute("class", "on")
+                glow.append(dot)
+                lit.push(dot)
+            }
+        svg.append(unlit, glow)
+
+        let shown = ""
+        let token = 0
+        const show = async (src: string, delay = 0) => {
+            if (src === shown) return
+            shown = src
+            const mine = ++token
+            const cells = await raster(src, ICON).catch(() => null)
+            if (!cells || mine !== token) return
+            lit.forEach((dot, i) => {
+                const on = cells[i]
+                const diag = (i % ICON) + (ICON - 1 - Math.floor(i / ICON))
+                dot.style.transitionDelay = on && !reduce.matches ? `${delay + diag * 9}ms` : "0ms"
+                dot.toggleAttribute("data-on", on)
+            })
+        }
+
+        const rows = document.querySelectorAll<HTMLElement>("[data-matrix-rows] [data-matrix-icon]")
+        rows.forEach(row => {
+            const pick = () => show(row.dataset.matrixIcon!)
+            row.addEventListener("pointerenter", pick)
+            row.addEventListener("focus", pick)
+        })
+        // Email is lit by default, after the page settles in.
+        if (rows[0]) show(rows[0].dataset.matrixIcon!, 450)
+    }
+
+    const initAll = () => {
+        initTilt()
+        initDotIcons()
+        initMatrix()
+    }
+
+    initAll()
+    document.addEventListener("proto:mount", initAll)
+</script>

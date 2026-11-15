@@ -1,0 +1,541 @@
+---
+// Prototype-only page shell: the production Layout with the brand-guide
+// changes applied (new mark, blue full stops, Fira Code, 3:4 dot grid).
+import "@styles/global.css"
+
+import { Font } from "astro:assets"
+import Nav from "./_Nav.astro"
+
+type Props = {
+    title: string
+    headerTitle?: string
+    active?: string
+    bare?: boolean
+}
+
+const { title, headerTitle, active, bare } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth motion-reduce:scroll-auto">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="robots" content="noindex" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <Font cssVariable="--font-dm-sans" preload />
+        <Font cssVariable="--font-poppins" preload />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap"
+        />
+        <title>{title}</title>
+    </head>
+    <body class="proto">
+        {
+            !bare && (
+                <div data-proto-header class="fixed top-0 z-20 w-full">
+                    <Nav active={active} />
+                    {headerTitle && (
+                        <div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
+                            <div class="absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80% bg-progressive-blur-to-b">
+                                <div
+                                    class="p-dotgrid h-full"
+                                    style="mask-image: linear-gradient(to bottom, white, 45%, transparent 95%)"
+                                />
+                            </div>
+                            <div class="relative m-auto w-full max-w-screen-2xl">
+                                <h1 class="mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16">
+                                    {headerTitle}
+                                    <span class="p-stop">.</span>
+                                </h1>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )
+        }
+        <div
+            class:list={[
+                "m-auto h-full max-w-screen-2xl",
+                { "mt-50 xs:mt-54 md:mt-66": !!headerTitle },
+            ]}
+        >
+            <slot />
+        </div>
+    </body>
+</html>
+
+<style is:global>
+    .proto {
+        --accent: #60a5fa;
+        --grad-a: #e0f2fe;
+        --grad-b: #3b82f6;
+        --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+        /* Guide: dot 3, gap 4, pitch 7, 10% fill. */
+        --dot: 3px;
+        --pitch: 7px;
+        --dot-alpha: 0.1;
+    }
+
+    /* Guide: body is DM Sans regular 400, not light. */
+    .proto p {
+        font-weight: 400;
+    }
+
+    .font-code {
+        font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-variant-ligatures: none;
+    }
+
+    .p-stop {
+        color: var(--accent);
+    }
+
+    .p-dotgrid {
+        background-image: radial-gradient(
+            circle at center,
+            rgb(255 255 255 / var(--dot-alpha)) calc(var(--dot) / 2 - 0.3px),
+            transparent calc(var(--dot) / 2 + 0.3px)
+        );
+        background-size: var(--pitch) var(--pitch);
+    }
+
+    .p-dotgrid-ink {
+        background-image: radial-gradient(
+            circle at center,
+            rgb(18 18 18 / var(--dot-alpha)) calc(var(--dot) / 2 - 0.3px),
+            transparent calc(var(--dot) / 2 + 0.3px)
+        );
+        background-size: var(--pitch) var(--pitch);
+    }
+
+    /* Dotted rule: the divider is dots too. */
+    .p-rule {
+        position: relative;
+        height: 3px;
+        background: radial-gradient(circle, rgb(255 255 255 / 0.28) 1.2px, transparent 1.6px) 0 0 /
+            7px 3px repeat-x;
+    }
+
+    .p-rule-ink {
+        background-image: radial-gradient(circle, rgb(18 18 18 / 0.3) 1.2px, transparent 1.6px);
+    }
+
+    /* The lit version of the rule sweeps in on hover of the parent .group. */
+    .p-rule-lit::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, var(--grad-a), var(--grad-b));
+        -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
+        mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
+        clip-path: inset(0 100% 0 0);
+        transition: clip-path 280ms var(--ease-out-strong);
+    }
+
+    .group:hover .p-rule-lit::after,
+    .group:focus-visible .p-rule-lit::after {
+        clip-path: inset(0);
+    }
+
+    .p-bullets li {
+        position: relative;
+        padding-left: 1.1rem;
+    }
+
+    .p-bullets li::before {
+        content: "";
+        position: absolute;
+        left: 0.1rem;
+        top: 0.62em;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+    }
+
+    /* ---------- the mark ---------- */
+
+    .nlogo {
+        display: block;
+        height: auto;
+        overflow: visible;
+    }
+
+    .nlogo rect,
+    .nlogo path {
+        fill: #fff;
+    }
+
+    .nlogo-dark rect,
+    .nlogo-dark path {
+        fill: #121212;
+    }
+
+    .nlogo circle {
+        fill: var(--accent);
+    }
+
+    .nlogo .off {
+        opacity: 0.1;
+    }
+
+    .nlogo .layer-g {
+        filter: blur(9px);
+    }
+
+    /* Resting state is fully lit. The hover chase drives these three custom
+       properties from JS; nothing else about the mark ever changes. */
+    .nlogo .l {
+        opacity: var(--o, 1);
+    }
+
+    .nlogo .g {
+        opacity: var(--go, 0);
+    }
+
+    .nlogo .p-halo {
+        opacity: var(--ho, 1);
+    }
+
+    /* The dot keeps a soft glow at rest, breathing like an online light. */
+    .nlogo .halo {
+        opacity: 0.55;
+        animation: p-breathe 2.6s ease-in-out infinite alternate;
+    }
+
+    .p-logo-host {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Boot tempo: every boot timing below is a multiple of --logo-k.
+       brisk = 1.2s total (the default), measured = 1.8s, slow = 2.6s. */
+    [data-logo] {
+        --logo-k: 0.6667;
+    }
+
+    [data-logo-tempo="measured"] {
+        --logo-k: 1;
+    }
+
+    [data-logo-tempo="brisk"] {
+        --logo-k: 0.6667;
+    }
+
+    [data-logo-tempo="slow"] {
+        --logo-k: 1.4444;
+    }
+
+    [data-logo] .s1 {
+        --d: 0;
+    }
+
+    [data-logo] .s2 {
+        --d: 1;
+    }
+
+    [data-logo] .s3 {
+        --d: 2;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        /* Before the script picks a host up, hold it dark so the boot doesn't
+           start from a flash of the lit mark. */
+        [data-logo="lit"]:not([data-ready]) .l,
+        [data-logo="lit"]:not([data-ready]) .p-halo {
+            opacity: 0;
+        }
+    }
+
+    /* Boot: stem, shoulder, leg power on in order with a glow flash each, then
+       the dot flickers alive and its halo settles in. Fill is backwards only,
+       so once it ends the custom-property resting state takes over. */
+    .is-boot .l:not(.dot) {
+        animation: p-seg-on calc(320ms * var(--logo-k)) ease-out
+            calc(var(--d) * 230ms * var(--logo-k)) backwards;
+    }
+
+    .is-boot .g:not(.dot) {
+        animation: p-glow-flash calc(700ms * var(--logo-k)) ease-out
+            calc(var(--d) * 230ms * var(--logo-k)) backwards;
+    }
+
+    .is-boot .l.dot {
+        animation: p-dot-flicker calc(640ms * var(--logo-k)) steps(1, end)
+            calc(820ms * var(--logo-k)) backwards;
+    }
+
+    .is-boot .g.dot {
+        animation: p-glow-flash calc(500ms * var(--logo-k)) ease-out
+            calc(1300ms * var(--logo-k)) backwards;
+    }
+
+    .is-boot .p-halo {
+        animation: p-seg-on calc(500ms * var(--logo-k)) ease-out
+            calc(1300ms * var(--logo-k)) backwards;
+    }
+
+    @keyframes p-seg-on {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes p-glow-flash {
+        0% {
+            opacity: 0;
+        }
+        30% {
+            opacity: 0.75;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes p-dot-flicker {
+        0% {
+            opacity: 0;
+        }
+        14% {
+            opacity: 1;
+        }
+        28% {
+            opacity: 0;
+        }
+        48% {
+            opacity: 1;
+        }
+        60% {
+            opacity: 0.25;
+        }
+        74%,
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes p-breathe {
+        from {
+            opacity: 0.2;
+        }
+        to {
+            opacity: 0.75;
+        }
+    }
+
+    /* ---------- copy feedback ---------- */
+
+    .p-cursor {
+        display: inline-block;
+        width: 0.6em;
+        height: 1.15em;
+        margin-left: 0.35em;
+        vertical-align: text-bottom;
+        background: #fff;
+        animation: p-blink 1.1s steps(1, end) infinite;
+    }
+
+    @keyframes p-blink {
+        50% {
+            opacity: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .nlogo .l,
+        .nlogo .g,
+        .nlogo .p-halo,
+        .nlogo .halo,
+        .p-cursor {
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+    // --- the mark: boot on load and tap, eased chase while a mouse hovers ---
+    // Contract: any `[data-logo="lit"]` host wrapping <Logo />, found at load
+    // or after a `proto:mount`. Boot tempo comes from --logo-k on the host
+    // (data-logo-tempo="brisk" | "measured" | "slow").
+
+    const BOOT_MS = 1800 // at --logo-k: 1, matches the CSS timeline
+    const CHASE_MS = 1200 // one lap: stem, shoulder, leg, dot
+    const PULSE = 0.28 // half-width of the travelling light, in laps
+    const FLOOR = 0.16 // brightness of a segment the light has left
+    const GLOW = 0.7
+    const MIX_MS = 280 // fully lit <-> chase
+
+    type Mark = {
+        host: HTMLElement
+        lit: SVGElement[]
+        glow: SVGElement[]
+        halo: SVGElement | null
+        mix: number
+        from: number
+        to: number
+        start: number
+        dur: number
+        t0: number
+        inside: boolean
+        bootUntil: number
+        bootTimer?: ReturnType<typeof setTimeout>
+    }
+
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)")
+    const running = new Set<Mark>()
+    let frame = 0
+
+    const smooth = (t: number) => t * t * (3 - 2 * t)
+    const easeOut = (t: number) => 1 - (1 - t) ** 3
+
+    // Brightness of segment i (0..3) when the light is at `phase` (0..1).
+    const pulse = (phase: number, i: number) => {
+        const d = Math.abs(phase - i / 4)
+        const dist = Math.min(d, 1 - d)
+        return dist >= PULSE ? 0 : smooth(1 - dist / PULSE)
+    }
+
+    const paint = (mark: Mark, now: number) => {
+        const phase = (((now - mark.t0) / CHASE_MS) % 1 + 1) % 1
+        mark.lit.forEach((el, i) => {
+            const b = pulse(phase, i)
+            const chase = FLOOR + (1 - FLOOR) * b
+            el.style.setProperty("--o", (1 + (chase - 1) * mark.mix).toFixed(3))
+            mark.glow[i]?.style.setProperty("--go", (GLOW * b * mark.mix).toFixed(3))
+        })
+        mark.halo?.style.setProperty("--ho", (1 - mark.mix).toFixed(3))
+    }
+
+    const rest = (mark: Mark) => {
+        mark.lit.forEach(el => el.style.removeProperty("--o"))
+        mark.glow.forEach(el => el.style.removeProperty("--go"))
+        mark.halo?.style.removeProperty("--ho")
+    }
+
+    const tick = (now: number) => {
+        for (const mark of running) {
+            if (!mark.host.isConnected) {
+                running.delete(mark)
+                continue
+            }
+            const p = mark.dur > 0 ? Math.min(1, (now - mark.start) / mark.dur) : 1
+            mark.mix = mark.from + (mark.to - mark.from) * easeOut(p)
+            if (p >= 1 && mark.to === 0) {
+                mark.mix = 0
+                rest(mark)
+                running.delete(mark)
+            } else {
+                paint(mark, now)
+            }
+        }
+        frame = running.size ? requestAnimationFrame(tick) : 0
+    }
+
+    const ease = (mark: Mark, to: number) => {
+        const now = performance.now()
+        if (to === 1 && mark.mix === 0) mark.t0 = now // light starts at the stem
+        mark.from = mark.mix
+        mark.to = to
+        mark.start = now
+        mark.dur = MIX_MS * Math.abs(to - mark.mix)
+        running.add(mark)
+        if (!frame) frame = requestAnimationFrame(tick)
+    }
+
+    const boot = (mark: Mark) => {
+        if (reduced.matches) return
+        const k = parseFloat(getComputedStyle(mark.host).getPropertyValue("--logo-k")) || 1
+        const total = BOOT_MS * k
+        // Drop any chase; the boot animations own opacity until they end.
+        running.delete(mark)
+        mark.mix = mark.from = mark.to = 0
+        rest(mark)
+        mark.host.classList.remove("is-boot")
+        void mark.host.getBoundingClientRect()
+        mark.host.classList.add("is-boot")
+        mark.bootUntil = performance.now() + total
+        clearTimeout(mark.bootTimer)
+        mark.bootTimer = setTimeout(() => {
+            mark.host.classList.remove("is-boot")
+            mark.bootUntil = 0
+            if (mark.inside && mark.host.isConnected) ease(mark, 1)
+        }, total + 40)
+    }
+
+    const initLogos = () => {
+        document
+            .querySelectorAll<HTMLElement>('[data-logo="lit"]:not([data-ready])')
+            .forEach(host => {
+                host.dataset.ready = ""
+                const pick = (layer: string) =>
+                    [".s1", ".s2", ".s3", ".dot"].map(
+                        seg => host.querySelector<SVGElement>(`.${layer}${seg}`)!,
+                    )
+                const mark: Mark = {
+                    host,
+                    lit: pick("l"),
+                    glow: pick("g"),
+                    halo: host.querySelector<SVGElement>(".p-halo"),
+                    mix: 0,
+                    from: 0,
+                    to: 0,
+                    start: 0,
+                    dur: 0,
+                    t0: 0,
+                    inside: false,
+                    bootUntil: 0,
+                }
+                host.addEventListener("pointerenter", event => {
+                    if (event.pointerType !== "mouse" || reduced.matches) return
+                    mark.inside = true
+                    // Mid-boot, the chase waits for the boot to finish.
+                    if (performance.now() >= mark.bootUntil) ease(mark, 1)
+                })
+                host.addEventListener("pointerleave", () => {
+                    mark.inside = false
+                    if (mark.mix > 0 || running.has(mark)) ease(mark, 0)
+                })
+                host.addEventListener("click", () => boot(mark))
+                boot(mark)
+            })
+    }
+
+    // --- copy to clipboard, with a label that flips for a moment ---
+    const initCopy = () => {
+        document
+            .querySelectorAll<HTMLElement>("[data-copy]:not([data-ready])")
+            .forEach(button => {
+                button.dataset.ready = ""
+                let timer: ReturnType<typeof setTimeout>
+                button.addEventListener("click", () => {
+                    navigator.clipboard?.writeText(button.dataset.copy!).catch(() => {})
+                    const scope = button.closest("[data-copy-scope]") ?? button
+                    const label = scope.querySelector<HTMLElement>("[data-copy-label]")
+                    if (!label) return
+                    label.textContent = label.dataset.done ?? "copied"
+                    scope.toggleAttribute("data-copied", true)
+                    clearTimeout(timer)
+                    timer = setTimeout(() => {
+                        label.textContent = label.dataset.idle ?? "copy"
+                        scope.removeAttribute("data-copied")
+                    }, 1600)
+                })
+            })
+    }
+
+    const init = () => {
+        initLogos()
+        initCopy()
+    }
+
+    init()
+    document.addEventListener("proto:mount", init)
+</script>
