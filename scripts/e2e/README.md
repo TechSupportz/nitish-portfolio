@@ -13,7 +13,7 @@ Failure modes to cover before changing the implementation:
 - Font preload changes cause fallback flashes or layout shifts.
 - Contact copy control fails to reset after navigation/revisits.
 - Direct routes, unknown-route status, mobile 404 typography, or reduced motion regress.
-- Project category expansion, project scrolling, active text, or the mobile sticky title stops following visibility after React islands are removed; crossing the desktop breakpoint leaves the wrong control active.
+- The projects ls sidebar stops printing new categories, highlighting the project in view, or updating the mobile path bar; crossing the desktop breakpoint leaves the wrong control active.
 
 Build with `pnpm build`, then serve with `pnpm preview:cf` on port 8787. Check an actual HTTP 200 and body after every rebuild; restart only this preview if Wrangler has stale assets.
 
@@ -23,6 +23,6 @@ The browser's clipboard permission must allow writing for the contact check. No 
 
 To repeat the main-thread stress condition, run `const busy = setInterval(() => { const end = performance.now() + 8; while (performance.now() < end) {} }, 16)` before the stress suite; run `clearInterval(busy)` in `finally`. This is a synthetic 8 ms task every 16 ms, not a calibrated CPU slowdown. It reproduced the baseline React #424 unmount-before-hydration race.
 
-Other real-browser expressions: `images.browser.js` checks candidate resolution, aspect ratio and actual resource bytes; `projects.browser.js` checks scroll, active category and sticky title; `interaction.browser.js` checks canvas pointer/ripple and manual/automatic role deadlines; `motion.browser.js` samples title/background and dot timing; `transition-errors.browser.js` deliberately creates invalid duplicate names and expects an observable InvalidStateError. Run the negative check separately from the zero-error suites. `reduced-motion.browser.js` uses the site's actual CSS through CSSOM plus matchMedia emulation because T3 has no native reduced-motion control; it restores the overrides and does not change OS settings. HDR output and other browser engines still require real-device checks.
+Other real-browser expressions: `images.browser.js` checks candidate resolution, aspect ratio and actual resource bytes; `projects.browser.js` checks scroll, the ls sidebar and the mobile path bar; `interaction.browser.js` checks canvas pointer/ripple and manual/automatic role deadlines; `motion.browser.js` samples title/background and dot timing; `transition-errors.browser.js` deliberately creates invalid duplicate names and expects an observable InvalidStateError. Run the negative check separately from the zero-error suites. `reduced-motion.browser.js` uses the site's actual CSS through CSSOM plus matchMedia emulation because T3 has no native reduced-motion control; it restores the overrides and does not change OS settings. HDR output and other browser engines still require real-device checks.
 
 Use browser screenshots and recordings to inspect logo hover, title entry over stationary background, matrix interaction, and the mobile drawer over the incoming contact page. Inspect extracted video frames against the current URL/DOM before accepting a recording. Additional direct-load and reduced-motion checks and result files are documented in the artifact README generated for this pass.

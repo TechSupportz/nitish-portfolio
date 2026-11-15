@@ -31,8 +31,9 @@
     };
     const dimensions = () => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth, fonts: document.fonts.status });
     const active = () => {
-        const expected = location.pathname === '/' ? '/about' : location.pathname;
-        check('active desktop dot', document.querySelector('.nav-dot')?.parentElement.getAttribute('href') === expected);
+        // Home has no nav entry, so no dot is active there.
+        const expected = location.pathname === '/' ? null : location.pathname;
+        check('active desktop dot', (document.querySelector('.nav-dot')?.parentElement.getAttribute('href') ?? null) === expected);
         check('active drawer dot', [...drawer.querySelectorAll('a > [data-nav-dot]')].filter(s => !s.classList.contains('opacity-0')).every(s => s.parentElement.getAttribute('href') === expected));
     };
     let metrics;
@@ -45,7 +46,7 @@
             window.setInterval = (fn, ms, ...args) => nativeInterval(() => { callbacks.push({ kind: 'interval', ms }); fn(...args); }, ms);
             window.setTimeout = (fn, ms, ...args) => nativeTimeout(() => { callbacks.push({ kind: 'timeout', ms }); typeof fn === 'function' ? fn(...args) : eval(fn); }, ms);
             try {
-                await nav('/about', 1200);
+                await nav('/', 1200);
                 callbacks.length = 0;
                 const start = performance.now();
                 await wait(8200);
@@ -53,27 +54,27 @@
                 check('role advances automatically', !!document.querySelector('[data-role-column][data-active="true"]'));
             } finally { window.setInterval = nativeInterval; window.setTimeout = nativeTimeout; }
             const navMs = [];
-            for (const path of ['/projects', '/contact', '/about', '/projects', '/contact', '/about']) navMs.push(await nav(path));
+            for (const path of ['/projects', '/contact', '/', '/projects', '/contact', '/']) navMs.push(await nav(path));
             metrics.navMs = navMs;
             const fonts = performance.getEntriesByType('resource').filter(e => e.name.endsWith('.woff2'));
             metrics.fontBytes = fonts.reduce((s, e) => s + e.decodedBodySize, 0);
         } else if (suite === 'stress') {
-            await nav('/projects'); await nav('/contact'); await nav('/about');
+            await nav('/projects'); await nav('/contact'); await nav('/');
             // Exercise interruption before capture, during capture, and during animation.
             for (const delay of [0, 5, 20, 60, 140, 0, 5, 20, 60, 140]) {
                 const traversed = new Promise(resolve => window.addEventListener('popstate', resolve, { once: true }));
                 history.back(); await traversed; await wait(delay); history.forward(); await wait(650);
-                check(`rapid back/forward ${delay}ms`, location.pathname === '/about' && document.querySelector('#scroll-list') && logo === document.querySelector('.logo'));
+                check(`rapid back/forward ${delay}ms`, location.pathname === '/' && document.querySelector('#scroll-list') && logo === document.querySelector('.logo'));
             }
             for (let i = 0; i < 10; i++) {
                 document.querySelector('.navbar a[href="/projects"]').click(); await wait(20);
                 document.querySelector('.navbar a[href="/contact"]').click(); await wait(20);
-                document.querySelector('.navbar a[href="/about"]').click(); await wait(650);
-                check('latest click wins', location.pathname === '/about' && !!document.querySelector('canvas'));
+                document.querySelector('.navbar a[href="/"]').click(); await wait(650);
+                check('latest click wins', location.pathname === '/' && !!document.querySelector('canvas'));
             }
             await wait(1200);
         } else {
-            for (const path of ['/about', '/projects', '/contact', '/about', '/projects', '/contact', '/about']) {
+            for (const path of ['/', '/projects', '/contact', '/', '/projects', '/contact', '/']) {
                 if (suite === 'mobile') {
                     document.querySelector('#menu-button').click(); await wait(550);
                     check('drawer reopens', drawer.hasAttribute('data-open') && drawer.getBoundingClientRect().x < innerWidth / 2);
@@ -104,7 +105,7 @@
             const readyBack = loaded(); history.back(); await readyBack; await wait(460);
             check('settled back', location.pathname === '/contact');
             const readyForward = loaded(); history.forward(); await readyForward; await wait(460);
-            check('settled forward', location.pathname === '/about');
+            check('settled forward', location.pathname === '/');
             const canvas = document.querySelector('canvas');
             await wait(1200);
             const before = canvas.toDataURL();

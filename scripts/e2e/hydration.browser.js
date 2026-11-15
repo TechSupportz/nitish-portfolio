@@ -22,7 +22,7 @@
             await wait([0, 5, 10, 20][i % 4]);
             await nav('/contact');
             await wait(150);
-            await nav('/about');
+            await nav('/');
             await wait([0, 5, 10, 20][i % 4]);
             await nav('/contact');
             await wait(150);

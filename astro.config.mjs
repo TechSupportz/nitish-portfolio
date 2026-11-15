@@ -35,6 +35,14 @@ export default defineConfig({
             styles: ["normal"],
             fallbacks: ["sans-serif"],
         },
+        {
+            provider: fontProviders.fontsource(),
+            name: "Fira Code",
+            cssVariable: "--font-fira-code",
+            weights: [400],
+            styles: ["normal"],
+            fallbacks: ["ui-monospace", "monospace"],
+        },
     ],
     vite: {
         plugins: [tailwindcss()],

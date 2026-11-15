@@ -1,0 +1,520 @@
+---
+import Layout from "@layouts/Layout.astro"
+import { soFar } from "@content/soFar"
+
+// Entries plus the "Born" ending, which has no dates of its own.
+const entries = soFar.map(entry => ({
+    ...entry,
+    year: 2021 + Math.floor((entry.start + 3) / 12),
+    meta: `${entry.kind} · ${entry.dates}${entry.expected ? " · expected" : ""}`,
+    branch: entry.kind === "work",
+}))
+const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, end })))
+---
+
+<Layout title="so far." headerTitle="so far.">
+    <div
+        data-sofar
+        data-bars={bars}
+        class="px-4 xs:px-6 md:grid md:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] md:gap-14 md:px-8 lg:px-12 lg:pt-12 xl:px-16"
+    >
+        <!-- The readout: the year of the entry you're on, its dates, and on
+             desktop a strip of the same LEDs showing every entry by quarter. -->
+        <div
+            class="sf-band sticky z-10 motion-preset-blur-right-md self-start pb-5 motion-duration-1000 md:pb-0"
+            aria-hidden="true"
+        >
+            <svg data-sf-year class="sf-led w-36 md:w-full md:max-w-64" viewBox="0 0 230 70"></svg>
+            <p data-sf-label class="mt-3 font-code text-sm text-white/60"></p>
+            <svg
+                data-sf-strip
+                class="sf-led sf-strip mt-6 hidden w-full max-w-64 overflow-visible md:block"
+                viewBox="0 0 230 38"></svg>
+        </div>
+        <ol
+            class="relative motion-preset-focus pb-[45vh] pl-16 motion-delay-75 motion-duration-1000 md:pt-2"
+        >
+            <div class="sf-rail absolute top-2 bottom-[45vh] left-3" aria-hidden="true">
+                <div data-sf-fill class="sf-fill"></div>
+            </div>
+            {
+                entries.map(entry => (
+                    <li
+                        data-sf-entry
+                        data-year={entry.year}
+                        data-start={entry.start}
+                        data-end={entry.end}
+                        data-label={entry.meta}
+                        class:list={["sf-entry relative pb-20", { "is-branch": entry.branch }]}
+                    >
+                        {entry.branch && (
+                            <>
+                                <svg class="sf-curve is-out" viewBox="0 0 28 32" aria-hidden="true">
+                                    <path d="M 0 0 C 0 16 28 16 28 32" />
+                                </svg>
+                                <span class="sf-rail sf-side" aria-hidden="true">
+                                    <span data-sf-fill class="sf-fill" />
+                                </span>
+                                <svg class="sf-curve is-in" viewBox="0 0 28 32" aria-hidden="true">
+                                    <path d="M 28 0 C 28 16 0 16 0 32" />
+                                </svg>
+                            </>
+                        )}
+                        <span class="sf-node" aria-hidden="true" />
+                        <div class="sf-body">
+                            <p class="font-code text-xs text-white/50">{entry.meta}</p>
+                            <h2 class="mt-1.5 text-2xl leading-tight xl:text-[1.75rem]">
+                                {entry.title}<span class="text-blue-400">.</span>
+                            </h2>
+                            <p class="mt-1 text-white/70">{entry.subtitle}</p>
+                            <ul class="dot-bullets mt-4 max-w-[62ch] space-y-1.5 text-[15px] leading-relaxed text-pretty text-white/85 lg:text-base">
+                                {entry.bullets.map(bullet => (
+                                    <li>{bullet}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </li>
+                ))
+            }
+            <!-- Before 2021 the data runs out: a broken stretch of line, and the
+                 readout glitches its way back to 2004. -->
+            <li data-sf-gap class="sf-gap relative h-72" aria-hidden="true">
+                <span class="sf-corrupt"></span>
+            </li>
+            <li data-sf-entry data-year="2004" data-label="life · 2004" class="sf-entry relative">
+                <span class="sf-node" aria-hidden="true"></span>
+                <div class="sf-body">
+                    <p class="font-code text-xs text-white/50">life · 2004</p>
+                    <h2 class="mt-1.5 text-2xl leading-tight xl:text-[1.75rem]">
+                        Born<span class="text-blue-400">.</span>
+                    </h2>
+                    <p class="mt-1 text-white/70">Didn't do much that year.</p>
+                </div>
+            </li>
+        </ol>
+    </div>
+</Layout>
+
+<style is:global>
+    /* Global because the readout's dots are made in JS. */
+
+    /* Phones: the readout sits in a band under the fixed header. It spans the
+       screen and backs everything above it, so entries never show through the
+       header's faded edge; a short fade underneath lets them slide in. */
+    .sf-band {
+        top: 12.5rem;
+        padding-top: 0.75rem;
+        background: var(--color-charcoal);
+    }
+
+    @media (max-width: 767px) {
+        .sf-band {
+            margin-inline: -1rem;
+            padding-inline: 1rem;
+        }
+
+        .sf-band::before,
+        .sf-band::after {
+            content: "";
+            position: absolute;
+            inset-inline: 0;
+            pointer-events: none;
+        }
+
+        .sf-band::before {
+            bottom: 100%;
+            height: 12.5rem;
+            background: var(--color-charcoal);
+        }
+
+        .sf-band::after {
+            top: 100%;
+            height: 1.5rem;
+            background: linear-gradient(var(--color-charcoal), transparent);
+        }
+    }
+
+    @media (min-width: 456px) and (max-width: 767px) {
+        .sf-band {
+            top: 13.5rem;
+            margin-inline: -1.5rem;
+            padding-inline: 1.5rem;
+        }
+
+        .sf-band::before {
+            height: 13.5rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .sf-band {
+            top: 19rem;
+            padding-top: 0;
+            background: none;
+        }
+    }
+
+    /* LEDs keep their colour; only opacity changes, in a left-to-right wipe
+       set by --d. */
+    .sf-led circle {
+        opacity: 0.1;
+        transition: opacity 140ms ease-out var(--d, 0ms);
+    }
+
+    .sf-led circle.on {
+        opacity: 1;
+    }
+
+    .sf-led circle.past {
+        opacity: 0.35;
+    }
+
+    .sf-strip text {
+        font-family: var(--font-code);
+        font-size: 9px;
+        fill: rgb(255 255 255 / 0.4);
+    }
+
+    /* The line: unlit dots, and a lit copy that fills down as you scroll. */
+    .sf-rail {
+        width: 3px;
+        background: radial-gradient(circle, rgb(255 255 255 / 0.22) 1.2px, transparent 1.6px) 0 0 / 3px 7px repeat-y;
+    }
+
+    .sf-fill {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle, var(--color-blue-400) 1.3px, transparent 1.7px) 0 0 / 3px 7px repeat-y;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    /* Lanes, relative to each entry's left edge: the main line, and the work
+       branch one lane to the right. */
+    .sf-entry,
+    .sf-gap {
+        --lane: calc(-3.25rem + 1.5px);
+    }
+
+    .sf-entry.is-branch {
+        --lane: calc(-1.5rem + 1.5px);
+    }
+
+    .sf-side {
+        position: absolute;
+        top: 0.75rem;
+        bottom: 3.5rem;
+        left: calc(var(--lane) - 1.5px);
+    }
+
+    .sf-curve {
+        position: absolute;
+        left: calc(-3.25rem + 1.5px);
+        width: 1.75rem;
+        height: 2rem;
+        overflow: visible;
+    }
+
+    .sf-curve.is-out {
+        top: calc(0.62rem - 2rem);
+    }
+
+    .sf-curve.is-in {
+        bottom: 1.5rem;
+    }
+
+    .sf-curve path {
+        fill: none;
+        stroke: rgb(255 255 255 / 0.22);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-dasharray: 0 7;
+        transition: stroke 200ms ease-out;
+    }
+
+    .sf-curve[data-on] path {
+        stroke: var(--color-blue-400);
+    }
+
+    /* Charcoal bands knock dots out of the line at uneven gaps; what's left
+       still fills as you scroll. */
+    .sf-corrupt {
+        position: absolute;
+        inset: 0 auto 0 calc(var(--lane) - 4px);
+        width: 8px;
+        background: repeating-linear-gradient(
+            to bottom,
+            transparent 0 15px,
+            var(--color-charcoal) 15px 31px,
+            transparent 31px 37px,
+            var(--color-charcoal) 37px 58px,
+            transparent 58px 72px,
+            var(--color-charcoal) 72px 79px,
+            transparent 79px 86px,
+            var(--color-charcoal) 86px 120px
+        );
+    }
+
+    .sf-node {
+        position: absolute;
+        top: 0.2rem;
+        left: calc(var(--lane) - 0.425rem);
+        width: 0.85rem;
+        height: 0.85rem;
+        border-radius: 50%;
+        background: var(--color-charcoal);
+        box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.35);
+    }
+
+    /* Node fill and halo are separate layers so only opacity and transform
+       change. Passed: filled. Lit: filled with a halo. */
+    .sf-node::before,
+    .sf-node::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        opacity: 0;
+    }
+
+    .sf-node::before {
+        background: var(--color-blue-400);
+        transform: scale(0.6);
+        transition:
+            opacity 200ms ease-out,
+            transform 250ms var(--ease-out-strong);
+    }
+
+    .sf-node::after {
+        box-shadow: 0 0 12px 2px rgb(96 165 250 / 0.6);
+        transition: opacity 250ms ease-out;
+    }
+
+    [data-passed] > .sf-node::before,
+    [data-lit] > .sf-node::before,
+    [data-lit] > .sf-node::after {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .sf-body {
+        opacity: 0.3;
+        transition: opacity 250ms ease-out;
+    }
+
+    [data-passed] > .sf-body {
+        opacity: 0.5;
+    }
+
+    [data-lit] > .sf-body {
+        opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sf-led circle,
+        .sf-curve path,
+        .sf-body {
+            transition: none;
+        }
+
+        .sf-node::before {
+            transform: none;
+            transition: opacity 150ms ease-out;
+        }
+    }
+</style>
+
+<script>
+    import { onPageLoad } from "@utils/pageLifecycle"
+
+    type Bar = { kind: string; start: number; end: number }
+
+    // 5 x 7 LED digits.
+    const DIGITS = [
+        ["01110", "10001", "10011", "10101", "11001", "10001", "01110"],
+        ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+        ["01110", "10001", "00001", "00010", "00100", "01000", "11111"],
+        ["11110", "00001", "00001", "01110", "00001", "00001", "11110"],
+        ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
+        ["11111", "10000", "11110", "00001", "00001", "10001", "01110"],
+        ["00110", "01000", "10000", "11110", "10001", "10001", "01110"],
+        ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
+        ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
+        ["01110", "10001", "10001", "01111", "00001", "00010", "01100"],
+    ]
+    // Months counted from apr 2021, like src/content/soFar.ts.
+    const NOW = (() => {
+        const d = new Date()
+        return (d.getFullYear() - 2021) * 12 + d.getMonth() + 1 - 4
+    })()
+
+    const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+    const mix = (a: number, b: number, t: number) => Math.round(a + (b - a) * t)
+    // Brand gradient, sky-100 -> blue-500.
+    const ledColor = (t: number) => `rgb(${mix(224, 59, t)} ${mix(242, 130, t)} ${mix(254, 246, t)})`
+    const dot = (svg: SVGSVGElement, c: number, r: number, t: number) => {
+        const node = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+        node.setAttribute("cx", String(c * 10 + 5))
+        node.setAttribute("cy", String(r * 10 + 5))
+        node.setAttribute("r", "3.6")
+        node.setAttribute("fill", ledColor(t))
+        node.style.setProperty("--d", `${c * 8}ms`)
+        svg.append(node)
+        return node
+    }
+
+    // A 4-digit readout. `flip` is the chance any dot shows wrong, for the
+    // glitchy stretch; otherwise a new value flips over left to right.
+    const makeYear = (svg: SVGSVGElement) => {
+        const dots = Array.from({ length: 7 }, (_, r) =>
+            Array.from({ length: 23 }, (_, c) => dot(svg, c, r, (c + 6 - r) / 28)),
+        )
+        let shown = ""
+        return (value: number, flip = 0) => {
+            const text = String(value)
+            if (text === shown && !flip) return
+            shown = flip ? "" : text
+            dots.forEach((row, r) =>
+                row.forEach((node, c) => {
+                    const col = c % 6
+                    const real = col < 5 && DIGITS[+text[Math.floor(c / 6)]][r][col] === "1"
+                    node.classList.toggle("on", col < 5 && (flip > 0 && Math.random() < flip ? !real : real))
+                }),
+            )
+        }
+    }
+
+    // The readout's panel extended downward: one dot per quarter from apr
+    // 2021 to dec 2026 (23 columns, the readout's width), study on the top
+    // row and work below, with year marks underneath.
+    const makeStrip = (svg: SVGSVGElement, data: Bar[]) => {
+        const cells = ["study", "work"].flatMap((kind, r) =>
+            Array.from({ length: 23 }, (_, c) => ({
+                node: dot(svg, c, r, (c + 6) / 28),
+                owner: data.findIndex(
+                    e => e.kind === kind && e.start <= c * 3 + 2 && Math.min(e.end, NOW) >= c * 3,
+                ),
+            })),
+        )
+        for (let year = 2021; year <= 2026; year++) {
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
+            text.setAttribute("x", String(Math.max(0, (year - 2021) * 4 - 1) * 10))
+            text.setAttribute("y", "34")
+            text.textContent = `'${String(year).slice(2)}`
+            svg.append(text)
+        }
+        // Lit entries are bright; newer ones you've passed stay dim.
+        return (lit: Set<number>, current: number) =>
+            cells.forEach(({ node, owner }) => {
+                node.classList.toggle("on", lit.has(owner))
+                node.classList.toggle("past", owner >= 0 && owner < current && !lit.has(owner))
+            })
+    }
+
+    onPageLoad(signal => {
+        const root = document.querySelector<HTMLElement>("[data-sofar]")
+        if (!root) return
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)")
+        const items = [...root.querySelectorAll<HTMLElement>("[data-sf-entry]")]
+        const fills = [...root.querySelectorAll<HTMLElement>("[data-sf-fill]")]
+        const curves = [...root.querySelectorAll<SVGElement>(".sf-curve")]
+        const gap = root.querySelector<HTMLElement>("[data-sf-gap]")!
+        const label = root.querySelector<HTMLElement>("[data-sf-label]")!
+        const setYear = makeYear(root.querySelector<SVGSVGElement>("[data-sf-year]")!)
+        const setStrip = makeStrip(
+            root.querySelector<SVGSVGElement>("[data-sf-strip]")!,
+            JSON.parse(root.dataset.bars!) as Bar[],
+        )
+
+        // Measured on load and resize, in page coordinates, so a scroll
+        // update is arithmetic plus writes with no layout reads.
+        let nodeY: number[] = []
+        let curveY: number[] = []
+        let gapTop = 0
+        let spans: { el: HTMLElement; top: number; height: number }[] = []
+        const pageY = (el: Element) => el.getBoundingClientRect().top + scrollY
+        const measure = () => {
+            nodeY = items.map(item => pageY(item) + 10)
+            curveY = curves.map(curve => pageY(curve) + curve.getBoundingClientRect().height / 2)
+            gapTop = pageY(gap)
+            spans = fills.map(el => ({ el, top: pageY(el), height: el.offsetHeight }))
+        }
+
+        let current = -1
+        let glitching = false
+        let lastGlitch = 0
+        const update = () => {
+            // Where you are on the timeline: the first entry at the top of the
+            // page, "Born" at the bottom, proportional in between, so the
+            // newest entry always leads whatever the window height.
+            const first = nodeY[0]
+            const born = nodeY[nodeY.length - 1]
+            const max = document.documentElement.scrollHeight - innerHeight
+            const at = first + (born - first) * (max > 0 ? clamp(scrollY / max, 0, 1) : 0)
+
+            spans.forEach(({ el, top, height }) => {
+                el.style.clipPath = `inset(0 0 ${height - clamp(at - top, 0, height)}px 0)`
+            })
+            curves.forEach((curve, i) => curve.toggleAttribute("data-on", curveY[i] <= at))
+            items.forEach((item, i) => item.toggleAttribute("data-passed", nodeY[i] <= at))
+
+            // Between the last real entry and "Born": a damaged readout,
+            // mostly 2021 for the first half, mostly 2004 for the second.
+            if (at >= gapTop && at < born) {
+                const now = performance.now()
+                if (!glitching || now - lastGlitch > 140) {
+                    lastGlitch = now
+                    setYear(at - gapTop < (born - gapTop) / 2 ? 2021 : 2004, reduced.matches ? 0 : 0.1)
+                    label.textContent = "░░░"
+                }
+                glitching = true
+            } else if (glitching) {
+                glitching = false
+                current = -1 // repaint the real readout below
+            }
+
+            // The entry you're on: the last one you've reached.
+            let next = 0
+            nodeY.forEach((y, i) => {
+                if (y <= at) next = i
+            })
+            if (next === current) return
+            current = next
+
+            // Lit = happening at the date on the readout (the start of the
+            // entry you're on). Reading GovTech (2023) lights TP too; reading
+            // TP (2021) doesn't light GovTech. "Born" has no dates.
+            const date = Number(items[current].dataset.start)
+            const lit = new Set<number>([current])
+            items.forEach((item, i) => {
+                if (date >= Number(item.dataset.start) && date <= Number(item.dataset.end)) lit.add(i)
+            })
+            items.forEach((item, i) => item.toggleAttribute("data-lit", lit.has(i)))
+            setStrip(lit, current)
+            if (glitching) return
+            setYear(Number(items[current].dataset.year))
+            label.textContent = items[current].dataset.label!
+        }
+
+        let frame = 0
+        const schedule = () => {
+            frame ||= requestAnimationFrame(() => {
+                frame = 0
+                update()
+            })
+        }
+        const relayout = () => {
+            measure()
+            update()
+        }
+        addEventListener("scroll", schedule, { signal, passive: true })
+        addEventListener("resize", relayout, { signal, passive: true })
+        // Fonts and late layout shifts move things without a resize.
+        const observer = new ResizeObserver(relayout)
+        observer.observe(root)
+        relayout()
+        return () => {
+            cancelAnimationFrame(frame)
+            observer.disconnect()
+        }
+    })
+</script>

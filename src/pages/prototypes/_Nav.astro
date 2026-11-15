@@ -10,8 +10,8 @@ type Props = {
 
 const { tempo, active } = Astro.props
 const links = [
-    { href: "/prototypes/about", label: "so far" },
-    { href: "/prototypes/projects", label: "projects" },
+    { href: "/so-far", label: "so far" },
+    { href: "/projects", label: "projects" },
     { href: "/prototypes/contact", label: "contact" },
 ]
 ---
@@ -21,7 +21,7 @@ const links = [
         class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
     >
         <a
-            href="/prototypes/logo"
+            href="/"
             data-logo="lit"
             data-logo-tempo={tempo}
             class="p-logo-host flex size-12 items-center md:size-14"

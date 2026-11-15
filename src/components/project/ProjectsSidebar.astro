@@ -1,115 +1,180 @@
 ---
-import { projectContent } from "@content/projects"
-import type { TProjectCategory } from "@src/types/ProjectContentType"
+// Terminal output. Each category is listed once, the first time you reach it;
+// scrolling back only moves the highlight. Commands render typed out and
+// printed; the script in projects.astro clears and types them (data-text is
+// the command, data-in marks printed output).
+import Highlight from "@components/Highlight.astro"
+import type { TListedProject, TProjectCategory } from "@src/types/ProjectContentType"
+
+type Props = {
+    groups: { category: TProjectCategory; items: TListedProject[] }[]
+}
+
+const { groups } = Astro.props
+const first = groups[0]
 ---
 
-<div data-project-sidebar class="flex flex-col gap-6 pr-12">
-    {(Object.keys(projectContent) as TProjectCategory[]).map(category => (
-        <details
-            id={`details-${category}`}
-            data-project-category={category}
-            open={category === "featured"}
-            class:list={[
-                "motion-preset-blur-down-md motion-duration-1500",
-                {
-                    "motion-delay-100": category === "featured",
-                    "motion-delay-200": category === "personal",
-                    "motion-delay-300": category === "hackathon",
-                },
-            ]}
-        >
-            <summary class="cursor-pointer list-none font-display text-2xl font-bold xl:text-3xl">
-                {category}
-            </summary>
-            <ul class="list-['···'] pt-1 pl-4">
-                {projectContent[category].map(project => (
-                    <li
-                        data-project-target={project.title.toLowerCase()}
-                        class:list={[
-                            "cursor-pointer pl-1.5 text-lg font-extralight text-balance transition-all duration-300 ease-out xl:text-xl",
-                            {
-                                "font-medium":
-                                    project.title.toLowerCase() === "transito",
-                            },
-                        ]}
-                    >
-                        {project.title.toLowerCase()}
-                    </li>
-                ))}
-            </ul>
-        </details>
-    ))}
-</div>
-
-<script>
-    import {
-        $currentProject,
-        $currentProjectCategory,
-    } from "@store/projectsStore"
-    import { onPageLoad } from "@utils/pageLifecycle"
-
-    onPageLoad(signal => {
-        const sidebar = document.querySelector<HTMLElement>(
-            "[data-project-sidebar]",
-        )
-        if (!sidebar) return
-        const items = sidebar.querySelectorAll<HTMLElement>(
-            "[data-project-target]",
-        )
-        const categories = sidebar.querySelectorAll<HTMLDetailsElement>(
-            "[data-project-category]",
-        )
-        const scrollTo = (element: Element | null) =>
-            element?.scrollIntoView({
-                block: "center",
-                behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-                    ? "instant"
-                    : "smooth",
-            })
-
-        items.forEach(item =>
-            item.addEventListener(
-                "click",
-                () => {
-                    scrollTo(
-                        document.getElementById(item.dataset.projectTarget!),
-                    )
-                },
-                { signal },
-            ),
-        )
-        categories.forEach(category =>
-            category.querySelector("summary")?.addEventListener(
-                "click",
-                () => {
-                    scrollTo(
-                        document.querySelector(
-                            `.${category.dataset.projectCategory}-project`,
-                        ),
-                    )
-                },
-                { signal },
-            ),
-        )
-
-        const unsubscribeProject = $currentProject.subscribe(project => {
-            items.forEach(item =>
-                item.classList.toggle(
-                    "font-medium",
-                    item.dataset.projectTarget === project,
-                ),
-            )
-        })
-        const unsubscribeCategory = $currentProjectCategory.subscribe(
-            category => {
-                categories.forEach(item => {
-                    item.open = item.dataset.projectCategory === category
-                })
-            },
-        )
-        return () => {
-            unsubscribeProject()
-            unsubscribeCategory()
+<nav
+    data-ls
+    class="flex min-h-0 min-w-0 flex-col pr-6 font-code text-sm"
+    aria-label="Projects"
+>
+    <p>
+        <span class="text-blue-400">❯</span>{" "}
+        <span data-ls-cmd data-text="ls ./projects">ls ./projects</span>
+    </p>
+    <div data-ls-out data-in class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
+        {
+            groups.map(({ category }, i) => (
+                <button
+                    style={`--i:${i}`}
+                    type="button"
+                    data-ls-dir={category}
+                    data-active={category === first.category ? "" : undefined}
+                    class="ls-dir"
+                >
+                    {category}/
+                </button>
+            ))
         }
-    })
-</script>
+    </div>
+    <div data-ls-scroll class="ls-scroll min-h-0 flex-1 overflow-y-auto">
+        {
+            groups.map(({ category, items }) => (
+                <div
+                    data-ls-block={category}
+                    hidden={category !== first.category}
+                    class="mt-5"
+                >
+                    <p>
+                        <span class="text-blue-400">❯</span>{" "}
+                        <span data-ls-cmd data-text={`ls ./${category}`}>
+                            ls ./{category}
+                        </span>
+                    </p>
+                    <ul
+                        data-ls-out
+                        data-in={category === first.category ? "" : undefined}
+                        class="mt-2 space-y-0.5"
+                    >
+                        {items.map((project, i) => (
+                            <li style={`--i:${i}`}>
+                                <button
+                                    type="button"
+                                    data-ls-row={project.id}
+                                    data-active={
+                                        project.id === first.items[0].id
+                                            ? ""
+                                            : undefined
+                                    }
+                                    class="group ls-row flex items-baseline gap-3 text-left"
+                                >
+                                    <span class="ls-no text-xs">{project.no}</span>
+                                    <span class="font-sans text-base xl:text-lg">
+                                        <Highlight>{project.name}</Highlight>
+                                        <span class="ls-stop">.</span>
+                                    </span>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))
+        }
+        <p data-ls-prompt class="mt-5">
+            <span class="text-blue-400">❯</span>
+            <span data-ls-cursor class="term-cursor" aria-hidden="true"></span>
+        </p>
+    </div>
+</nav>
+
+<style>
+    .ls-dir {
+        color: rgb(255 255 255 / 0.45);
+        transition: color 150ms ease-out;
+    }
+
+    .ls-dir:hover,
+    .ls-dir[data-active] {
+        color: white;
+    }
+
+    .ls-dir[data-active] {
+        text-decoration: underline dotted var(--color-blue-400);
+        text-underline-offset: 4px;
+        text-decoration-thickness: 2px;
+    }
+
+    .ls-row {
+        color: rgb(255 255 255 / 0.5);
+        transition: color 150ms ease-out;
+    }
+
+    .ls-row:hover,
+    .ls-row[data-active] {
+        color: white;
+    }
+
+    .ls-no {
+        color: rgb(255 255 255 / 0.35);
+    }
+
+    .ls-row[data-active] .ls-no {
+        color: var(--color-blue-400);
+    }
+
+    /* The project in view gets the brand's full stop. */
+    .ls-stop {
+        color: var(--color-blue-400);
+        opacity: 0;
+        transition: opacity 150ms ease-out;
+    }
+
+    .ls-row[data-active] .ls-stop {
+        opacity: 1;
+    }
+
+    /* Scrollback: older listings scroll up under the pinned header, with no
+       visible scrollbar. The fade only shows once scrolled. */
+    .ls-scroll {
+        scrollbar-width: none;
+        overscroll-behavior: contain;
+    }
+
+    .ls-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ls-scroll[data-scrolled] {
+        mask-image: linear-gradient(to bottom, transparent, white 3rem);
+    }
+
+    /* Output prints line by line after the command types: each line fades
+       in and rises 4px, 35ms apart. */
+    [data-ls-out] > * {
+        transition:
+            opacity 160ms ease-out calc(var(--i, 0) * 35ms),
+            transform 220ms var(--ease-out-strong) calc(var(--i, 0) * 35ms),
+            color 150ms ease-out;
+    }
+
+    [data-ls-out]:not([data-in]) > * {
+        opacity: 0;
+        transform: translateY(4px);
+        pointer-events: none;
+    }
+
+    /* The cursor holds solid while typing, and blinks at an idle prompt. */
+    [data-ls-cursor][data-typing] {
+        animation: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        [data-ls-out] > *,
+        .ls-dir,
+        .ls-row,
+        .ls-stop {
+            transition: none;
+        }
+    }
+</style>

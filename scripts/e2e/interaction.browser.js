@@ -1,7 +1,7 @@
 (async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
     const ready = new Promise(r => document.addEventListener('astro:page-load', r, { once: true }));
-    document.querySelector('nav a[href="/about"]').click(); await ready; await wait(1200);
+    document.querySelector('nav a[href="/"]').click(); await ready; await wait(1200);
     const canvas = document.querySelector('canvas'), rect = canvas.getBoundingClientRect();
     const hash = () => canvas.toDataURL();
     const results = [], check = (name, pass, details = {}) => results.push({ name, pass: !!pass, ...details });

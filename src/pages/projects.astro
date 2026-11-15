@@ -1,110 +1,285 @@
 ---
 import ProjectCard from "@components/project/ProjectCard.astro"
+import ProjectsSidebar from "@components/project/ProjectsSidebar.astro"
 import StickyProjectTitle from "@components/project/StickyProjectTitle.astro"
 import Layout from "@layouts/Layout.astro"
 import { projectContent } from "@content/projects"
-import ProjectsSidebar from "@components/project/ProjectsSidebar.astro"
-import type { TProjectCategory } from "@src/types/ProjectContentType"
+import type {
+    TListedProject,
+    TProjectCategory,
+} from "@src/types/ProjectContentType"
+
+let count = 0
+const groups = (Object.keys(projectContent) as TProjectCategory[]).map(
+    category => ({
+        category,
+        items: projectContent[category].map(
+            (project): TListedProject => ({
+                ...project,
+                category,
+                no: String(++count).padStart(2, "0"),
+                id: project.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/^-|-$/g, ""),
+                name: project.title.toLowerCase(),
+            }),
+        ),
+    }),
+)
+const first = groups[0].items[0]
 ---
 
 <Layout title="projects." headerTitle="projects.">
     <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
-        <div
-            class="fixed hidden h-5/6 justify-between wmax:max-w-100 lg:flex lg:w-[25vw]"
+        <aside
+            class="fixed hidden h-[calc(100dvh-21rem)] justify-between wmax:max-w-100 lg:flex lg:w-[25vw]"
         >
-            <ProjectsSidebar />
+            <ProjectsSidebar groups={groups} />
             <div
-                class="mr-12 h-full w-1 motion-preset-fade-lg overflow-clip motion-delay-500 motion-duration-1500"
+                class="mr-10 h-full w-1 motion-preset-fade-lg overflow-clip motion-delay-500 motion-duration-1500"
                 style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
             >
                 <div
                     id="divider"
-                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70 transition-transform duration-300 ease-out"
+                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70"
                 >
                 </div>
             </div>
-        </div>
+        </aside>
         <div
-            class="w-full pb-48 wmax:ml-100 lg:mb-32 lg:ml-[25vw] lg:w-3/4 lg:pb-24"
+            class="flex w-full motion-preset-focus flex-col gap-12 px-6 pb-48 motion-delay-75 motion-duration-1000 md:px-8 lg:ml-[25vw] lg:w-3/4 lg:gap-16 lg:px-0 lg:pb-40 wmax:ml-100"
         >
             {
-                (Object.keys(projectContent) as TProjectCategory[]).map(
-                    category => (
-                        <div class="mb-16 lg:mb-24">
-                            <div class="my-2 grid motion-preset-focus place-items-center gap-7 motion-delay-75 motion-duration-1000 sm:gap-8 lg:place-items-center lg:gap-24 lg:motion-duration-1500">
-                                {projectContent[category].map(project => (
-                                    <ProjectCard
-                                        title={project.title}
-                                        category={category}
-                                        description={project.description}
-                                        mobileDescription={
-                                            project.mobileDescription
-                                        }
-                                        additionalDescription={
-                                            project.additionalDescription
-                                        }
-                                        imageUrl={project.imageUrl}
-                                        url={project.url}
-                                        icons={project.icons}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    ),
+                groups.flatMap(group =>
+                    group.items.map(project => <ProjectCard {...project} />),
                 )
             }
         </div>
-        <StickyProjectTitle />
     </div>
+    <StickyProjectTitle category={first.category} name={first.name} />
 </Layout>
-<script>
-    import { $projectVisibility } from "@store/projectsStore"
-    import type { TProjectCategory } from "@src/types/ProjectContentType"
 
+<script>
     import { onPageLoad } from "@utils/pageLifecycle"
 
+    const TYPE_MS = 24
+    const PRINT_PAUSE_MS = 90
+    const INTRO_DELAY_MS = 250
+
     onPageLoad(signal => {
-        const projectCards = document.querySelectorAll(".project-card")
+        const side = document.querySelector<HTMLElement>("[data-ls]")
+        const cards = [
+            ...document.querySelectorAll<HTMLElement>("[data-project-card]"),
+        ]
+        if (!side || !cards.length) return
 
-        if (!projectCards.length) return
-        $projectVisibility.set({
-            transito: { category: "featured", isVisible: true },
-        })
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)")
+        const behavior = (): ScrollBehavior =>
+            reduced.matches ? "instant" : "smooth"
+        const dirs = [...side.querySelectorAll<HTMLElement>("[data-ls-dir]")]
+        const blocks = [
+            ...side.querySelectorAll<HTMLElement>("[data-ls-block]"),
+        ]
+        const rows = [...side.querySelectorAll<HTMLElement>("[data-ls-row]")]
+        const prompt = side.querySelector<HTMLElement>("[data-ls-prompt]")!
+        const cursor = side.querySelector<HTMLElement>("[data-ls-cursor]")!
+        const scroller = side.querySelector<HTMLElement>("[data-ls-scroll]")!
+        const pwd = document.querySelector<HTMLElement>("[data-pwd]")
+        const divider = document.getElementById("divider")
+        const header = document.querySelector("h1")
 
-        // Function to animate the divider
-        window.addEventListener(
+        let currentId = cards[0].id
+        let currentCat = cards[0].dataset.category!
+
+        // Keep a sidebar line in view without touching the page scroll.
+        const keepInView = (el: HTMLElement, toBottom = false) => {
+            const box = scroller.getBoundingClientRect()
+            const r = el.getBoundingClientRect()
+            let top = scroller.scrollTop
+            if (toBottom) top = scroller.scrollHeight
+            else if (r.top < box.top + 48) top += r.top - box.top - 48
+            else if (r.bottom > box.bottom - 8) top += r.bottom - box.bottom + 8
+            else return
+            scroller.scrollTo({ top, behavior: behavior() })
+        }
+
+        // Commands run one at a time. The cursor moves onto the line being
+        // typed (solid), the output prints all at once, then the cursor
+        // returns to a fresh prompt and blinks. Anything queued behind runs
+        // instantly, so fast scrolling never leaves a half-typed line.
+        type Job = { line: HTMLElement; cmd: HTMLElement; out: HTMLElement }
+        const jobs: Job[] = []
+        let running = false
+        const sleep = (ms: number) =>
+            new Promise<void>(resolve => {
+                const id = setTimeout(resolve, ms)
+                signal.addEventListener("abort", () => clearTimeout(id), {
+                    once: true,
+                })
+            })
+        const pump = async () => {
+            if (running) return
+            running = true
+            while (jobs.length && !signal.aborted) {
+                const { line, cmd, out } = jobs.shift()!
+                const text = cmd.dataset.text!
+                line.hidden = false
+                if (line !== side) prompt.before(line)
+                if (reduced.matches || jobs.length) {
+                    cmd.textContent = text
+                } else {
+                    cmd.textContent = ""
+                    cmd.after(cursor)
+                    cursor.toggleAttribute("data-typing", true)
+                    prompt.hidden = true // no idle prompt under a line being typed
+                    keepInView(prompt, true)
+                    for (let i = 1; i <= text.length; i++) {
+                        await sleep(TYPE_MS)
+                        if (signal.aborted) return
+                        if (jobs.length) {
+                            cmd.textContent = text
+                            break
+                        }
+                        cmd.textContent = text.slice(0, i)
+                    }
+                    await sleep(PRINT_PAUSE_MS)
+                    if (signal.aborted) return
+                }
+                out.toggleAttribute("data-in", true)
+                prompt.hidden = false
+                prompt.append(cursor)
+                cursor.toggleAttribute("data-typing", false)
+                keepInView(prompt, true)
+            }
+            running = false
+        }
+        const run = (line: HTMLElement) => {
+            jobs.push({
+                line,
+                cmd: line.querySelector<HTMLElement>("[data-ls-cmd]")!,
+                out: line.querySelector<HTMLElement>("[data-ls-out]")!,
+            })
+            pump()
+        }
+
+        // First visit to a category runs its `ls` once, stacked under the
+        // earlier ones.
+        const revealed = new Set<string>()
+        const reveal = (cat: string) => {
+            if (revealed.has(cat)) return
+            revealed.add(cat)
+            const block = blocks.find(b => b.dataset.lsBlock === cat)
+            if (block) run(block)
+        }
+
+        // On load the sidebar types its way in: `ls ./projects`, then the
+        // category in view. The rendered HTML already shows both, for
+        // reduced motion and for the moment before this runs.
+        revealed.add(currentCat)
+        if (!reduced.matches) {
+            side.querySelectorAll("[data-ls-out]").forEach(out =>
+                out.removeAttribute("data-in"),
+            )
+            side.querySelectorAll<HTMLElement>("[data-ls-cmd]").forEach(
+                cmd => (cmd.textContent = ""),
+            )
+            const firstBlock = blocks.find(b => b.dataset.lsBlock === currentCat)!
+            firstBlock.hidden = true
+            prompt.hidden = true
+            sleep(INTRO_DELAY_MS).then(() => {
+                if (signal.aborted) return
+                run(side)
+                run(firstBlock)
+            })
+        }
+
+        const setActive = (card: HTMLElement) => {
+            const cat = card.dataset.category!
+            if (cat !== currentCat) {
+                currentCat = cat
+                dirs.forEach(dir =>
+                    dir.toggleAttribute("data-active", dir.dataset.lsDir === cat),
+                )
+                reveal(cat)
+            }
+            if (card.id === currentId) return
+            currentId = card.id
+            rows.forEach(row => {
+                const on = row.dataset.lsRow === card.id
+                row.toggleAttribute("data-active", on)
+                if (on && !row.closest<HTMLElement>("[data-ls-block]")!.hidden)
+                    keepInView(row)
+            })
+            if (pwd) pwd.textContent = `${cat}/${card.dataset.name}`
+        }
+
+        // The card in view is the lowest one whose top has passed a reading
+        // line a little under the fixed header.
+        const update = () => {
+            const headerBottom = header?.getBoundingClientRect().bottom ?? 200
+            const line = headerBottom + (innerHeight - headerBottom) * 0.3
+            let pick = cards[0]
+            for (const card of cards) {
+                if (card.getBoundingClientRect().top <= line) pick = card
+            }
+            if (
+                innerHeight + scrollY >=
+                document.documentElement.scrollHeight - 4
+            ) {
+                pick = cards[cards.length - 1]
+            }
+            setActive(pick)
+        }
+
+        let frame = 0
+        addEventListener(
             "scroll",
             () => {
-                const divider = document.getElementById("divider")
-                if (!divider) return
-
-                divider.style.transform = `translateY(-${window.scrollY / 50}px)`
+                if (frame) return
+                frame = requestAnimationFrame(() => {
+                    frame = 0
+                    // The dotted divider drifts a little with the page.
+                    if (divider && !reduced.matches)
+                        divider.style.transform = `translateY(-${scrollY / 50}px)`
+                    update()
+                })
             },
             { signal, passive: true },
         )
-
-        const observer = new IntersectionObserver(
-            entries => {
-                entries.forEach(entry => {
-                    const { target, isIntersecting } = entry
-
-                    $projectVisibility.setKey(target.id, {
-                        category: target.classList[0].split(
-                            "-",
-                        )[0] as TProjectCategory,
-                        isVisible: isIntersecting,
-                    })
-                })
-            },
-            {
-                rootMargin: "-264px 0px 0px 0px",
-                threshold: 0.5,
-            },
+        addEventListener("resize", update, { signal, passive: true })
+        scroller.addEventListener(
+            "scroll",
+            () =>
+                scroller.toggleAttribute(
+                    "data-scrolled",
+                    scroller.scrollTop > 2,
+                ),
+            { signal, passive: true },
         )
 
-        projectCards.forEach(card => {
-            observer.observe(card)
-        })
-        return () => observer.disconnect()
+        const scrollToCard = (card?: Element | null) =>
+            card?.scrollIntoView({ block: "start", behavior: behavior() })
+        dirs.forEach(dir =>
+            dir.addEventListener(
+                "click",
+                () =>
+                    scrollToCard(
+                        cards.find(
+                            card => card.dataset.category === dir.dataset.lsDir,
+                        ),
+                    ),
+                { signal },
+            ),
+        )
+        rows.forEach(row =>
+            row.addEventListener(
+                "click",
+                () => scrollToCard(document.getElementById(row.dataset.lsRow!)),
+                { signal },
+            ),
+        )
+        update()
+        return () => cancelAnimationFrame(frame)
     })
 </script>

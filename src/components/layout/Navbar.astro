@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets"
+import Logo from "@components/Logo.astro"
 import Menu from "@lucide/astro/icons/menu"
 import { getNavLinks } from "@utils/navLinks"
 import Highlight from "@components/Highlight.astro"
@@ -11,14 +11,13 @@ const navLinks = getNavLinks(Astro.url.pathname)
     <div
         class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
     >
-        <a href="/" class="logo size-12 md:size-14" transition:persist="navbar-logo">
-            <Image
-                src="/logo.svg"
-                alt="logo"
-                loading="eager"
-                height={56}
-                width={56}
-            />
+        <a
+            href="/"
+            class="logo flex size-12 items-center md:size-14"
+            aria-label="nitish, home"
+            transition:persist="navbar-logo"
+        >
+            <Logo class="w-10 md:w-12" />
         </a>
         <div
             id="menu-button"
@@ -35,7 +34,7 @@ const navLinks = getNavLinks(Astro.url.pathname)
                         <Highlight>{label}</Highlight>
                         <span
                             class:list={[
-                                "text-2xl",
+                                "text-2xl text-blue-400",
                                 { "nav-dot": isActive, "opacity-0": !isActive },
                             ]}
                         >
@@ -51,6 +50,96 @@ const navLinks = getNavLinks(Astro.url.pathname)
     import { isDrawerOpen } from "@store/uiStore"
     import { onPageLoad } from "@utils/pageLifecycle"
 
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)")
+    const BOOT_MS = 1200 // matches the CSS timeline in Logo.astro
+    const CHASE_MS = 1200 // one lap: stem, shoulder, leg, dot
+    const PULSE = 0.28 // half-width of the travelling light, in laps
+    const FLOOR = 0.16 // brightness a segment drops to once the light has left
+    const MIX_MS = 280 // fully lit <-> chase
+
+    const smooth = (t: number) => t * t * (3 - 2 * t)
+    const easeOut = (t: number) => 1 - (1 - t) ** 3
+
+    // Hover chase: the light travels stem -> shoulder -> leg -> dot. `mix`
+    // eases between fully lit (0) and the chase (1), so neither end snaps.
+    const makeMark = (host: HTMLElement) => {
+        const svg = host.querySelector("svg")!
+        const pick = (layer: string) =>
+            [".s1", ".s2", ".s3", ".dot"].map(
+                seg => host.querySelector<SVGElement>(`.${layer}${seg}`)!,
+            )
+        const lit = pick("l")
+        const glow = pick("g")
+        const halo = host.querySelector<SVGElement>(".halo-wrap")
+        let mix = 0
+        let from = 0
+        let to = 0
+        let start = 0
+        let duration = 0
+        let lap = 0
+        let frame = 0
+        let inside = false
+        let bootUntil = 0
+
+        const pulse = (phase: number, i: number) => {
+            const d = Math.abs(phase - i / 4)
+            const dist = Math.min(d, 1 - d)
+            return dist >= PULSE ? 0 : smooth(1 - dist / PULSE)
+        }
+        const rest = () => {
+            lit.forEach(el => el.style.removeProperty("--o"))
+            glow.forEach(el => el.style.removeProperty("--go"))
+            halo?.style.removeProperty("--ho")
+        }
+        const tick = (now: number) => {
+            const p = duration > 0 ? Math.min(1, (now - start) / duration) : 1
+            mix = from + (to - from) * easeOut(p)
+            if (p >= 1 && to === 0) {
+                mix = 0
+                frame = 0
+                rest()
+                return
+            }
+            const phase = ((((now - lap) / CHASE_MS) % 1) + 1) % 1
+            lit.forEach((el, i) => {
+                const b = pulse(phase, i)
+                el.style.setProperty("--o", String(1 + (FLOOR + (1 - FLOOR) * b - 1) * mix))
+                glow[i].style.setProperty("--go", String(0.7 * b * mix))
+            })
+            halo?.style.setProperty("--ho", String(1 - mix))
+            frame = requestAnimationFrame(tick)
+        }
+        const ease = (target: number) => {
+            const now = performance.now()
+            if (target === 1 && mix === 0) lap = now // the light starts at the stem
+            from = mix
+            to = target
+            start = now
+            duration = MIX_MS * Math.abs(target - mix)
+            if (!frame) frame = requestAnimationFrame(tick)
+        }
+
+        return {
+            boot() {
+                svg.classList.remove("is-boot")
+                void svg.getBoundingClientRect()
+                svg.classList.add("is-boot")
+                bootUntil = performance.now() + BOOT_MS
+                setTimeout(() => {
+                    svg.classList.remove("is-boot")
+                    if (inside) ease(1)
+                }, BOOT_MS + 40)
+            },
+            hover(on: boolean) {
+                inside = on
+                // Mid-boot, the chase waits for the boot to finish.
+                if (on && performance.now() < bootUntil) return
+                ease(on ? 1 : 0)
+            },
+        }
+    }
+    let mark: ReturnType<typeof makeMark> | null = null
+
     onPageLoad(signal => {
         document.getElementById("menu-button")?.addEventListener(
             "click",
@@ -60,30 +149,25 @@ const navLinks = getNavLinks(Astro.url.pathname)
             { signal },
         )
 
-        const logo = document.querySelector(".logo")
-        if (!logo) return
+        const logo = document.querySelector<HTMLElement>(".logo")
+        if (!logo || reduced.matches) return
 
-        // The same logo DOM node survives internal navigation.
-        logo.classList.remove("animate-quick-spin")
-        if (!sessionStorage.getItem("logo-spun")) {
-            sessionStorage.setItem("logo-spun", "true")
-            logo.classList.add("animate-quick-spin")
+        // The same logo node survives internal navigation, so its state
+        // lives outside this per-page setup. Boot once per session.
+        mark ??= makeMark(logo)
+        if (!sessionStorage.getItem("logo-booted")) {
+            sessionStorage.setItem("logo-booted", "true")
+            mark.boot()
         }
-
         logo.addEventListener(
-            "mouseenter",
-            () => {
-                logo.classList.add("animate-quick-spin")
+            "pointerenter",
+            event => {
+                if (event.pointerType === "mouse") mark!.hover(true)
             },
             { signal },
         )
-
-        logo.addEventListener(
-            "animationend",
-            () => {
-                logo.classList.remove("animate-quick-spin")
-            },
-            { signal },
-        )
+        logo.addEventListener("pointerleave", () => mark!.hover(false), {
+            signal,
+        })
     })
 </script>

@@ -23,7 +23,7 @@
     const results = [];
     const check = (name, pass, details = {}) => results.push({ name, pass: !!pass, ...details });
     try {
-        apply(); await nav('/about'); apply(); await wait(1300);
+        apply(); await nav('/'); apply(); await wait(1300);
         const canvas = document.querySelector('canvas'), before = canvas.toDataURL();
         const rect = canvas.getBoundingClientRect();
         window.dispatchEvent(new PointerEvent('pointerdown', { clientX: innerWidth / 2, clientY: rect.y + rect.height / 2, pointerType: 'touch' }));

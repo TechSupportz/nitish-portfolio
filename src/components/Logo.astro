@@ -1,0 +1,172 @@
+---
+// The mark: a segmented-LED "n" (stem, shoulder, leg) and the accent dot, on
+// the brand guide's 132 x 120 grid. Each segment is drawn three times: the
+// unlit LED, a blurred glow, and the lit face. Only opacity ever animates.
+// The navbar script drives the boot (`is-boot` on the svg) and the hover
+// chase (--o / --go / --ho on the layers).
+type Props = {
+    class?: string
+}
+
+const { class: className } = Astro.props
+const layers = ["off", "g", "l"] as const
+---
+
+<svg
+    class:list={["nlogo", className]}
+    viewBox="0 0 132 120"
+    role="img"
+    aria-label="nitish"
+>
+    {
+        layers.map(layer => (
+            <g class={`layer-${layer}`}>
+                <rect class={`${layer} s1`} x="0" y="0" width="30" height="120" rx="15" />
+                <path
+                    class={`${layer} s2`}
+                    d="M51,0 A51,51 0 0 1 102,51 A15,15 0 0 1 72,51 A21,21 0 0 0 51,30 A15,15 0 0 1 51,0 Z"
+                />
+                <rect class={`${layer} s3`} x="72" y="72" width="30" height="48" rx="15" />
+                <circle class={`${layer} dot`} cx="120" cy="108" r="12" />
+                {layer === "g" && (
+                    <g class="halo-wrap">
+                        <circle class="halo" cx="120" cy="108" r="12" />
+                    </g>
+                )}
+            </g>
+        ))
+    }
+</svg>
+
+<style>
+    .nlogo {
+        display: block;
+        height: auto;
+        overflow: visible;
+    }
+
+    rect,
+    path {
+        fill: white;
+    }
+
+    circle {
+        fill: var(--color-blue-400);
+    }
+
+    .off {
+        opacity: 0.1;
+    }
+
+    .layer-g {
+        filter: blur(9px);
+    }
+
+    /* At rest everything is lit; the hover chase overrides these. */
+    .l {
+        opacity: var(--o, 1);
+    }
+
+    .g {
+        opacity: var(--go, 0);
+    }
+
+    .halo-wrap {
+        opacity: var(--ho, 1);
+    }
+
+    /* The dot keeps a soft glow, breathing like an online light. */
+    .halo {
+        opacity: 0.55;
+        animation: logo-breathe 2.6s ease-in-out infinite alternate;
+    }
+
+    .s2 {
+        --d: 1;
+    }
+
+    .s3 {
+        --d: 2;
+    }
+
+    /* Boot, about 1.2s: stem, shoulder and leg power on in turn with a glow
+       flash each, then the dot flickers alive. Backwards fill only, so the
+       resting state takes over when it ends. */
+    .is-boot .l:not(.dot) {
+        animation: logo-on 213ms ease-out calc(var(--d, 0) * 153ms) backwards;
+    }
+
+    .is-boot .g:not(.dot) {
+        animation: logo-flash 467ms ease-out calc(var(--d, 0) * 153ms) backwards;
+    }
+
+    .is-boot .l.dot {
+        animation: logo-flicker 427ms steps(1, end) 547ms backwards;
+    }
+
+    .is-boot .g.dot {
+        animation: logo-flash 333ms ease-out 867ms backwards;
+    }
+
+    .is-boot .halo-wrap {
+        animation: logo-on 333ms ease-out 867ms backwards;
+    }
+
+    @keyframes logo-on {
+        from {
+            opacity: 0;
+        }
+    }
+
+    @keyframes logo-flash {
+        0% {
+            opacity: 0;
+        }
+        30% {
+            opacity: 0.75;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes logo-flicker {
+        0% {
+            opacity: 0;
+        }
+        14% {
+            opacity: 1;
+        }
+        28% {
+            opacity: 0;
+        }
+        48% {
+            opacity: 1;
+        }
+        60% {
+            opacity: 0.25;
+        }
+        74%,
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes logo-breathe {
+        from {
+            opacity: 0.2;
+        }
+        to {
+            opacity: 0.75;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .l,
+        .g,
+        .halo-wrap,
+        .halo {
+            animation: none !important;
+        }
+    }
+</style>

@@ -6,6 +6,7 @@
         var(--font-dm-sans), "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol", "Noto Color Emoji";
     --font-display: var(--font-poppins);
+    --font-code: var(--font-fira-code), ui-monospace, monospace;
 
     --color-charcoal: #121212;
 
@@ -14,23 +15,13 @@
 
     --text-shadow-xl: 0 0 50px black;
 
+    --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+
     --progressive-blur-to-t: to top;
     --progressive-blur-to-b: to bottom;
     --progressive-blur-to-l: to left;
     --progressive-blur-to-r: to right;
 
-    --animate-quick-spin: quick-spin 0.35s linear;
-    @keyframes quick-spin {
-        0% {
-            transform: scale(1) rotate(0deg);
-        }
-        50% {
-            transform: scale(1.25) rotate(180deg);
-        }
-        100% {
-            transform: scale(1) rotate(360deg);
-        }
-    }
 }
 
 @utility bg-progressive-blur-to-* {
@@ -72,6 +63,77 @@ h6 {
 
 p {
     font-weight: var(--font-weight-light);
+}
+
+/* Brand details: the dotted rule, blue-dot bullets and a terminal cursor. */
+
+.dotted-rule {
+    position: relative;
+    height: 3px;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.28) 1.2px, transparent 1.6px) 0 0 /
+        7px 3px repeat-x;
+}
+
+/* The lit version sweeps across on hover of the parent .group. */
+.dotted-rule-lit::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        var(--color-sky-100),
+        var(--color-blue-500)
+    );
+    mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 280ms var(--ease-out-strong);
+}
+
+.group:hover .dotted-rule-lit::after,
+.group:focus-visible .dotted-rule-lit::after {
+    clip-path: inset(0);
+}
+
+.dot-bullets li {
+    position: relative;
+    padding-left: 1.1rem;
+}
+
+.dot-bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0.1rem;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-blue-400);
+}
+
+.term-cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.15em;
+    margin-left: 0.35em;
+    vertical-align: text-bottom;
+    background: white;
+    animation: term-blink 1.1s steps(1, end) infinite;
+}
+
+@keyframes term-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dotted-rule-lit::after {
+        transition: none;
+    }
+
+    .term-cursor {
+        animation: none;
+    }
 }
 
 details::details-content {

@@ -19,8 +19,6 @@ export const projectContent: TProjectContent = {
     featured: [
         {
             title: "Transito",
-            mobileDescription:
-                "Hopefully the last bus timing app you'll need in Singapore. No fluff, and yes, NUS shuttles too.",
             description:
                 "Hopefully the last bus timing app you'll ever need. Open it, see when your bus is coming, and go. No fluff, and yes, NUS shuttles too.",
             additionalDescription: "My ongoing rabbit hole since 2021.",
@@ -30,8 +28,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Canvas to Notion",
-            mobileDescription:
-                "Got tired of Canvas surprises, so an agent syncs everything to my Notion planner.",
             description:
                 "I got tired of checking Canvas for surprises, so now an agent quietly syncs everything into my Notion planner.",
             additionalDescription:
@@ -42,8 +38,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Native Glass Navbar",
-            mobileDescription:
-                "Wanted Liquid Glass in Flutter, so I borrowed the real tab bar from UIKit.",
             description:
                 "I wanted iOS 26's Liquid Glass tab bar in Flutter, so I just borrowed the real one from UIKit.",
             additionalDescription:
@@ -54,8 +48,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "smpl.widgets",
-            mobileDescription:
-                "Widgets that look nice the second you add them. No home screen design project needed.",
             description:
                 "Got tired of widget apps that make you design your whole home screen from scratch. These just look nice the second you add them.",
             additionalDescription: "Widgets without the work.",
@@ -67,8 +59,6 @@ export const projectContent: TProjectContent = {
     personal: [
         {
             title: "ATEM iPad Controller",
-            mobileDescription:
-                "An iPad remote for the ATEM Mini. Trigger camera switches without being next to it.",
             description:
                 "Turned an iPad into a touch remote for an ATEM Mini video switcher, so I could trigger camera switches without being next to it.",
             additionalDescription:
@@ -79,8 +69,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Carousell Deal Scout",
-            mobileDescription:
-                "Needed an iPad for uni. Made a bot scroll Carousell and ping me about good deals.",
             description:
                 "Needed an iPad for uni, and being chronically on Carousell was not fun. So I made a bot do the scrolling and only ping me about the good deals.",
             additionalDescription:
@@ -91,8 +79,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Word Counter",
-            mobileDescription:
-                "Count words, skip in-text citations. One less assignment chore.",
             description:
                 "A word counter with an ignore in-text citation toggle because I was annoyed of removing them manually for assignments.",
             imageUrl: wordCounterThumbnail,
@@ -101,8 +87,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Portfolio Website",
-            mobileDescription:
-                "A home for my projects and a little playground for design. You're on it!",
             description:
                 "My very own portfolio website built not just to showcase my projects but also my design & frontend skills",
             additionalDescription: "...and yes, you're on it right now!",
@@ -114,8 +98,6 @@ export const projectContent: TProjectContent = {
     hackathon: [
         {
             title: "Andrea",
-            mobileDescription:
-                "An AI sidekick to untangle your small claim and get hearing-ready.",
             description:
                 "Small claims, lots of paperwork. Andrea's an AI sidekick that helps you untangle your story and get hearing-ready, no lawyer needed.",
             additionalDescription:
@@ -126,8 +108,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "Perfectly Balanced",
-            mobileDescription:
-                "Vision Pro brain games that get you turning, reaching, and thinking.",
             description:
                 "Vision Pro brain games with a catch: you have to move. Targets pop up all around you, so you're turning and reaching while you think.",
             additionalDescription:
@@ -138,8 +118,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "EmailGPT",
-            mobileDescription:
-                "GPT-powered email help right in Gmail. Less staring at a blank reply box.",
             description:
                 "A Chrome extension that helps you write emails right inside Gmail with GPT-3.5, so you don't have to stare at a blank reply box.",
             additionalDescription:
@@ -150,8 +128,6 @@ export const projectContent: TProjectContent = {
         },
         {
             title: "GPABuyWat?",
-            mobileDescription:
-                "Check your GPA and see if you can afford chicken rice!",
             description:
                 "Calculate your GPA with ease, whether you're at home or on the go, and see if you can afford chicken rice!",
             additionalDescription: "Built during Hack&Roll 2023.",

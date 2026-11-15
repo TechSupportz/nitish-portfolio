@@ -44,7 +44,7 @@ const navLinks = getNavLinks(Astro.url.pathname)
                             <Highlight>{label}</Highlight>
                             <span
                                 data-nav-dot
-                                class:list={[{ "opacity-0": !isActive }]}
+                                class:list={["text-blue-400", { "opacity-0": !isActive }]}
                             >
                                 {"."}
                             </span>
