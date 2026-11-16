@@ -41,16 +41,16 @@ export const projectContent: TProjectContent = {
             icons: ["notion", "agent"],
         },
         {
-            title: "Native Glass Navbar",
+            title: "GPA Buy What?",
             mobileDescription:
-                "Wanted Liquid Glass in Flutter, so I borrowed the real tab bar from UIKit.",
+                "A GPA calculator that prints you a receipt and tells you if you can afford chicken rice.",
             description:
-                "I wanted iOS 26's Liquid Glass tab bar in Flutter, so I just borrowed the real one from UIKit.",
+                "Our Hack&Roll 2023 GPA calculator, now with an actual receipt for your GPA. Scan its barcode to move your grades from laptop to phone (beeps included), or just paste them in.",
             additionalDescription:
-                "Up on pub.dev if you want that glass in your app too.",
-            imageUrl: nativeGlassNavbarThumbnail,
-            url: "https://pub.dev/packages/native_glass_navbar",
-            icons: ["flutter", "swift", "ios"],
+                "Revamped when I should've been studying for finals.",
+            imageUrl: gpaBuyWhatThumbnail,
+            url: "https://gpabuywhat.com",
+            icons: ["react", "typescript", "cloud"],
         },
         {
             title: "smpl.widgets",
@@ -65,6 +65,18 @@ export const projectContent: TProjectContent = {
         },
     ],
     personal: [
+        {
+            title: "Native Glass Navbar",
+            mobileDescription:
+                "Wanted Liquid Glass in Flutter, so I borrowed the real tab bar from UIKit.",
+            description:
+                "I wanted iOS 26's Liquid Glass tab bar in Flutter, so I just borrowed the real one from UIKit.",
+            additionalDescription:
+                "Up on pub.dev if you want that glass in your app too.",
+            imageUrl: nativeGlassNavbarThumbnail,
+            url: "https://pub.dev/packages/native_glass_navbar",
+            icons: ["flutter", "swift", "ios"],
+        },
         {
             title: "ATEM iPad Controller",
             mobileDescription:
@@ -147,17 +159,6 @@ export const projectContent: TProjectContent = {
             imageUrl: emailGPTThumbnail,
             url: "https://github.com/Coeeter/EmailGPT",
             icons: ["openAI", "extension", "typescript"],
-        },
-        {
-            title: "GPABuyWat?",
-            mobileDescription:
-                "Check your GPA and see if you can afford chicken rice!",
-            description:
-                "Calculate your GPA with ease, whether you're at home or on the go, and see if you can afford chicken rice!",
-            additionalDescription: "Built during Hack&Roll 2023.",
-            imageUrl: gpaBuyWhatThumbnail,
-            url: "https://gpa-buy-wat.vercel.app/",
-            icons: ["react", "typescript"],
         },
     ],
 }
