@@ -14,9 +14,8 @@ const { category, name } = Astro.props
     aria-hidden="true"
 >
     <div class="absolute inset-0 bg-progressive-blur-to-t"></div>
-    <p class="relative truncate px-4 pt-6 pb-4 font-code text-sm sm:px-6">
-        <span class="text-blue-400">❯</span> ./<span data-pwd
-            >{category}/{name}</span
-        >
+    <p class="relative flex items-center truncate px-4 pt-6 pb-4 font-code text-sm font-normal sm:px-6">
+        <span class="mr-[0.6em] size-1.5 shrink-0 rounded-full bg-blue-400"></span>
+        ./<span data-pwd class="truncate">{category}/{name}</span>
     </p>
 </div>

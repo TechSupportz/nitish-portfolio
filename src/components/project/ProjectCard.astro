@@ -1,5 +1,8 @@
 ---
-import ArrowUpRight from "@lucide/astro/icons/arrow-up-right"
+// Image on the left (45%), words on the right in three parts: the title on
+// the image's top edge, the description, then a small "link / built with"
+// spec straight after it.
+import Highlight from "@components/Highlight.astro"
 import ProjectIcon from "@components/project/ProjectIcon.astro"
 import type { TListedProject } from "@src/types/ProjectContentType"
 import { Image } from "astro:assets"
@@ -8,7 +11,6 @@ type Props = TListedProject
 
 const {
     id,
-    no,
     name,
     title,
     category,
@@ -22,6 +24,17 @@ const {
 // Titles that already end in punctuation don't get a second full stop.
 const stop = !/[.?!]$/.test(title)
 const host = new URL(url).hostname.replace(/^www\./, "")
+// Hover brackets: one L per corner, a corner dot plus a 3-dot arm each way,
+// as [x, y] in dot steps. Each corner is this L mirrored.
+const L_DOTS = [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [3, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+]
 ---
 
 <a
@@ -31,71 +44,171 @@ const host = new URL(url).hostname.replace(/^www\./, "")
     data-project-card
     data-category={category}
     data-name={name}
-    class="project-card group grid scroll-mt-72 items-center gap-5 md:grid-cols-2 md:gap-8 xl:gap-10"
+    class="group grid scroll-mt-72 items-start gap-5 md:grid-cols-[minmax(0,9fr)_minmax(0,11fr)] md:gap-8 xl:gap-10"
 >
-    <div
-        class="relative overflow-hidden rounded-md outline-2 outline-white/10 transition-[outline-color] duration-200 ease-out group-hover:outline-white/35"
-    >
-        <Image
-            class="w-full"
-            src={imageUrl}
-            alt={`${title} preview`}
-            width={900}
-            height={600}
-            widths={[300, 450, 600, 800, 900]}
-            sizes="(min-width: 1024px) 34vw, (min-width: 768px) 46vw, 92vw"
-        />
-        <div class="card-dots" aria-hidden="true"></div>
+    <div class="relative">
+        <span class="card-brackets" aria-hidden="true">
+            {
+                ["tl", "tr", "bl", "br"].map(corner => (
+                    <span class:list={["card-corner", corner]}>
+                        {L_DOTS.map(([x, y]) => (
+                            <b style={`--x:${x};--y:${y}`} />
+                        ))}
+                    </span>
+                ))
+            }
+        </span>
+        <div class="overflow-hidden rounded-md">
+            <Image
+                class="card-img w-full"
+                src={imageUrl}
+                alt={`${title} preview`}
+                width={900}
+                height={600}
+                widths={[300, 450, 600, 800, 900]}
+                sizes="(min-width: 1024px) 32vw, (min-width: 768px) 44vw, 92vw"
+            />
+        </div>
     </div>
-    <div class="max-w-[60ch]">
-        <div class="flex justify-between gap-4 font-code text-xs text-white/55">
-            <span>{no} / {category}</span>
-            <span
-                class="flex items-center gap-1 transition-colors duration-200 ease-out group-hover:text-white"
-            >
-                {host}
-                <ArrowUpRight
-                    class="size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    aria-hidden="true"
-                />
-            </span>
-        </div>
-        <h2 class="mt-1.5 text-2xl xl:text-[1.75rem]">
-            {name}{stop && <span class="text-blue-400">.</span>}
+    <div>
+        <h2 class="card-title text-3xl leading-tight">
+            {title}{stop && <span class="text-blue-400">.</span>}
         </h2>
-        <div class="dotted-rule dotted-rule-lit my-3"></div>
-        <ul
-            class="dot-bullets space-y-1 text-[15px] leading-relaxed text-pretty text-white/85 lg:text-base"
+        <div
+            class="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-pretty lg:text-base"
         >
-            <li>{description}</li>
-            {additionalDescription && <li>{additionalDescription}</li>}
-        </ul>
-        <div class="mt-3.5 flex items-center justify-end gap-2">
-            {icons.map(icon => <ProjectIcon type={icon} class="size-4.5" />)}
+            <p class="font-normal text-white/85">{description}</p>
+            {
+                additionalDescription && (
+                    <p class="mt-2 font-normal text-white/55">
+                        {additionalDescription}
+                    </p>
+                )
+            }
         </div>
+        <dl
+            class="mt-7 mb-2 grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-y-2 text-xs"
+        >
+            <dt class="text-white/35">link</dt>
+            <dd class="text-white/60">
+                <Highlight>{host}</Highlight>
+            </dd>
+            <dt class="text-white/35">built with</dt>
+            <dd class="flex gap-2">
+                {icons.map(icon => <ProjectIcon type={icon} class="size-4" />)}
+            </dd>
+        </dl>
     </div>
 </a>
 
 <style>
-    /* A quiet halftone over the preview on hover: charcoal dots that fade
-       out toward the top right, so the image is screened, not covered. */
-    .card-dots {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background-image: radial-gradient(
-            circle at center,
-            rgb(18 18 18 / 0.35) 1px,
-            transparent 1.4px
-        );
-        background-size: 5px 5px;
-        mask-image: linear-gradient(to top right, black, transparent 65%);
-        opacity: 0;
-        transition: opacity 300ms var(--ease-out-strong, ease-out);
+    /* Optical alignment: the top of the capitals sits on the image's top
+       edge, not the top of the line box. */
+    .card-title {
+        margin-top: -0.3em;
     }
 
-    .group:hover .card-dots,
-    .group:focus-visible .card-dots {
+    /* Hover: viewfinder brackets, one L of lit dots per corner (the brand's
+       3px dot on a 7px pitch), each fading up while sliding 4px in from its
+       corner. Corners take their colour from where they sit on the brand
+       gradient. The image also scales up a touch inside its frame. */
+    .card-brackets {
+        position: absolute;
+        inset: -11px;
+        pointer-events: none;
+    }
+
+    .card-corner {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        opacity: 0;
+        translate: var(--tx) var(--ty);
+        transition:
+            opacity 200ms ease-out,
+            translate 300ms var(--ease-out-strong);
+    }
+
+    .card-corner.tl {
+        top: 0;
+        left: 0;
+        --c: var(--color-grad-from);
+        --tx: -4px;
+        --ty: -4px;
+    }
+
+    .card-corner.tr {
+        top: 0;
+        right: 0;
+        transform: scaleX(-1);
+        --c: color-mix(in oklab, var(--color-grad-from), var(--color-grad-to));
+        --tx: 4px;
+        --ty: -4px;
+    }
+
+    .card-corner.bl {
+        bottom: 0;
+        left: 0;
+        transform: scaleY(-1);
+        --c: color-mix(in oklab, var(--color-grad-from), var(--color-grad-to));
+        --tx: -4px;
+        --ty: 4px;
+    }
+
+    .card-corner.br {
+        right: 0;
+        bottom: 0;
+        transform: scale(-1);
+        --c: var(--color-grad-to);
+        --tx: 4px;
+        --ty: 4px;
+    }
+
+    .card-corner b {
+        position: absolute;
+        left: calc(var(--x) * 7px);
+        top: calc(var(--y) * 7px);
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--c);
+    }
+
+    .card-img {
+        transition: transform 400ms var(--ease-out-strong);
+    }
+
+    @media (hover: hover) {
+        .group:hover .card-corner {
+            opacity: 1;
+            translate: 0 0;
+        }
+
+        .group:hover .card-img {
+            transform: scale(1.03);
+        }
+    }
+
+    .group:focus-visible .card-corner {
         opacity: 1;
+        translate: 0 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .card-img,
+        .card-corner {
+            transition: none;
+        }
+
+        .group:hover .card-img {
+            transform: none;
+        }
+    }
+
+    @supports (text-box: trim-start cap alphabetic) {
+        .card-title {
+            margin-top: 0;
+            text-box: trim-start cap alphabetic;
+        }
     }
 </style>

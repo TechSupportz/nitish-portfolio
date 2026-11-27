@@ -32,20 +32,11 @@ const first = groups[0].items[0]
 
 <Layout title="projects." headerTitle="projects.">
     <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
+        <!-- Fixed, so it never gets pushed up at the end of the page. -->
         <aside
-            class="fixed hidden h-[calc(100dvh-21rem)] justify-between wmax:max-w-100 lg:flex lg:w-[25vw]"
+            class="fixed hidden h-[calc(100dvh-21rem)] wmax:max-w-100 lg:flex lg:w-[25vw]"
         >
             <ProjectsSidebar groups={groups} />
-            <div
-                class="mr-10 h-full w-1 motion-preset-fade-lg overflow-clip motion-delay-500 motion-duration-1500"
-                style="mask-image: linear-gradient(to bottom, transparent, white 18%, white 82%, transparent)"
-            >
-                <div
-                    id="divider"
-                    class="h-[1000vh] w-px border-r-[3.5px] border-dotted opacity-70"
-                >
-                </div>
-            </div>
         </aside>
         <div
             class="flex w-full motion-preset-focus flex-col gap-12 px-6 pb-48 motion-delay-75 motion-duration-1000 md:px-8 lg:ml-[25vw] lg:w-3/4 lg:gap-16 lg:px-0 lg:pb-40 wmax:ml-100"
@@ -66,6 +57,8 @@ const first = groups[0].items[0]
     const TYPE_MS = 24
     const PRINT_PAUSE_MS = 90
     const INTRO_DELAY_MS = 250
+    // Scroll this far past the bottom of the page to hatch the easter egg.
+    const EGG_PUSH = 240
 
     onPageLoad(signal => {
         const side = document.querySelector<HTMLElement>("[data-ls]")
@@ -77,40 +70,13 @@ const first = groups[0].items[0]
         const reduced = matchMedia("(prefers-reduced-motion: reduce)")
         const behavior = (): ScrollBehavior =>
             reduced.matches ? "instant" : "smooth"
+        const blocks = [...side.querySelectorAll<HTMLElement>("[data-ls-block]")]
         const dirs = [...side.querySelectorAll<HTMLElement>("[data-ls-dir]")]
-        const blocks = [
-            ...side.querySelectorAll<HTMLElement>("[data-ls-block]"),
-        ]
         const rows = [...side.querySelectorAll<HTMLElement>("[data-ls-row]")]
         const prompt = side.querySelector<HTMLElement>("[data-ls-prompt]")!
-        const cursor = side.querySelector<HTMLElement>("[data-ls-cursor]")!
-        const scroller = side.querySelector<HTMLElement>("[data-ls-scroll]")!
         const pwd = document.querySelector<HTMLElement>("[data-pwd]")
-        const divider = document.getElementById("divider")
         const header = document.querySelector("h1")
 
-        let currentId = cards[0].id
-        let currentCat = cards[0].dataset.category!
-
-        // Keep a sidebar line in view without touching the page scroll.
-        const keepInView = (el: HTMLElement, toBottom = false) => {
-            const box = scroller.getBoundingClientRect()
-            const r = el.getBoundingClientRect()
-            let top = scroller.scrollTop
-            if (toBottom) top = scroller.scrollHeight
-            else if (r.top < box.top + 48) top += r.top - box.top - 48
-            else if (r.bottom > box.bottom - 8) top += r.bottom - box.bottom + 8
-            else return
-            scroller.scrollTo({ top, behavior: behavior() })
-        }
-
-        // Commands run one at a time. The cursor moves onto the line being
-        // typed (solid), the output prints all at once, then the cursor
-        // returns to a fresh prompt and blinks. Anything queued behind runs
-        // instantly, so fast scrolling never leaves a half-typed line.
-        type Job = { line: HTMLElement; cmd: HTMLElement; out: HTMLElement }
-        const jobs: Job[] = []
-        let running = false
         const sleep = (ms: number) =>
             new Promise<void>(resolve => {
                 const id = setTimeout(resolve, ms)
@@ -118,100 +84,142 @@ const first = groups[0].items[0]
                     once: true,
                 })
             })
+
+        // The sidebar isn't scrolled by hand: when its listing is taller than
+        // the space, it follows the project in view, keeping that row about
+        // 40% of the way down. `target` overrides it (the easter egg sits at
+        // the bottom). The track eases toward the latest target every frame,
+        // so a new target mid-move bends the motion instead of restarting it.
+        const track = side.querySelector<HTMLElement>("[data-ls-track]")!
+        const FOLLOW_AT = 0.4
+        const EASE_MS = 140 // time constant: ~95% of the way in 3x this
+        let offset = 0
+        let goal = 0
+        let glide = 0
+        let last = 0
+        const paint = () => {
+            track.style.transform = `translate3d(0, ${-offset}px, 0)`
+            // The top fade grows with how far the listing has moved, so it
+            // never pops on or off.
+            side.style.setProperty("--ls-fade", `${Math.min(offset, 48)}px`)
+        }
+        const step = (now: number) => {
+            const dt = last ? now - last : 16
+            last = now
+            offset += (goal - offset) * (1 - Math.exp(-dt / EASE_MS))
+            if (Math.abs(goal - offset) < 0.3) offset = goal
+            paint()
+            glide = offset === goal ? 0 : requestAnimationFrame(step)
+        }
+        const follow = (target?: HTMLElement) => {
+            const el =
+                target ?? side.querySelector<HTMLElement>("[data-ls-row][data-active]")
+            if (!el || el.closest<HTMLElement>("[hidden]")) return
+            const max = Math.max(0, track.offsetHeight - side.clientHeight)
+            const r = el.getBoundingClientRect()
+            const at = r.top - track.getBoundingClientRect().top // ignores the slide
+            const next = target ? max : at + r.height / 2 - side.clientHeight * FOLLOW_AT
+            goal = Math.min(max, Math.max(0, next))
+            if (reduced.matches) {
+                cancelAnimationFrame(glide)
+                glide = 0
+                offset = goal
+                paint()
+            } else if (!glide) {
+                last = 0
+                glide = requestAnimationFrame(step)
+            }
+        }
+        signal.addEventListener("abort", () => cancelAnimationFrame(glide))
+        addEventListener("resize", () => follow(), { signal, passive: true })
+
+        // Commands run one at a time: the command types, then its output
+        // streams in. Anything queued behind prints instantly, so fast
+        // scrolling never leaves a half-typed line.
+        const queue: HTMLElement[] = []
+        let running = false
         const pump = async () => {
             if (running) return
             running = true
-            while (jobs.length && !signal.aborted) {
-                const { line, cmd, out } = jobs.shift()!
+            while (queue.length && !signal.aborted) {
+                const block = queue.shift()!
+                const cmd = block.querySelector<HTMLElement>("[data-ls-cmd]")!
+                const out = block.querySelector<HTMLElement>("[data-ls-out]")!
                 const text = cmd.dataset.text!
-                line.hidden = false
-                if (line !== side) prompt.before(line)
-                if (reduced.matches || jobs.length) {
+                block.hidden = false
+                prompt.before(block)
+                // Bring the line into view before it types, not after.
+                const egg = block.hasAttribute("data-ls-egg")
+                follow(egg ? block : undefined)
+                if (reduced.matches || queue.length) {
                     cmd.textContent = text
                 } else {
+                    prompt.hidden = true
                     cmd.textContent = ""
-                    cmd.after(cursor)
-                    cursor.toggleAttribute("data-typing", true)
-                    prompt.hidden = true // no idle prompt under a line being typed
-                    keepInView(prompt, true)
+                    cmd.toggleAttribute("data-typing", true)
                     for (let i = 1; i <= text.length; i++) {
                         await sleep(TYPE_MS)
                         if (signal.aborted) return
-                        if (jobs.length) {
+                        if (queue.length) {
                             cmd.textContent = text
                             break
                         }
                         cmd.textContent = text.slice(0, i)
                     }
+                    cmd.toggleAttribute("data-typing", false)
                     await sleep(PRINT_PAUSE_MS)
-                    if (signal.aborted) return
                 }
                 out.toggleAttribute("data-in", true)
                 prompt.hidden = false
-                prompt.append(cursor)
-                cursor.toggleAttribute("data-typing", false)
-                keepInView(prompt, true)
+                follow(egg ? block : undefined)
             }
             running = false
         }
-        const run = (line: HTMLElement) => {
-            jobs.push({
-                line,
-                cmd: line.querySelector<HTMLElement>("[data-ls-cmd]")!,
-                out: line.querySelector<HTMLElement>("[data-ls-out]")!,
-            })
-            pump()
-        }
 
-        // First visit to a category runs its `ls` once, stacked under the
-        // earlier ones.
-        const revealed = new Set<string>()
-        const reveal = (cat: string) => {
-            if (revealed.has(cat)) return
-            revealed.add(cat)
-            const block = blocks.find(b => b.dataset.lsBlock === cat)
-            if (block) run(block)
-        }
-
-        // On load the sidebar types its way in: `ls ./projects`, then the
-        // category in view. The rendered HTML already shows both, for
-        // reduced motion and for the moment before this runs.
-        revealed.add(currentCat)
+        // On load the first two commands type in: `ls projects`, then the
+        // first category. The rendered HTML already shows both, for reduced
+        // motion and for the moment before this runs.
+        const seen = new Set<string>()
+        const opening = blocks.slice(0, 2)
+        opening.forEach(block => seen.add(block.dataset.lsBlock!))
         if (!reduced.matches) {
-            side.querySelectorAll("[data-ls-out]").forEach(out =>
-                out.removeAttribute("data-in"),
-            )
-            side.querySelectorAll<HTMLElement>("[data-ls-cmd]").forEach(
-                cmd => (cmd.textContent = ""),
-            )
-            const firstBlock = blocks.find(b => b.dataset.lsBlock === currentCat)!
-            firstBlock.hidden = true
-            prompt.hidden = true
-            sleep(INTRO_DELAY_MS).then(() => {
-                if (signal.aborted) return
-                run(side)
-                run(firstBlock)
+            opening.forEach(block => {
+                block.hidden = true
+                block.querySelector("[data-ls-out]")!.removeAttribute("data-in")
+                queue.push(block)
             })
+            sleep(INTRO_DELAY_MS).then(pump)
         }
 
+        let currentId = ""
+        let currentCat = ""
         const setActive = (card: HTMLElement) => {
-            const cat = card.dataset.category!
-            if (cat !== currentCat) {
-                currentCat = cat
-                dirs.forEach(dir =>
-                    dir.toggleAttribute("data-active", dir.dataset.lsDir === cat),
-                )
-                reveal(cat)
-            }
             if (card.id === currentId) return
             currentId = card.id
-            rows.forEach(row => {
-                const on = row.dataset.lsRow === card.id
-                row.toggleAttribute("data-active", on)
-                if (on && !row.closest<HTMLElement>("[data-ls-block]")!.hidden)
-                    keepInView(row)
-            })
+            const cat = card.dataset.category!
+            rows.forEach(row =>
+                row.toggleAttribute("data-active", row.dataset.lsRow === currentId),
+            )
             if (pwd) pwd.textContent = `${cat}/${card.dataset.name}`
+            if (!running) follow()
+            if (cat === currentCat) return
+            currentCat = cat
+            dirs.forEach(dir =>
+                dir.toggleAttribute("data-active", dir.dataset.lsDir === cat),
+            )
+            blocks.forEach(block =>
+                block.toggleAttribute("data-on", block.dataset.lsBlock === cat),
+            )
+
+            // Print every category up to this one, so a fast scroll past one
+            // still lists them in order.
+            const upTo = blocks.findIndex(b => b.dataset.lsBlock === cat)
+            blocks.slice(0, upTo + 1).forEach(block => {
+                if (seen.has(block.dataset.lsBlock!)) return
+                seen.add(block.dataset.lsBlock!)
+                queue.push(block)
+            })
+            pump()
         }
 
         // The card in view is the lowest one whose top has passed a reading
@@ -239,46 +247,56 @@ const first = groups[0].items[0]
                 if (frame) return
                 frame = requestAnimationFrame(() => {
                     frame = 0
-                    // The dotted divider drifts a little with the page.
-                    if (divider && !reduced.matches)
-                        divider.style.transform = `translateY(-${scrollY / 50}px)`
                     update()
                 })
             },
             { signal, passive: true },
         )
         addEventListener("resize", update, { signal, passive: true })
-        scroller.addEventListener(
-            "scroll",
-            () =>
-                scroller.toggleAttribute(
-                    "data-scrolled",
-                    scroller.scrollTop > 2,
-                ),
+
+        // Easter egg: keep scrolling at the bottom of the page and the
+        // terminal tries to open the in-progress folder. Once.
+        let hatched = false
+        let push = 0
+        addEventListener(
+            "wheel",
+            event => {
+                const max = document.documentElement.scrollHeight - innerHeight
+                if (event.deltaY <= 0 || scrollY < max - 2) {
+                    push = 0
+                    return
+                }
+                // A deliberate push, not the tail of a momentum scroll.
+                push += event.deltaY
+                if (push < EGG_PUSH || running || hatched) return
+                hatched = true
+                const block = document.createElement("div")
+                block.className = "mt-6 mb-4"
+                block.dataset.lsEgg = ""
+                block.innerHTML =
+                    '<p class="ls-line"><span class="ls-dot"></span><span data-ls-cmd data-text="cd in-progress"></span><span class="ls-cursor ls-cmd-cursor"></span></p>' +
+                    '<div data-ls-out class="mt-1.5">' +
+                    '<p style="--i:0" class="font-normal text-white/45">cd: permission denied: in-progress</p>' +
+                    '<p style="--i:1" class="font-sans text-base font-normal text-white/60">there\'s def stuff in there. <em>trust.</em></p>' +
+                    "</div>"
+                block.hidden = true
+                prompt.before(block)
+                queue.push(block)
+                pump()
+            },
             { signal, passive: true },
         )
 
         const scrollToCard = (card?: Element | null) =>
             card?.scrollIntoView({ block: "start", behavior: behavior() })
-        dirs.forEach(dir =>
-            dir.addEventListener(
+        side.querySelectorAll<HTMLElement>("[data-ls-jump]").forEach(btn =>
+            btn.addEventListener(
                 "click",
-                () =>
-                    scrollToCard(
-                        cards.find(
-                            card => card.dataset.category === dir.dataset.lsDir,
-                        ),
-                    ),
+                () => scrollToCard(document.getElementById(btn.dataset.lsJump!)),
                 { signal },
             ),
         )
-        rows.forEach(row =>
-            row.addEventListener(
-                "click",
-                () => scrollToCard(document.getElementById(row.dataset.lsRow!)),
-                { signal },
-            ),
-        )
+
         // Arrow keys step card to card instead of nudging the page.
         addEventListener(
             "keydown",
