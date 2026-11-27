@@ -11,18 +11,37 @@ type DotMatrixProps = {
 type TRgb = [number, number, number]
 type TRect = { x0: number; y0: number; x1: number; y1: number }
 
-// Grid matches the old /dot-matrix.svg tile: 11px pitch, 1.5px dots at 30% white
-const PITCH = 11
-const OFFSET = 6
-const DOT_RADIUS = 1.5
-// Phone pixels are physically smaller, so dots get a touch bigger to read as bright
-const DOT_RADIUS_MOBILE = 1.6
-const BASE_ALPHA = 0.3
+// The grid's size lives in global.css (--matrix-*), shared with the .dot-grid
+// banners, and is read on every layout. These are only fallbacks
+let PITCH = 12
+let OFFSET = 6
+let DOT_RADIUS = 2.5
+let DOT_RADIUS_MOBILE = 2.7
+let BASE_ALPHA = 0.3
+let ICON_RADIUS = 4.45
+const readGrid = () => {
+    const css = getComputedStyle(document.documentElement)
+    const read = (name: string, fallback: number) => {
+        const value = parseFloat(css.getPropertyValue(name))
+        return Number.isFinite(value) && value > 0 ? value : fallback
+    }
+    // Same ratios as global.css: dot:gap 3:4, lit dots at 2/3 of the pitch
+    const dot = read("--matrix-dot", 5)
+    PITCH = (dot * 7) / 3
+    OFFSET = PITCH / 2
+    DOT_RADIUS = dot / 2
+    // Phone pixels are physically smaller, so dots get a touch bigger to read as bright
+    DOT_RADIUS_MOBILE = DOT_RADIUS * 1.08
+    BASE_ALPHA = read("--matrix-alpha", 0.3)
+    ICON_RADIUS = PITCH / 3
+}
 
-const ICON_ALPHA = 0.72
-const ICON_GROWTH = 0.45
-const ICON_FADE_MS = 650
-const ICON_MAX_DOTS = 52
+const ICON_ALPHA = 0.9
+// Icon stroke in Lucide's 24-unit space (Lucide itself draws at 2)
+const ICON_STROKE = 2.7
+const ICON_STROKE_MOBILE = 3.2
+// Largest the icon gets, in px; its size in dots follows the pitch
+const ICON_MAX_PX = 576
 // Share of the area the icon may take. On desktop the area is the whole hero,
 // so the icon sits top-right and only overlaps the copy slightly
 const ICON_SLOT_FILL_X = 0.48
@@ -30,12 +49,21 @@ const ICON_SLOT_FILL_Y = 0.76
 // The mobile matrix is tall, so height gets a smaller share to keep the icon in the top part
 const ICON_MATRIX_FILL_X = 0.63
 const ICON_MATRIX_FILL_Y = 0.455
-// Time for the diagonal sweep to cross the icon, whatever its size
-const ICON_SWEEP_MS = 250
+// Switching icons: the old icon's dots turn off and the new one's turn on,
+// each dot on its own in a random order, like an LED panel redrawing
+const PIXEL_OUT_SPREAD_MS = 280
+const PIXEL_IN_DELAY_MS = 120
+const PIXEL_IN_SPREAD_MS = 420
+const PIXEL_STEP_MS = 70
+const SWITCH_MS = PIXEL_IN_DELAY_MS + PIXEL_IN_SPREAD_MS + PIXEL_STEP_MS
+// First icon: the hero's full stop flickers on (CSS, index.astro), then a
+// ripple leaves it and each icon dot grows in as the ring passes
+const REVEAL_DELAY_MS = 880
+const REVEAL_GROW_MS = 420
 // Mobile only: the lit icon dots are also drawn as an HDR image (~4x SDR white,
 // public/hdr-glow.avif) masked to the dots, so HDR screens show them glowing.
-// Two layers crossfade between icons in step with the canvas sweep
-const HDR_GLOW_FADE_MS = ICON_FADE_MS + ICON_SWEEP_MS
+// Two layers crossfade between icons over the same time as the canvas switch
+const HDR_GLOW_FADE_MS = SWITCH_MS
 // Ripples get the same HDR glow, dimmer, as a CSS-masked ring over the grid dots
 const RIPPLE_HDR_ALPHA = 0.45
 
@@ -49,22 +77,37 @@ const SPOT_RADIUS = 115
 const RIPPLE_SPEED = 0.38
 const RIPPLE_WIDTH = 22
 const RIPPLE_LIFE_MS = 1500
-// Each role change sends a pulse in from a random spot on the grid's edge,
-// shortly after the icon sweep starts
-const ROLE_PULSE_DELAY_MS = 200
-const ROLE_PULSE_MIN_MASK = 0.5
-const ROLE_PULSE_EDGE_DOTS = 3
-// Min distance from the previous pulse, as a share of the grid's diagonal
-const ROLE_PULSE_MIN_GAP = 0.3
-const ROLE_PULSE_TRIES = 12
+// The first icon's ring crosses the whole grid, like the profile picture's
+// reveal: dots light up just behind it and fade as it moves on
+const REVEAL_WAKE_PX = 140
+const REVEAL_WAKE_ALPHA = 0.5
+// Like the pfp's ring: the radius follows 1 - (1 - t)^4 over this time, out
+// to 1.4x the farthest corner, so it crosses the grid quickly (~1.2s) and does
+// most of its slowing down past the edge, off screen
+const REVEAL_RING_MS = 4400
+const REVEAL_EASE = 4
+const REVEAL_OVERSHOOT = 1.4
+// The ring also uncovers the grid itself, behind a soft edge this wide
+const REVEAL_EDGE_PX = 48
+const revealRadius = (age: number, reach: number) =>
+    reach *
+    (1 -
+        Math.pow(
+            1 - Math.min(1, Math.max(0, age / REVEAL_RING_MS)),
+            REVEAL_EASE,
+        ))
+// When the eased ring reaches a point `distance` away
+const revealArrival = (distance: number, reach: number) =>
+    REVEAL_RING_MS *
+    (1 - Math.pow(1 - Math.min(1, distance / reach), 1 / REVEAL_EASE))
 
 const WHITE: TRgb = [255, 255, 255]
+// The brand gradient, sky-100 to blue-500 (--color-grad-from / --color-grad-to)
 const SKY: TRgb = [224, 242, 254]
-const BLUE: TRgb = [96, 165, 250]
+const BLUE: TRgb = [59, 130, 246]
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value))
-const easeInOut = (t: number) =>
-    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
 const mix = (a: TRgb, b: TRgb, t: number): TRgb => [
     a[0] + (b[0] - a[0]) * t,
     a[1] + (b[1] - a[1]) * t,
@@ -102,6 +145,26 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         let mask = new Float32Array(0)
         let lit = new Float32Array(0)
         let from = new Float32Array(0)
+        // Per-dot random order for the pixel switch, rolled once per layout
+        let outOrder = new Float32Array(0)
+        let inOrder = new Float32Array(0)
+        // First-icon reveal: t < 0 while the full stop is still flickering,
+        // then the ring's start time and origin, until every icon dot is in
+        // The grid itself, uncovered by the same ring; null once fully shown
+        let unveil: {
+            t: number
+            x: number
+            y: number
+            reach: number
+            clear: number
+        } | null = null
+        let reveal: {
+            t: number
+            x: number
+            y: number
+            reach: number
+            end: number
+        } | null = null
         let dim = new Float32Array(0)
         let dimTarget = new Float32Array(0)
         let iconSets: Uint8Array[] = []
@@ -118,6 +181,13 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             x: number
             y: number
             t: number
+            life: number
+            // The reveal ring eases out to this radius (0 for a plain tap
+            // ripple), lighting the grid behind it as it goes
+            reach: number
+            wake: boolean
+            // Dropped once its radius passes this (the reveal, past the grid)
+            clear: number
             glow?: HTMLDivElement
         }[] = []
         const timers = new Set<ReturnType<typeof setTimeout>>()
@@ -156,7 +226,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                   }
 
             const size = Math.min(
-                ICON_MAX_DOTS,
+                Math.floor(ICON_MAX_PX / PITCH),
                 Math.floor(
                     Math.min(
                         area.width *
@@ -186,9 +256,11 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             const set = new Uint8Array(cols * rows)
             if (icon.size <= 0) return set
 
-            const span = (icon.size + 2) * PITCH
+            // Whole pixels: the pitch can be fractional (it follows the dot
+            // size), and a canvas rounds its width down, so indexing pixels
+            // with a fractional span would read the wrong ones
+            const span = Math.ceil((icon.size + 2) * PITCH)
             const unit = (icon.size * PITCH) / 24
-            const strokeDots = icon.fill ? 2.6 : 4
             const offscreen = document.createElement("canvas")
             offscreen.width = span
             offscreen.height = span
@@ -199,7 +271,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
             off.translate(PITCH, PITCH)
             off.scale(unit, unit)
-            off.lineWidth = (strokeDots * PITCH) / unit
+            off.lineWidth = icon.fill ? ICON_STROKE_MOBILE : ICON_STROKE
             off.lineCap = "round"
             off.lineJoin = "round"
             paths.forEach(path => off.stroke(new Path2D(path)))
@@ -323,13 +395,15 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     maskCtx.arc(
                         OFFSET + (id % cols) * PITCH,
                         OFFSET + Math.floor(id / cols) * PITCH,
-                        dotRadius * (1 + ICON_GROWTH),
+                        ICON_RADIUS,
                         0,
                         Math.PI * 2,
                     )
                     maskCtx.fill()
                 })
-                return `url(${maskCanvas.toDataURL()}) ${left}px ${top}px / ${span}px ${span}px no-repeat`
+                // Sized to the rounded-up canvas so it isn't stretched by a fraction
+                const size = maskCanvas.width / dpr
+                return `url(${maskCanvas.toDataURL()}) ${left}px ${top}px / ${size}px ${size}px no-repeat`
             })
         }
 
@@ -426,11 +500,29 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             return `radial-gradient(circle at ${x}px ${y}px, transparent ${inner}px, #000 ${radius}px, transparent ${radius + RIPPLE_WIDTH}px)`
         }
 
-        const addRipple = (x: number, y: number) => {
+        // How strong a ring still is: taps fade quickly, the reveal holds on
+        // until it has crossed the grid
+        const waveFade = (wave: (typeof ripples)[number], age: number) =>
+            Math.pow(1 - age / wave.life, 1.5)
+        const waveRadius = (wave: (typeof ripples)[number], age: number) =>
+            wave.wake ? revealRadius(age, wave.reach) : age * RIPPLE_SPEED
+
+        const addRipple = (
+            x: number,
+            y: number,
+            life = RIPPLE_LIFE_MS,
+            reach = 0,
+            clear = Infinity,
+        ) => {
+            const wake = reach > 0
             const wave: (typeof ripples)[number] = {
                 x,
                 y,
                 t: performance.now(),
+                life,
+                reach,
+                wake,
+                clear,
             }
             if (glowAllowed() && rippleHost) {
                 const glow = document.createElement("div")
@@ -454,6 +546,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         }
 
         const layout = () => {
+            readGrid()
             box = canvas.getBoundingClientRect()
             const dpr = window.devicePixelRatio || 1
             canvas.width = Math.round(box.width * dpr)
@@ -489,12 +582,17 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             }
 
             iconSets = icons.map(rasterize)
+            outOrder = Float32Array.from({ length: cols * rows }, Math.random)
+            inOrder = Float32Array.from({ length: cols * rows }, Math.random)
             buildGlowMasks()
             resetGlow()
             buildRippleDotsMask()
-            // Snap straight to the current icon so resizing never replays the sweep
+            // Snap straight to the current icon so resizing never replays the
+            // switch; a resize mid-reveal just shows the icon
             lit = Float32Array.from(iconSets[active] ?? [])
             from = Float32Array.from(lit)
+            reveal = null
+            unveil = null
             dimTarget = new Float32Array(cols * rows).fill(1)
             measureText()
             dim = Float32Array.from(dimTarget)
@@ -516,7 +614,11 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             lastFrame = now
 
             for (let i = ripples.length - 1; i >= 0; i--) {
-                if (now - ripples[i].t > RIPPLE_LIFE_MS) {
+                const age = now - ripples[i].t
+                if (
+                    age > ripples[i].life ||
+                    waveRadius(ripples[i], age) > ripples[i].clear
+                ) {
                     ripples[i].glow?.remove()
                     ripples.splice(i, 1)
                 }
@@ -524,17 +626,35 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             for (const wave of ripples) {
                 if (!wave.glow) continue
                 const age = now - wave.t
-                const ring = ringMask(wave.x, wave.y, age * RIPPLE_SPEED)
+                const ring = ringMask(wave.x, wave.y, waveRadius(wave, age))
                 wave.glow.style.setProperty("mask-image", ring)
                 wave.glow.style.setProperty("-webkit-mask-image", ring)
                 wave.glow.style.opacity = String(
-                    RIPPLE_HDR_ALPHA * Math.pow(1 - age / RIPPLE_LIFE_MS, 1.5),
+                    RIPPLE_HDR_ALPHA * waveFade(wave, age),
                 )
             }
 
             const since = now - changedAt
+            if (reveal && reveal.t >= 0 && now > reveal.end) {
+                from = Float32Array.from(iconSets[active] ?? [])
+                lit = Float32Array.from(from)
+                reveal = null
+                changedAt = -Infinity
+            }
             const iconSweeping =
-                !reduceMotion && since < ICON_SWEEP_MS + ICON_FADE_MS
+                !reduceMotion &&
+                (reveal !== null || unveil !== null || since < SWITCH_MS)
+            // How much of the grid the reveal ring has uncovered so far
+            let unveilRadius = !unveil
+                ? Infinity
+                : unveil.t < 0
+                  ? 0
+                  : revealRadius(now - unveil.t, unveil.reach)
+            if (unveil && unveilRadius >= unveil.clear) {
+                unveil = null
+                unveilRadius = Infinity
+                fullRedraw = true
+            }
 
             // Everything that changes this frame, plus what last frame drew
             const changed: TRect[] = []
@@ -553,7 +673,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             }
             for (const wave of ripples) {
                 const reach =
-                    (now - wave.t) * RIPPLE_SPEED + RIPPLE_WIDTH + PITCH
+                    waveRadius(wave, now - wave.t) + RIPPLE_WIDTH + PITCH
                 changed.push({
                     x0: wave.x - reach,
                     y0: wave.y - reach,
@@ -621,10 +741,34 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     right - left,
                     bottom - top,
                 )
+                // Hide the grid the reveal ring hasn't reached yet
+                if (unveil) {
+                    ctx.save()
+                    ctx.beginPath()
+                    ctx.rect(left, top, right - left, bottom - top)
+                    ctx.clip()
+                    if (unveilRadius > 0) {
+                        const edge = ctx.createRadialGradient(
+                            unveil.x,
+                            unveil.y,
+                            Math.max(0, unveilRadius - REVEAL_EDGE_PX),
+                            unveil.x,
+                            unveil.y,
+                            unveilRadius,
+                        )
+                        edge.addColorStop(0, "#000")
+                        edge.addColorStop(1, "rgba(0,0,0,0)")
+                        ctx.globalCompositeOperation = "destination-in"
+                        ctx.fillStyle = edge
+                        ctx.fillRect(left, top, right - left, bottom - top)
+                    } else {
+                        ctx.clearRect(left, top, right - left, bottom - top)
+                    }
+                    ctx.restore()
+                }
             }
 
             const target = iconSets[active]
-            const stagger = ICON_SWEEP_MS / Math.max(1, 2 * icon.size)
             const dimStep = 1 - Math.exp(-dt / DIM_EASE_MS)
             let dimMoving = false
 
@@ -636,13 +780,47 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     const y = OFFSET + r * PITCH
 
                     if (target) {
-                        const delay =
-                            Math.max(0, c - icon.c0 + (r - icon.r0)) * stagger
-                        const t = reduceMotion
-                            ? 1
-                            : clamp((since - delay) / ICON_FADE_MS)
-                        lit[id] =
-                            from[id] + (target[id] - from[id]) * easeInOut(t)
+                        if (reveal) {
+                            // First icon: grow in as the full stop's ring passes
+                            const grow =
+                                reveal.t < 0
+                                    ? 0
+                                    : easeOut(
+                                          clamp(
+                                              (now -
+                                                  reveal.t -
+                                                  revealArrival(
+                                                      Math.hypot(
+                                                          x - reveal.x,
+                                                          y - reveal.y,
+                                                      ),
+                                                      reveal.reach,
+                                                  )) /
+                                                  REVEAL_GROW_MS,
+                                          ),
+                                      )
+                            lit[id] = target[id] * grow
+                        } else if (reduceMotion) {
+                            lit[id] = target[id]
+                        } else if (target[id] && from[id] > 0.999) {
+                            // Lit in both icons, so it just stays on
+                            lit[id] = 1
+                        } else {
+                            const off = clamp(
+                                (since - outOrder[id] * PIXEL_OUT_SPREAD_MS) /
+                                    PIXEL_STEP_MS,
+                            )
+                            const on = clamp(
+                                (since -
+                                    PIXEL_IN_DELAY_MS -
+                                    inOrder[id] * PIXEL_IN_SPREAD_MS) /
+                                    PIXEL_STEP_MS,
+                            )
+                            lit[id] = Math.max(
+                                from[id] * (1 - off),
+                                target[id] * on,
+                            )
+                        }
 
                         dim[id] += (dimTarget[id] - dim[id]) * dimStep
                         if (Math.abs(dimTarget[id] - dim[id]) > 0.005) {
@@ -659,22 +837,41 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     }
 
                     let ripple = 0
+                    let wake = 0
                     for (const wave of ripples) {
                         const age = now - wave.t
-                        const offRing = Math.abs(
-                            Math.hypot(x - wave.x, y - wave.y) -
-                                age * RIPPLE_SPEED,
-                        )
+                        const fade = waveFade(wave, age)
+                        const behind =
+                            waveRadius(wave, age) -
+                            Math.hypot(x - wave.x, y - wave.y)
+                        const offRing = Math.abs(behind)
                         if (offRing < RIPPLE_WIDTH) {
                             ripple = Math.max(
                                 ripple,
-                                (1 - offRing / RIPPLE_WIDTH) *
-                                    Math.pow(1 - age / RIPPLE_LIFE_MS, 1.5),
+                                (1 - offRing / RIPPLE_WIDTH) * fade,
+                            )
+                        }
+                        if (wave.wake && behind > 0) {
+                            wake = Math.max(
+                                wake,
+                                Math.exp(-behind / REVEAL_WAKE_PX) * fade,
                             )
                         }
                     }
+                    // Nothing shows ahead of the reveal ring
+                    if (
+                        unveil &&
+                        Math.hypot(x - unveil.x, y - unveil.y) > unveilRadius
+                    )
+                        continue
                     // Untouched dots are already on the base layer
-                    if (level < 0.001 && spot === 0 && ripple === 0) continue
+                    if (
+                        level < 0.001 &&
+                        spot === 0 &&
+                        ripple === 0 &&
+                        wake < 0.01
+                    )
+                        continue
 
                     // Spotlight and ripple only ever brighten dots that exist,
                     // so they fade out with the grid instead of spilling past it
@@ -682,7 +879,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     const alpha = Math.min(
                         1,
                         Math.max(base, level * ICON_ALPHA) +
-                            (spot * 0.3 + ripple * 0.6) * Math.max(m, level),
+                            (spot * 0.3 +
+                                ripple * 0.6 +
+                                wake * REVEAL_WAKE_ALPHA) *
+                                Math.max(m, level),
                     )
                     // Painted over the base dot, so only add what's missing
                     const overlay = (alpha - base) / (1 - base)
@@ -697,7 +897,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         )
                         color = mix(color, mix(SKY, BLUE, along), lit[id])
                     }
-                    const tint = Math.max(spot * 0.5, ripple * 0.85) * m
+                    const tint =
+                        Math.max(spot * 0.5, ripple * 0.85, wake * 0.85) * m
                     if (tint > 0) {
                         color = mix(color, mix(SKY, BLUE, c / cols), tint)
                     }
@@ -707,8 +908,9 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     ctx.arc(
                         x,
                         y,
-                        dotRadius *
-                            (1 + level * ICON_GROWTH + ripple * 0.3 * m),
+                        dotRadius +
+                            (ICON_RADIUS - dotRadius) * level +
+                            dotRadius * (ripple * 0.55 + wake * 0.3) * m,
                         0,
                         Math.PI * 2,
                     )
@@ -776,76 +978,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             addRipple(x, y)
         }
 
-        // Pulse from a random dot along the edge of the visible grid, so the
-        // ring rolls in across it. Sides are picked in proportion to their
-        // length, and a spot too close to the last pulse is re-rolled
-        let lastPulse: { x: number; y: number } | null = null
-        const pulseFromEdge = () => {
-            // Reduced motion may have been switched on while this was queued
-            if (reduceMotion) return
-            const visibleRows = [...mask.keys()].filter(
-                r => mask[r] >= ROLE_PULSE_MIN_MASK,
-            )
-            if (visibleRows.length === 0 || cols === 0) return
-
-            const top = visibleRows[0]
-            const bottom = visibleRows[visibleRows.length - 1]
-            const height = bottom - top + 1
-            const depth = () =>
-                Math.floor(
-                    Math.random() * Math.min(ROLE_PULSE_EDGE_DOTS, height),
-                )
-            const anyCol = () => Math.floor(Math.random() * cols)
-            const anyRow = () => top + Math.floor(Math.random() * height)
-
-            const randomEdgeSpot = () => {
-                let col: number
-                let row: number
-                const pick = Math.random() * 2 * (cols + height)
-                if (pick < cols) {
-                    col = anyCol()
-                    row = top + depth()
-                } else if (pick < 2 * cols) {
-                    col = anyCol()
-                    row = bottom - depth()
-                } else if (pick < 2 * cols + height) {
-                    col = depth()
-                    row = anyRow()
-                } else {
-                    col = cols - 1 - depth()
-                    row = anyRow()
-                }
-                return { x: OFFSET + col * PITCH, y: OFFSET + row * PITCH }
-            }
-
-            const minGap =
-                Math.hypot(cols * PITCH, height * PITCH) * ROLE_PULSE_MIN_GAP
-            let spot = randomEdgeSpot()
-            for (
-                let tries = 1;
-                lastPulse && tries < ROLE_PULSE_TRIES;
-                tries++
-            ) {
-                const gap = Math.hypot(
-                    spot.x - lastPulse.x,
-                    spot.y - lastPulse.y,
-                )
-                if (gap >= minGap) break
-                const candidate = randomEdgeSpot()
-                const candidateGap = Math.hypot(
-                    candidate.x - lastPulse.x,
-                    candidate.y - lastPulse.y,
-                )
-                if (candidateGap > gap) spot = candidate
-            }
-
-            lastPulse = spot
-            addRipple(spot.x, spot.y)
-        }
-
         const unsubscribe = $activeRole.subscribe(index => {
             if (index === active) return
             from = Float32Array.from(lit)
+            reveal = null
             active = index
             changedAt = performance.now()
             crossfadeGlow(index)
@@ -857,7 +993,6 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 iconUnsettled = true
                 schedule()
             }, 750)
-            if (!reduceMotion) later(pulseFromEdge, ROLE_PULSE_DELAY_MS)
             schedule()
         })
 
@@ -870,6 +1005,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             layout()
         })
         resizeObserver.observe(canvas)
+        // Dev only: editing the --matrix-* values hot-swaps the CSS, so lay the
+        // grid out again to pick them up without a reload
+        const relayout = () => layout()
+        import.meta.hot?.on("vite:afterUpdate", relayout)
         document.fonts?.ready.then(() => {
             measureText()
             iconUnsettled = true
@@ -933,11 +1072,75 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
         layout()
         laidOutSize = `${box.width}x${box.height}`
-        // First paint sweeps the starting icon in
-        from = new Float32Array(cols * rows)
-        changedAt = performance.now()
-        // Fade the first glow in alongside the first sweep
-        fadeInGlow()
+        // First icon: wait for the hero's full stop to flicker on, then light
+        // the icon from it with a ripple. Without the full stop, it switches in
+        // from blank like any other icon
+        const origin = document.querySelector<HTMLElement>(
+            "[data-matrix-origin]",
+        )
+        if (origin && !reduceMotion) {
+            const pending = { t: -1, x: 0, y: 0, reach: 1, end: Infinity }
+            reveal = pending
+            unveil = { t: -1, x: 0, y: 0, reach: 1, clear: Infinity }
+            // The ring is the fade in, so skip the canvas's own
+            canvas.style.transition = "none"
+            lit = new Float32Array(cols * rows)
+            from = new Float32Array(cols * rows)
+            later(() => {
+                if (reveal !== pending) return
+                const stop = origin.getBoundingClientRect()
+                const x = stop.left + stop.width / 2 - box.left
+                const y = stop.top + stop.height * 0.72 - box.top
+                const corners = [
+                    [icon.c0 - 1, icon.r0 - 1],
+                    [icon.c0 + icon.size + 1, icon.r0 + icon.size + 1],
+                    [icon.c0 - 1, icon.r0 + icon.size + 1],
+                    [icon.c0 + icon.size + 1, icon.r0 - 1],
+                ].map(([c, r]) =>
+                    Math.hypot(OFFSET + c * PITCH - x, OFFSET + r * PITCH - y),
+                )
+                const farthest = Math.max(
+                    ...[
+                        [0, 0],
+                        [box.width, 0],
+                        [0, box.height],
+                        [box.width, box.height],
+                    ].map(([cx, cy]) => Math.hypot(cx - x, cy - y)),
+                )
+                const reach = REVEAL_OVERSHOOT * farthest
+                const t = performance.now()
+                reveal = {
+                    t,
+                    x,
+                    y,
+                    reach,
+                    end:
+                        t +
+                        revealArrival(Math.max(...corners), reach) +
+                        REVEAL_GROW_MS,
+                }
+                unveil = {
+                    t,
+                    x,
+                    y,
+                    reach,
+                    clear: farthest + REVEAL_EDGE_PX,
+                }
+                // Kept until its lit wake has left the grid too
+                addRipple(
+                    x,
+                    y,
+                    REVEAL_RING_MS,
+                    reach,
+                    farthest + 4 * REVEAL_WAKE_PX,
+                )
+                fadeInGlow()
+            }, REVEAL_DELAY_MS)
+        } else {
+            from = new Float32Array(cols * rows)
+            changedAt = performance.now()
+            fadeInGlow()
+        }
 
         window.addEventListener("pointermove", onPointerMove)
         document.documentElement.addEventListener(
@@ -955,6 +1158,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             debugToggle?.remove()
             unsubscribe()
             resizeObserver.disconnect()
+            import.meta.hot?.off("vite:afterUpdate", relayout)
             window.removeEventListener("pointermove", onPointerMove)
             document.documentElement.removeEventListener(
                 "pointerleave",

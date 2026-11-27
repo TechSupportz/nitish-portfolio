@@ -9,6 +9,9 @@
     --font-code: var(--font-fira-code), ui-monospace, monospace;
 
     --color-charcoal: #121212;
+    /* Brand gradient for things that light up (DotMatrix.tsx mirrors it) */
+    --color-grad-from: var(--color-sky-100);
+    --color-grad-to: var(--color-blue-500);
 
     --breakpoint-xs: 456px;
     --breakpoint-wmax: 1600px;
@@ -41,6 +44,25 @@
     > * {
         grid-area: 1 / 1 / 2 / 2;
     }
+}
+
+/* The dot grid, in one place: the home matrix (DotMatrix.tsx reads these on
+   layout) and every .dot-grid banner. Set the dot size; the rest follows the
+   brand guide's ratios: dot:gap 3:4 for the grid (3pt dot, 7pt pitch), and lit
+   icon dots at 2/3 of the pitch (its icon dot:gap of 2:1). */
+:root {
+    --matrix-dot: 4px;
+    --matrix-alpha: 0.2;
+    --matrix-pitch: calc(var(--matrix-dot) * 7 / 3);
+}
+
+.dot-grid {
+    background-image: radial-gradient(
+        circle,
+        rgb(255 255 255 / var(--matrix-alpha)) calc(var(--matrix-dot) / 2 - 0.5px),
+        transparent calc(var(--matrix-dot) / 2 + 0.5px)
+    );
+    background-size: var(--matrix-pitch) var(--matrix-pitch);
 }
 
 html,
@@ -81,8 +103,8 @@ p {
     inset: 0;
     background: linear-gradient(
         to right,
-        var(--color-sky-100),
-        var(--color-blue-500)
+        var(--color-grad-from),
+        var(--color-grad-to)
     );
     mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
     clip-path: inset(0 100% 0 0);

@@ -16,7 +16,7 @@ const text = stop ? title.slice(0, -1) : title
         <div class="blur-layer" style="--b: 6px; --end: 74%"></div>
         <div class="blur-layer" style="--b: 12px; --end: 60%"></div>
         <div class="header-tint"></div>
-        <div class="header-dots bg-[url('/dot-matrix.svg')] bg-repeat"></div>
+        <div class="header-dots dot-grid"></div>
     </div>
     <div class="m-auto w-full max-w-screen-2xl">
         <h1
@@ -63,7 +63,6 @@ const text = stop ? title.slice(0, -1) : title
 
     /* The dots fade in under the navbar and dissolve before the content. */
     .header-dots {
-        opacity: 0.3;
         mask-image: linear-gradient(
             to bottom,
             transparent,

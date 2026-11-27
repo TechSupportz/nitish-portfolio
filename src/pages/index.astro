@@ -10,7 +10,7 @@ import Layout from "@layouts/Layout.astro"
 // Roles use their short form so "I am a ___" stays on one line beside the icon.
 const scrollItems = [...profileRoles, profileRoles[0]]
 const scrollItemClass =
-    "bg-linear-to-tr from-sky-100 to-blue-500 bg-clip-text text-transparent"
+    "bg-linear-to-tr from-grad-from to-grad-to bg-clip-text text-transparent"
 ---
 
 <Layout title="Nitish" disableScroll>
@@ -39,7 +39,10 @@ const scrollItemClass =
                         data-matrix-dim
                         class="mb-0.5 motion-preset-blur-right-md text-5xl motion-delay-75 motion-duration-1000 xs:text-6xl sm:text-7xl xl:text-[5rem] 2xl:text-8xl"
                     >
-                        Nitish,
+                        Nitish<span
+                            data-matrix-origin
+                            class="stop-flicker text-blue-400">.</span
+                        >
                     </h1>
                     <div
                         class="flex motion-preset-blur-right-md flex-wrap items-baseline gap-2 text-5xl motion-delay-100 motion-duration-1000 xs:text-6xl sm:text-7xl lg:text-6xl xl:text-[5rem] 2xl:text-8xl"
@@ -316,3 +319,39 @@ const scrollItemClass =
         }
     })
 </script>
+
+<style>
+    /* The full stop flickers on like the logo's dot, then the matrix sends the
+       first icon out from it (DotMatrix.tsx, REVEAL_DELAY_MS). */
+    .stop-flicker {
+        animation: stop-flicker 430ms steps(1, end) 450ms backwards;
+    }
+
+    @keyframes stop-flicker {
+        0% {
+            opacity: 0;
+        }
+        14% {
+            opacity: 1;
+        }
+        28% {
+            opacity: 0;
+        }
+        48% {
+            opacity: 1;
+        }
+        60% {
+            opacity: 0.25;
+        }
+        74%,
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .stop-flicker {
+            animation: none;
+        }
+    }
+</style>
