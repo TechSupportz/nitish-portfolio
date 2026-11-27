@@ -1,4 +1,4 @@
-import type { TProjectIcon } from "@utils/projectIcons"
+import type { TProjectIcon } from "@components/project/card/projectIcons"
 
 export type TProject = {
     title: string
@@ -12,10 +12,14 @@ export type TProject = {
 export type TProjectCategory = "featured" | "personal" | "hackathon"
 export type TProjectContent = Record<TProjectCategory, TProject[]>
 
-// A project as listed on the projects page: numbered, slugged and lowercased.
+// A project as listed on the projects page: with its anchor ID and terminal name.
 export type TListedProject = TProject & {
     category: TProjectCategory
     id: string
-    no: string
     name: string
+}
+
+export type TProjectGroup = {
+    category: TProjectCategory
+    items: TListedProject[]
 }

@@ -34,29 +34,27 @@ const { title, headerTitle, active, bare } = Astro.props
         <title>{title}</title>
     </head>
     <body class="proto">
-        {
-            !bare && (
-                <div data-proto-header class="fixed top-0 z-20 w-full">
-                    <Nav active={active} />
-                    {headerTitle && (
-                        <div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
-                            <div class="absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80% bg-progressive-blur-to-b">
-                                <div
-                                    class="p-dotgrid h-full"
-                                    style="mask-image: linear-gradient(to bottom, white, 45%, transparent 95%)"
-                                />
-                            </div>
-                            <div class="relative m-auto w-full max-w-screen-2xl">
-                                <h1 class="mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16">
-                                    {headerTitle}
-                                    <span class="p-stop">.</span>
-                                </h1>
-                            </div>
+        {!bare && (
+            <div data-proto-header class="fixed top-0 z-20 w-full">
+                <Nav active={active} />
+                {headerTitle && (
+                    <div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
+                        <div class="absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80% bg-progressive-blur-to-b">
+                            <div
+                                class="p-dotgrid h-full"
+                                style="mask-image: linear-gradient(to bottom, white, 45%, transparent 95%)"
+                            />
                         </div>
-                    )}
-                </div>
-            )
-        }
+                        <div class="relative m-auto w-full max-w-screen-2xl">
+                            <h1 class="mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16">
+                                {headerTitle}
+                                <span class="p-stop">.</span>
+                            </h1>
+                        </div>
+                    </div>
+                )}
+            </div>
+        )}
         <div
             class:list={[
                 "m-auto h-full max-w-screen-2xl",
@@ -86,7 +84,8 @@ const { title, headerTitle, active, bare } = Astro.props
     }
 
     .font-code {
-        font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family:
+            "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
         font-variant-ligatures: none;
     }
 
@@ -116,12 +115,20 @@ const { title, headerTitle, active, bare } = Astro.props
     .p-rule {
         position: relative;
         height: 3px;
-        background: radial-gradient(circle, rgb(255 255 255 / 0.28) 1.2px, transparent 1.6px) 0 0 /
-            7px 3px repeat-x;
+        background: radial-gradient(
+                circle,
+                rgb(255 255 255 / 0.28) 1.2px,
+                transparent 1.6px
+            )
+            0 0 / 7px 3px repeat-x;
     }
 
     .p-rule-ink {
-        background-image: radial-gradient(circle, rgb(18 18 18 / 0.3) 1.2px, transparent 1.6px);
+        background-image: radial-gradient(
+            circle,
+            rgb(18 18 18 / 0.3) 1.2px,
+            transparent 1.6px
+        );
     }
 
     /* The lit version of the rule sweeps in on hover of the parent .group. */
@@ -130,8 +137,10 @@ const { title, headerTitle, active, bare } = Astro.props
         position: absolute;
         inset: 0;
         background: linear-gradient(to right, var(--grad-a), var(--grad-b));
-        -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
-        mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
+        -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0
+            0 / 7px 3px repeat-x;
+        mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px
+            3px repeat-x;
         clip-path: inset(0 100% 0 0);
         transition: clip-path 280ms var(--ease-out-strong);
     }
@@ -404,12 +413,15 @@ const { title, headerTitle, active, bare } = Astro.props
     }
 
     const paint = (mark: Mark, now: number) => {
-        const phase = (((now - mark.t0) / CHASE_MS) % 1 + 1) % 1
+        const phase = ((((now - mark.t0) / CHASE_MS) % 1) + 1) % 1
         mark.lit.forEach((el, i) => {
             const b = pulse(phase, i)
             const chase = FLOOR + (1 - FLOOR) * b
             el.style.setProperty("--o", (1 + (chase - 1) * mark.mix).toFixed(3))
-            mark.glow[i]?.style.setProperty("--go", (GLOW * b * mark.mix).toFixed(3))
+            mark.glow[i]?.style.setProperty(
+                "--go",
+                (GLOW * b * mark.mix).toFixed(3),
+            )
         })
         mark.halo?.style.setProperty("--ho", (1 - mark.mix).toFixed(3))
     }
@@ -426,7 +438,8 @@ const { title, headerTitle, active, bare } = Astro.props
                 running.delete(mark)
                 continue
             }
-            const p = mark.dur > 0 ? Math.min(1, (now - mark.start) / mark.dur) : 1
+            const p =
+                mark.dur > 0 ? Math.min(1, (now - mark.start) / mark.dur) : 1
             mark.mix = mark.from + (mark.to - mark.from) * easeOut(p)
             if (p >= 1 && mark.to === 0) {
                 mark.mix = 0
@@ -452,7 +465,10 @@ const { title, headerTitle, active, bare } = Astro.props
 
     const boot = (mark: Mark) => {
         if (reduced.matches) return
-        const k = parseFloat(getComputedStyle(mark.host).getPropertyValue("--logo-k")) || 1
+        const k =
+            parseFloat(
+                getComputedStyle(mark.host).getPropertyValue("--logo-k"),
+            ) || 1
         const total = BOOT_MS * k
         // Drop any chase; the boot animations own opacity until they end.
         running.delete(mark)
@@ -472,12 +488,14 @@ const { title, headerTitle, active, bare } = Astro.props
 
     const initLogos = () => {
         document
-            .querySelectorAll<HTMLElement>('[data-logo="lit"]:not([data-ready])')
+            .querySelectorAll<HTMLElement>(
+                '[data-logo="lit"]:not([data-ready])',
+            )
             .forEach(host => {
                 host.dataset.ready = ""
                 const pick = (layer: string) =>
-                    [".s1", ".s2", ".s3", ".dot"].map(
-                        seg => host.querySelector<SVGElement>(`.${layer}${seg}`)!,
+                    [".s1", ".s2", ".s3", ".dot"].map(seg =>
+                        host.querySelector<SVGElement>(`.${layer}${seg}`)!,
                     )
                 const mark: Mark = {
                     host,
@@ -516,9 +534,12 @@ const { title, headerTitle, active, bare } = Astro.props
                 button.dataset.ready = ""
                 let timer: ReturnType<typeof setTimeout>
                 button.addEventListener("click", () => {
-                    navigator.clipboard?.writeText(button.dataset.copy!).catch(() => {})
+                    navigator.clipboard
+                        ?.writeText(button.dataset.copy!)
+                        .catch(() => {})
                     const scope = button.closest("[data-copy-scope]") ?? button
-                    const label = scope.querySelector<HTMLElement>("[data-copy-label]")
+                    const label =
+                        scope.querySelector<HTMLElement>("[data-copy-label]")
                     if (!label) return
                     label.textContent = label.dataset.done ?? "copied"
                     scope.toggleAttribute("data-copied", true)

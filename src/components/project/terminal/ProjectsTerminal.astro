@@ -1,0 +1,176 @@
+---
+import type { TProjectGroup } from "@src/types/ProjectContentType"
+import ProjectsEggExchanges from "./easter-egg/ProjectsEggExchanges.astro"
+import ProjectsPromptBar from "./listing/ProjectsPromptBar.astro"
+import ProjectsSidebar from "./listing/ProjectsSidebar.astro"
+
+type Props = { groups: TProjectGroup[] }
+
+const { groups } = Astro.props
+---
+
+<ProjectsPromptBar groups={groups} />
+<aside class="fixed hidden h-[calc(100dvh-21rem)] wmax:max-w-100 lg:flex lg:w-[25vw]">
+    <ProjectsSidebar groups={groups} />
+</aside>
+<ProjectsEggExchanges />
+
+<style is:global>
+    /* The script slides the listing to follow you; it isn't scrolled by
+       hand. A fade at the top, as tall as the distance moved (up to 48px),
+       shows when lines have slid off. */
+    .ls-scroll {
+        mask-image: linear-gradient(
+            to bottom,
+            transparent,
+            white var(--ls-fade, 0px)
+        );
+    }
+
+    /* Command lines: the dot is centred on the text, not on its baseline. */
+    .ls-line {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+    }
+
+    /* The prompt dot: dim by default, blue for the category you're in and
+       for the live prompt. It fades between the two. */
+    .ls-dot {
+        display: inline-block;
+        flex: none;
+        width: 6px;
+        height: 6px;
+        margin-right: 0.6em;
+        border-radius: 50%;
+        vertical-align: middle;
+        background: oklch(100% 0 0 / 22%);
+        transition: background-color 300ms ease;
+    }
+
+    [data-on] > .ls-line .ls-dot,
+    .ls-live .ls-dot {
+        background: var(--color-blue-400);
+    }
+
+    /* Block cursor: solid while typing, blinking at rest. A command line
+       shows its own cursor only while it types. */
+    .ls-cursor {
+        display: inline-block;
+        width: 0.55em;
+        height: 1.1em;
+        background: oklch(100% 0 0 / 85%);
+        animation: term-blink 1.1s steps(1, end) infinite;
+    }
+
+    [data-typing] + .ls-cursor {
+        animation: none;
+    }
+
+    .ls-cmd-cursor {
+        display: none;
+    }
+
+    [data-typing] + .ls-cmd-cursor {
+        display: inline-block;
+    }
+
+    .ls-dir {
+        color: oklch(100% 0 0 / 45%);
+        transition: color 150ms ease-out;
+    }
+
+    .ls-row {
+        color: oklch(100% 0 0 / 55%);
+        transition: color 150ms ease-out;
+    }
+
+    /* The idle prompt is clickable (it runs the next easter-egg command).
+       It spans the full line with generous vertical hit area; on phones
+       its ::after covers the blank space below the last card too. */
+    .ls-prompt {
+        position: relative;
+        width: 100%;
+        padding-block: 0.75rem;
+        margin-top: -0.75rem;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .ls-prompt:not([data-locked]):not([data-done]):hover .ls-cursor {
+        background: white;
+    }
+
+    .ls-prompt:focus-visible {
+        outline: 2px solid var(--color-blue-400);
+        outline-offset: -2px;
+        border-radius: 4px;
+    }
+
+    .ls-prompt[data-locked],
+    .ls-prompt[data-done] {
+        cursor: default;
+    }
+
+    .ls-prompt-slot::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        inset-inline: -2rem;
+        bottom: -15rem;
+    }
+
+    .ls-prompt-slot[data-locked]::after,
+    .ls-prompt-slot[data-done]::after {
+        display: none;
+    }
+
+    .ls-egg-hint {
+        margin-left: 0.55em;
+        color: oklch(100% 0 0 / 35%);
+        user-select: none;
+    }
+
+    .ls-prompt[data-locked] .ls-egg-hint,
+    .ls-prompt[data-done] .ls-egg-hint {
+        display: none;
+    }
+
+    /* The easter egg's "ask me" link to the contact page. */
+    .ls-egg-link {
+        color: white;
+        text-decoration: underline dotted var(--color-blue-400);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+    }
+
+    .ls-dir:hover,
+    .ls-dir[data-active],
+    .ls-row:hover,
+    .ls-row[data-active] {
+        color: white;
+    }
+
+    /* Output streams in: each line appears instantly, 45ms after the one
+       above it. Hidden until its command has typed (data-in). */
+    [data-ls-out]:not([data-in]) > * {
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    [data-ls-out][data-in] > * {
+        transition: visibility 0s linear calc(var(--i, 0) * 45ms);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ls-cursor {
+            animation: none;
+        }
+
+        .ls-dir,
+        .ls-row,
+        [data-ls-out] > * {
+            transition: none;
+        }
+    }
+</style>

@@ -1,0 +1,89 @@
+---
+import type { TProjectGroup } from "@src/types/ProjectContentType"
+
+type Props = {
+    groups: TProjectGroup[]
+    mobile?: boolean
+}
+
+const { groups, mobile = false } = Astro.props
+const first = groups[0]
+let printLine = 2
+---
+
+<div data-ls-block="projects" class="mb-4">
+    <p class="ls-line" style={mobile ? "--i:0" : undefined}>
+        <span class="ls-dot"></span>
+        <span data-ls-cmd data-text="ls projects">
+            ls projects
+        </span>
+        {!mobile && <span class="ls-cursor ls-cmd-cursor"></span>}
+    </p>
+    <div
+        data-ls-out={mobile ? undefined : ""}
+        data-in={mobile ? undefined : ""}
+        class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1"
+        style={mobile ? "--i:1" : undefined}
+    >
+        {groups.map(({ category, items }, i) => (
+            <button
+                type="button"
+                style={mobile ? undefined : `--i:${i}`}
+                data-ls-dir={category}
+                data-ls-jump={items[0].id}
+                data-active={
+                    !mobile && category === first.category ? "" : undefined
+                }
+                class:list={["ls-dir", { "py-1.5": mobile }]}
+            >
+                {category}/
+            </button>
+        ))}
+    </div>
+</div>
+{groups.map(({ category, items }) => (
+    <div
+        data-ls-block={category}
+        data-on={!mobile && category === first.category ? "" : undefined}
+        hidden={!mobile && category !== first.category}
+        class="mb-4"
+    >
+        <p class="ls-line" style={mobile ? `--i:${printLine++}` : undefined}>
+            <span class="ls-dot"></span>
+            <span data-ls-cmd data-text={`ls -l ${category}`}>
+                ls -l {category}
+            </span>
+            {!mobile && <span class="ls-cursor ls-cmd-cursor"></span>}
+        </p>
+        <ul
+            data-ls-out={mobile ? undefined : ""}
+            data-in={!mobile && category === first.category ? "" : undefined}
+            class:list={[
+                "font-sans text-base",
+                mobile ? "mt-1" : "mt-1.5 leading-[1.4]",
+            ]}
+        >
+            {items.map((project, i) => (
+                <li style={`--i:${mobile ? printLine++ : i}`}>
+                    <button
+                        type="button"
+                        data-ls-row={project.id}
+                        data-ls-jump={project.id}
+                        data-active={
+                            !mobile && project.id === first.items[0].id
+                                ? ""
+                                : undefined
+                        }
+                        class:list={[
+                            "ls-row text-left",
+                            { "w-full py-1.5": mobile },
+                        ]}
+                    >
+                        {project.name}
+                        {mobile && <span class="pb-stop">.</span>}
+                    </button>
+                </li>
+            ))}
+        </ul>
+    </div>
+))}

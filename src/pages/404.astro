@@ -7,35 +7,23 @@ const navLinks = getNavLinks(Astro.url.pathname)
 ---
 
 <Layout title="404." headerTitle="404." disableScroll>
-    <div
-        class="mt-2 flex flex-col gap-8 px-4 xs:px-6 md:mt-4 md:gap-10 md:px-8 lg:gap-12 lg:px-12 xl:px-16"
-    >
-        <div
-            class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-100 md:gap-4 motion-duration-1500"
-        >
+    <div class="mt-2 flex flex-col gap-8 px-4 xs:px-6 md:mt-4 md:gap-10 md:px-8 lg:gap-12 lg:px-12 xl:px-16">
+        <div class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-100 md:gap-4 motion-duration-1500">
             <h2 class="text-4xl xs:text-5xl">you seem lost.</h2>
-            <p
-                class="text-2xl font-light text-balance xs:text-3xl lg:max-w-[32ch] lg:text-2xl"
-            >
+            <p class="text-2xl font-light text-balance xs:text-3xl lg:max-w-[32ch] lg:text-2xl">
                 This page doesn't exist, or it did and I forgot about it.
             </p>
         </div>
-        <div
-            class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-200 motion-duration-1500 md:gap-4"
-        >
+        <div class="flex motion-preset-blur-down-md flex-col gap-3 motion-delay-200 motion-duration-1500 md:gap-4">
             <p class="text-xl text-white/50 xs:text-2xl">
                 try one of these instead
             </p>
-            <div
-                class="flex flex-col gap-2 font-display text-3xl font-bold xs:text-4xl"
-            >
-                {
-                    navLinks.map(({ href, label }) => (
-                        <a href={href} class="group w-fit">
-                            <Highlight>{label}.</Highlight>
-                        </a>
-                    ))
-                }
+            <div class="flex flex-col gap-2 font-display text-3xl font-bold xs:text-4xl">
+                {navLinks.map(({ href, label }) => (
+                    <a href={href} class="group w-fit">
+                        <Highlight>{label}.</Highlight>
+                    </a>
+                ))}
             </div>
         </div>
     </div>

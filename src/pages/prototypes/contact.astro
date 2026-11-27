@@ -68,12 +68,16 @@ const links = [
                             <br />
                             Thiyagarajan
                         </div>
-                        <p class="mt-1.5 text-sm text-white/60">software developer &amp; student</p>
+                        <p class="mt-1.5 text-sm text-white/60">
+                            software developer &amp; student
+                        </p>
                     </div>
                 </div>
             </div>
             <div class="w-full max-w-md min-w-0 motion-preset-blur-right-md motion-delay-150 motion-duration-700">
-                <h2 class="text-3xl lg:text-4xl">lets talk<span class="p-stop">.</span></h2>
+                <h2 class="text-3xl lg:text-4xl">
+                    lets talk<span class="p-stop">.</span>
+                </h2>
                 <p class="mt-1.5 text-lg text-balance text-white/80 lg:text-xl">
                     Got an opportunity or found a bug in something I built?
                 </p>
@@ -85,12 +89,20 @@ const links = [
                             data-copy={EMAIL}
                             class="group flex w-full items-center gap-4 py-3.5 text-left"
                         >
-                            <Image src={emailIcon} alt="Email" class="size-6 shrink-0" />
+                            <Image
+                                src={emailIcon}
+                                alt="Email"
+                                class="size-6 shrink-0"
+                            />
                             <span class="min-w-0 flex-1">
-                                <span class="font-code block text-xs text-white/50">email</span>
+                                <span class="font-code block text-xs text-white/50">
+                                    email
+                                </span>
                                 <span class="font-code text-base lg:text-lg">
                                     <Highlight>
-                                        <!--email_off-->{EMAIL}<!--/email_off-->
+                                        <!--email_off-->
+                                        {EMAIL}
+                                        <!--/email_off-->
                                     </Highlight>
                                     <span class="p-enddot" aria-hidden="true" />
                                 </span>
@@ -105,32 +117,39 @@ const links = [
                             </span>
                         </button>
                     </li>
-                    {
-                        links.map(link => (
-                            <li>
-                                <div class="p-rule" />
-                                <a
-                                    href={link.href}
-                                    target="_blank"
-                                    class="group flex items-center gap-4 py-3.5"
-                                >
-                                    <Image src={link.icon} alt={link.label} class="size-6 shrink-0" />
-                                    <span class="min-w-0 flex-1">
-                                        <span class="font-code block text-xs text-white/50">
-                                            {link.key}
-                                        </span>
-                                        <span class="font-code text-base lg:text-lg">
-                                            <Highlight>{link.value.toLowerCase()}</Highlight>
-                                            <span class="p-enddot" aria-hidden="true" />
-                                        </span>
+                    {links.map(link => (
+                        <li>
+                            <div class="p-rule" />
+                            <a
+                                href={link.href}
+                                target="_blank"
+                                class="group flex items-center gap-4 py-3.5"
+                            >
+                                <Image
+                                    src={link.icon}
+                                    alt={link.label}
+                                    class="size-6 shrink-0"
+                                />
+                                <span class="min-w-0 flex-1">
+                                    <span class="font-code block text-xs text-white/50">
+                                        {link.key}
                                     </span>
-                                    <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
-                                        open ↗
+                                    <span class="font-code text-base lg:text-lg">
+                                        <Highlight>
+                                            {link.value.toLowerCase()}
+                                        </Highlight>
+                                        <span
+                                            class="p-enddot"
+                                            aria-hidden="true"
+                                        />
                                     </span>
-                                </a>
-                            </li>
-                        ))
-                    }
+                                </span>
+                                <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
+                                    open ↗
+                                </span>
+                            </a>
+                        </li>
+                    ))}
                     <li class="p-rule" aria-hidden="true" />
                 </ul>
             </div>
@@ -155,7 +174,9 @@ const links = [
                     />
                 </div>
                 <div class="min-w-0 motion-preset-blur-right-md motion-delay-100 motion-duration-700 lg:order-1">
-                    <h2 class="text-2xl xs:text-3xl">lets talk<span class="p-stop">.</span></h2>
+                    <h2 class="text-2xl xs:text-3xl">
+                        lets talk<span class="p-stop">.</span>
+                    </h2>
                     <p class="mt-1 max-w-[34ch] text-lg text-balance text-white/70">
                         Got an opportunity or found a bug in something I built?
                     </p>
@@ -178,30 +199,30 @@ const links = [
                                 class="group mt-1 text-left font-display text-2xl leading-tight font-bold xs:text-3xl lg:text-4xl"
                             >
                                 <Highlight>
-                                    <!--email_off-->contact@tnitish<span class="p-stop">.</span>com<!--/email_off-->
+                                    <!--email_off-->contact@tnitish
+                                    <span class="p-stop">.</span>com
+                                    <!--/email_off-->
                                 </Highlight>
                             </button>
                         </li>
-                        {
-                            links.map((link, i) => (
-                                <li>
-                                    <div class="font-code text-xs text-white/50">
-                                        0{i + 2} · {link.key} ↗
-                                    </div>
-                                    <a
-                                        href={link.href}
-                                        target="_blank"
-                                        aria-label={`${link.label}: ${link.value}`}
-                                        class="group mt-1 inline-block font-display text-2xl leading-tight font-bold xs:text-3xl lg:text-4xl"
-                                    >
-                                        <Highlight>
-                                            {link.value.toLowerCase()}
-                                            <span class="p-stop">.</span>
-                                        </Highlight>
-                                    </a>
-                                </li>
-                            ))
-                        }
+                        {links.map((link, i) => (
+                            <li>
+                                <div class="font-code text-xs text-white/50">
+                                    0{i + 2} · {link.key} ↗
+                                </div>
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    aria-label={`${link.label}: ${link.value}`}
+                                    class="group mt-1 inline-block font-display text-2xl leading-tight font-bold xs:text-3xl lg:text-4xl"
+                                >
+                                    <Highlight>
+                                        {link.value.toLowerCase()}
+                                        <span class="p-stop">.</span>
+                                    </Highlight>
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>
@@ -229,7 +250,9 @@ const links = [
                 />
             </div>
             <div class="w-full max-w-md min-w-0 motion-preset-blur-right-md motion-delay-100 motion-duration-700">
-                <h2 class="text-3xl lg:text-4xl">lets talk<span class="p-stop">.</span></h2>
+                <h2 class="text-3xl lg:text-4xl">
+                    lets talk<span class="p-stop">.</span>
+                </h2>
                 <p class="mt-1.5 text-lg text-balance text-white/80 lg:text-xl">
                     Got an opportunity or found a bug in something I built?
                 </p>
@@ -243,10 +266,14 @@ const links = [
                             class="group flex w-full items-center gap-4 py-3.5 text-left"
                         >
                             <span class="min-w-0 flex-1">
-                                <span class="font-code block text-xs text-white/50">email</span>
+                                <span class="font-code block text-xs text-white/50">
+                                    email
+                                </span>
                                 <span class="text-lg lg:text-xl">
                                     <Highlight>
-                                        <!--email_off-->{EMAIL}<!--/email_off-->
+                                        <!--email_off-->
+                                        {EMAIL}
+                                        <!--/email_off-->
                                     </Highlight>
                                 </span>
                             </span>
@@ -260,31 +287,29 @@ const links = [
                             </span>
                         </button>
                     </li>
-                    {
-                        links.map(link => (
-                            <li>
-                                <div class="p-rule" />
-                                <a
-                                    href={link.href}
-                                    target="_blank"
-                                    data-matrix-icon={link.icon.src}
-                                    class="group flex items-center gap-4 py-3.5"
-                                >
-                                    <span class="min-w-0 flex-1">
-                                        <span class="font-code block text-xs text-white/50">
-                                            {link.key}
-                                        </span>
-                                        <span class="text-lg lg:text-xl">
-                                            <Highlight>{link.value}</Highlight>
-                                        </span>
+                    {links.map(link => (
+                        <li>
+                            <div class="p-rule" />
+                            <a
+                                href={link.href}
+                                target="_blank"
+                                data-matrix-icon={link.icon.src}
+                                class="group flex items-center gap-4 py-3.5"
+                            >
+                                <span class="min-w-0 flex-1">
+                                    <span class="font-code block text-xs text-white/50">
+                                        {link.key}
                                     </span>
-                                    <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
-                                        open ↗
+                                    <span class="text-lg lg:text-xl">
+                                        <Highlight>{link.value}</Highlight>
                                     </span>
-                                </a>
-                            </li>
-                        ))
-                    }
+                                </span>
+                                <span class="font-code shrink-0 text-xs text-white/50 transition-colors duration-150 ease-out group-hover:text-white">
+                                    open ↗
+                                </span>
+                            </a>
+                        </li>
+                    ))}
                     <li class="p-rule" aria-hidden="true" />
                 </ul>
             </div>
@@ -308,53 +333,82 @@ const links = [
                     <div class="font-display text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl">
                         Nitish Thiyagarajan<span class="p-stop">.</span>
                     </div>
-                    <p class="mt-1 text-sm text-white/60 sm:text-base">software developer &amp; student</p>
+                    <p class="mt-1 text-sm text-white/60 sm:text-base">
+                        software developer &amp; student
+                    </p>
                 </div>
             </header>
             <div class="mt-10 grid motion-preset-blur-up-md gap-10 motion-delay-100 motion-duration-700 lg:mt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
                 <section data-copy-scope>
                     <div class="flex items-end justify-between gap-4">
-                        <h2 class="text-2xl">lets talk<span class="p-stop">.</span></h2>
-                        <svg data-doticon={emailIcon.src} class="p-doticon" viewBox="0 0 36 36" aria-hidden="true" />
+                        <h2 class="text-2xl">
+                            lets talk<span class="p-stop">.</span>
+                        </h2>
+                        <svg
+                            data-doticon={emailIcon.src}
+                            class="p-doticon"
+                            viewBox="0 0 36 36"
+                            aria-hidden="true"
+                        />
                     </div>
                     <div class="p-rule mt-2" />
                     <p class="mt-4 text-pretty text-white/80">
-                        Got an opportunity or found a bug in something I built? Email's the best way to reach me.
+                        Got an opportunity or found a bug in something I built?
+                        Email's the best way to reach me.
                     </p>
-                    <button type="button" data-copy={EMAIL} class="group mt-4 block text-left">
+                    <button
+                        type="button"
+                        data-copy={EMAIL}
+                        class="group mt-4 block text-left"
+                    >
                         <span class="font-code block text-xs text-[var(--accent)]">
-                            <span data-copy-label data-idle="email · click to copy" data-done="copied to clipboard.">
+                            <span
+                                data-copy-label
+                                data-idle="email · click to copy"
+                                data-done="copied to clipboard."
+                            >
                                 email · click to copy
                             </span>
                         </span>
                         <span class="mt-1 block text-xl sm:text-2xl">
                             <Highlight>
-                                <!--email_off-->{EMAIL}<!--/email_off-->
+                                <!--email_off-->
+                                {EMAIL}
+                                <!--/email_off-->
                             </Highlight>
                         </span>
                     </button>
                 </section>
                 <section>
                     <div class="flex items-end justify-between gap-4">
-                        <h2 class="text-2xl">elsewhere<span class="p-stop">.</span></h2>
-                        <svg data-doticon={githubIcon.src} class="p-doticon" viewBox="0 0 36 36" aria-hidden="true" />
+                        <h2 class="text-2xl">
+                            elsewhere<span class="p-stop">.</span>
+                        </h2>
+                        <svg
+                            data-doticon={githubIcon.src}
+                            class="p-doticon"
+                            viewBox="0 0 36 36"
+                            aria-hidden="true"
+                        />
                     </div>
                     <div class="p-rule mt-2" />
                     <ul class="mt-4 space-y-4">
-                        {
-                            links.map(link => (
-                                <li>
-                                    <a href={link.href} target="_blank" class="group block">
-                                        <span class="font-code block text-xs text-[var(--accent)]">
-                                            {link.key} ↗
-                                        </span>
-                                        <span class="mt-0.5 block text-lg">
-                                            <Highlight>{link.value}</Highlight>
-                                        </span>
-                                    </a>
-                                </li>
-                            ))
-                        }
+                        {links.map(link => (
+                            <li>
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    class="group block"
+                                >
+                                    <span class="font-code block text-xs text-[var(--accent)]">
+                                        {link.key} ↗
+                                    </span>
+                                    <span class="mt-0.5 block text-lg">
+                                        <Highlight>{link.value}</Highlight>
+                                    </span>
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                 </section>
             </div>
@@ -427,7 +481,12 @@ const links = [
         pointer-events: none;
         mask-image:
             radial-gradient(circle, #000 1.3px, transparent 1.8px),
-            radial-gradient(circle closest-side, transparent 58%, #000 66%, transparent 100%);
+            radial-gradient(
+                circle closest-side,
+                transparent 58%,
+                #000 66%,
+                transparent 100%
+            );
         mask-size:
             var(--pitch, 7px) var(--pitch, 7px),
             100% 100%;
@@ -441,7 +500,11 @@ const links = [
     }
 
     .p-ht-lit {
-        background: linear-gradient(135deg, var(--grad-a, #e0f2fe), var(--grad-b, #3b82f6));
+        background: linear-gradient(
+            135deg,
+            var(--grad-a, #e0f2fe),
+            var(--grad-b, #3b82f6)
+        );
         animation: p-ht-sweep 1100ms var(--ease-out-strong) 250ms both;
     }
 
@@ -461,7 +524,13 @@ const links = [
         mask-image:
             radial-gradient(circle closest-side, #000 74%, transparent 84%),
             radial-gradient(circle, #000 2.3px, transparent 2.8px),
-            radial-gradient(circle closest-side, transparent 66%, #000 78%, #000 94%, transparent 100%);
+            radial-gradient(
+                circle closest-side,
+                transparent 66%,
+                #000 78%,
+                #000 94%,
+                transparent 100%
+            );
         mask-size:
             100% 100%,
             var(--pitch, 7px) var(--pitch, 7px),
@@ -607,7 +676,14 @@ const links = [
                                 let max = 0
                                 for (let y = 0; y < 4; y++)
                                     for (let x = 0; x < 4; x++)
-                                        max = Math.max(max, alpha[((r * 4 + y) * s + c * 4 + x) * 4 + 3])
+                                        max = Math.max(
+                                            max,
+                                            alpha[
+                                                ((r * 4 + y) * s + c * 4 + x) *
+                                                    4 +
+                                                    3
+                                            ],
+                                        )
                                 cells.push(max > 110)
                             }
                         resolve(cells)
@@ -639,7 +715,9 @@ const links = [
     // Resume: one small gradient icon per section heading (guide pitch 3, dot 2).
     const initDotIcons = () => {
         document
-            .querySelectorAll<SVGSVGElement>("svg[data-doticon]:not([data-ready])")
+            .querySelectorAll<SVGSVGElement>(
+                "svg[data-doticon]:not([data-ready])",
+            )
             .forEach(svg => {
                 svg.dataset.ready = ""
                 const n = 12
@@ -649,7 +727,14 @@ const links = [
                             if (!on) return
                             const r = Math.floor(i / n)
                             const c = i % n
-                            svg.append(circle(c * 3 + 1.5, r * 3 + 1.5, 1.05, gradient(r, c, n)))
+                            svg.append(
+                                circle(
+                                    c * 3 + 1.5,
+                                    r * 3 + 1.5,
+                                    1.05,
+                                    gradient(r, c, n),
+                                ),
+                            )
                         }),
                     )
                     .catch(() => {})
@@ -663,7 +748,9 @@ const links = [
     const ORIGIN = PANEL - ICON - 1
 
     const initMatrix = () => {
-        const svg = document.querySelector<SVGSVGElement>("svg[data-matrix]:not([data-ready])")
+        const svg = document.querySelector<SVGSVGElement>(
+            "svg[data-matrix]:not([data-ready])",
+        )
         if (!svg) return
         svg.dataset.ready = ""
         const lit: SVGCircleElement[] = []
@@ -672,10 +759,16 @@ const links = [
         const glow = document.createElementNS(SVG_NS, "g")
         glow.setAttribute("class", "lit")
         for (let r = 0; r < PANEL; r++)
-            for (let c = 0; c < PANEL; c++) unlit.append(circle(c * 10 + 5, r * 10 + 5, 2.15))
+            for (let c = 0; c < PANEL; c++)
+                unlit.append(circle(c * 10 + 5, r * 10 + 5, 2.15))
         for (let r = 0; r < ICON; r++)
             for (let c = 0; c < ICON; c++) {
-                const dot = circle((ORIGIN + c) * 10 + 5, (ORIGIN + r) * 10 + 5, 3.4, gradient(r, c, ICON))
+                const dot = circle(
+                    (ORIGIN + c) * 10 + 5,
+                    (ORIGIN + r) * 10 + 5,
+                    3.4,
+                    gradient(r, c, ICON),
+                )
                 dot.setAttribute("class", "on")
                 glow.append(dot)
                 lit.push(dot)
@@ -693,12 +786,15 @@ const links = [
             lit.forEach((dot, i) => {
                 const on = cells[i]
                 const diag = (i % ICON) + (ICON - 1 - Math.floor(i / ICON))
-                dot.style.transitionDelay = on && !reduce.matches ? `${delay + diag * 9}ms` : "0ms"
+                dot.style.transitionDelay =
+                    on && !reduce.matches ? `${delay + diag * 9}ms` : "0ms"
                 dot.toggleAttribute("data-on", on)
             })
         }
 
-        const rows = document.querySelectorAll<HTMLElement>("[data-matrix-rows] [data-matrix-icon]")
+        const rows = document.querySelectorAll<HTMLElement>(
+            "[data-matrix-rows] [data-matrix-icon]",
+        )
         rows.forEach(row => {
             const pick = () => show(row.dataset.matrixIcon!)
             row.addEventListener("pointerenter", pick)

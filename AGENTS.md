@@ -46,9 +46,18 @@ in their labels.
   it fades between the two. Output streams in a line at a time with no fade.
   Rows brighten on hover, no highlight box. The sidebar is `fixed`, so it
   never gets pushed up at the end of the page.
-- **Easter egg:** a deliberate scroll past the bottom types `cd in-progress`,
-  gets permission denied, and answers in Nitish's voice. Once only, kept to
-  one short block so the sidebar doesn't grow.
+- **Easter egg:** each deliberate scroll (or pull, on phones) past the bottom
+  types the next of three exchanges: `cd in-progress` gets permission denied,
+  `sudo ls in-progress` shows a few joke files ("ok... its mostly ideas but
+  still counts"), and `cat in-progress/???.md` is locked too, ending on "you
+  know u can just ask me right?" with a `contact.` link to `/contact`. Then
+  it's quiet. Clicking the idle prompt (dot + cursor) also runs the next one.
+  Copy is Nitish's own; keep it as written.
+- **Phones** (`ProjectsPromptBar.astro`, below `lg`): the terminal is one line
+  pinned under the header, `• ls -l <category>` with `n/total`, retyped as you
+  scroll. Tap it for the full listing (prints line by line, page dims to 35%
+  and locks). The easter egg types under the last card, from its own tappable
+  prompt or a pull past the bottom.
 - **Cards** (`ProjectCard.astro`): image 45%, words 55%. Title trimmed to the
   image's top edge with `text-box: trim-start cap alphabetic`, description
   capped at ~46ch, then a `link / built with` spec. No dotted rule or blue

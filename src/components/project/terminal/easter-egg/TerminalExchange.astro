@@ -1,0 +1,26 @@
+---
+type Props = { command: string }
+
+const { command } = Astro.props
+---
+
+<template data-egg-exchange>
+    <div data-ls-egg>
+        <p class="ls-line">
+            <span class="ls-dot"></span>
+            <span data-ls-cmd data-text={command}></span>
+            <span class="ls-cursor ls-cmd-cursor"></span>
+        </p>
+        <div data-ls-out class="mt-1.5">
+            <p style="--i:0" class="font-normal text-white/45">
+                <slot name="output" />
+            </p>
+            <p
+                style="--i:1"
+                class="mt-1 font-sans text-base font-normal text-white/60"
+            >
+                <slot />
+            </p>
+        </div>
+    </div>
+</template>

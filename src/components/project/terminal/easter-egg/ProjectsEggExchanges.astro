@@ -1,0 +1,35 @@
+---
+import TerminalExchange from "./TerminalExchange.astro"
+
+const files = [
+    "app-idea-v3.md",
+    "grab-for-dogs.md",
+    "another-todo-app/",
+    "???.md",
+]
+---
+
+<TerminalExchange command="cd in-progress">
+    <Fragment slot="output">cd: permission denied: in-progress</Fragment>
+    there's def stuff in there. <em>trust.</em>
+</TerminalExchange>
+<TerminalExchange command="sudo ls in-progress">
+    <Fragment slot="output">
+        {files.map(file => (
+            <span class="mr-4 inline-block whitespace-nowrap">{file}</span>
+        ))}
+    </Fragment>
+    <em>ok..</em>. its mostly ideas but still counts
+</TerminalExchange>
+<TerminalExchange command="cat in-progress/???.md">
+    <Fragment slot="output">
+        cat: in-progress/???.md: Permission denied
+    </Fragment>
+    you know u can just ask me <em>right?</em>
+    <span class="mt-1 block">
+        <a href="/contact" class="ls-egg-link">
+            contact
+        </a>
+        <span class="text-blue-400">.</span>
+    </span>
+</TerminalExchange>

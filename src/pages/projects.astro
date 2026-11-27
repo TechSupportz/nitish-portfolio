@@ -1,324 +1,45 @@
 ---
-import ProjectCard from "@components/project/ProjectCard.astro"
-import ProjectsSidebar from "@components/project/ProjectsSidebar.astro"
-import StickyProjectTitle from "@components/project/StickyProjectTitle.astro"
+import ProjectCard from "@components/project/card/ProjectCard.astro"
+import ProjectsEggPrompt from "@components/project/terminal/easter-egg/ProjectsEggPrompt.astro"
+import ProjectsTerminal from "@components/project/terminal/ProjectsTerminal.astro"
 import Layout from "@layouts/Layout.astro"
-import { projectContent } from "@content/projects"
-import type {
-    TListedProject,
-    TProjectCategory,
-} from "@src/types/ProjectContentType"
-
-let count = 0
-const groups = (Object.keys(projectContent) as TProjectCategory[]).map(
-    category => ({
-        category,
-        items: projectContent[category].map(
-            (project): TListedProject => ({
-                ...project,
-                category,
-                no: String(++count).padStart(2, "0"),
-                id: project.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "-")
-                    .replace(/^-|-$/g, ""),
-                name: project.title.toLowerCase(),
-            }),
-        ),
-    }),
-)
-const first = groups[0].items[0]
+import { projectGroups as groups } from "@content/projects"
 ---
 
 <Layout title="projects." headerTitle="projects.">
-    <div class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
-        <!-- Fixed, so it never gets pushed up at the end of the page. -->
-        <aside
-            class="fixed hidden h-[calc(100dvh-21rem)] wmax:max-w-100 lg:flex lg:w-[25vw]"
-        >
-            <ProjectsSidebar groups={groups} />
-        </aside>
-        <div
-            class="flex w-full motion-preset-focus flex-col gap-12 px-6 pb-48 motion-delay-75 motion-duration-1000 md:px-8 lg:ml-[25vw] lg:w-3/4 lg:gap-16 lg:px-0 lg:pb-40 wmax:ml-100"
-        >
-            {
-                groups.flatMap(group =>
-                    group.items.map(project => <ProjectCard {...project} />),
-                )
-            }
+    <div data-projects class="lg:flex lg:px-12 lg:pt-12 xl:px-16">
+        <ProjectsTerminal groups={groups} />
+        <div class="flex w-full motion-preset-focus flex-col gap-12 px-6 pt-12 motion-delay-75 motion-duration-1000 md:px-8 lg:ml-[25vw] lg:w-3/4 lg:gap-16 lg:px-0 lg:pt-0 lg:pb-40 wmax:ml-100">
+            {groups.flatMap(group =>
+                group.items.map(project => <ProjectCard {...project} />),
+            )}
+            <div
+                data-egg-slot
+                class="relative -mx-6 overflow-x-clip px-6 pb-60 font-code text-sm md:-mx-8 md:px-8 lg:hidden"
+            >
+                <ProjectsEggPrompt mobile />
+            </div>
         </div>
     </div>
-    <StickyProjectTitle category={first.category} name={first.name} />
 </Layout>
 
 <script>
+    import { createProjectNavigation } from "@components/project/navigation/projectNavigation"
+    import { createProjectsTerminal } from "@components/project/terminal/projectsTerminal"
     import { onPageLoad } from "@utils/pageLifecycle"
 
-    const TYPE_MS = 24
-    const PRINT_PAUSE_MS = 90
-    const INTRO_DELAY_MS = 250
-    // Scroll this far past the bottom of the page to hatch the easter egg.
-    const EGG_PUSH = 240
-
     onPageLoad(signal => {
-        const side = document.querySelector<HTMLElement>("[data-ls]")
-        const cards = [
-            ...document.querySelectorAll<HTMLElement>("[data-project-card]"),
-        ]
-        if (!side || !cards.length) return
+        const page = document.querySelector<HTMLElement>("[data-projects]")
+        if (!page) return
 
         const reduced = matchMedia("(prefers-reduced-motion: reduce)")
-        const behavior = (): ScrollBehavior =>
-            reduced.matches ? "instant" : "smooth"
-        const blocks = [...side.querySelectorAll<HTMLElement>("[data-ls-block]")]
-        const dirs = [...side.querySelectorAll<HTMLElement>("[data-ls-dir]")]
-        const rows = [...side.querySelectorAll<HTMLElement>("[data-ls-row]")]
-        const prompt = side.querySelector<HTMLElement>("[data-ls-prompt]")!
-        const pwd = document.querySelector<HTMLElement>("[data-pwd]")
-        const header = document.querySelector("h1")
-
-        const sleep = (ms: number) =>
-            new Promise<void>(resolve => {
-                const id = setTimeout(resolve, ms)
-                signal.addEventListener("abort", () => clearTimeout(id), {
-                    once: true,
-                })
-            })
-
-        // The sidebar isn't scrolled by hand: when its listing is taller than
-        // the space, it follows the project in view, keeping that row about
-        // 40% of the way down. `target` overrides it (the easter egg sits at
-        // the bottom). The track eases toward the latest target every frame,
-        // so a new target mid-move bends the motion instead of restarting it.
-        const track = side.querySelector<HTMLElement>("[data-ls-track]")!
-        const FOLLOW_AT = 0.4
-        const EASE_MS = 140 // time constant: ~95% of the way in 3x this
-        let offset = 0
-        let goal = 0
-        let glide = 0
-        let last = 0
-        const paint = () => {
-            track.style.transform = `translate3d(0, ${-offset}px, 0)`
-            // The top fade grows with how far the listing has moved, so it
-            // never pops on or off.
-            side.style.setProperty("--ls-fade", `${Math.min(offset, 48)}px`)
-        }
-        const step = (now: number) => {
-            const dt = last ? now - last : 16
-            last = now
-            offset += (goal - offset) * (1 - Math.exp(-dt / EASE_MS))
-            if (Math.abs(goal - offset) < 0.3) offset = goal
-            paint()
-            glide = offset === goal ? 0 : requestAnimationFrame(step)
-        }
-        const follow = (target?: HTMLElement) => {
-            const el =
-                target ?? side.querySelector<HTMLElement>("[data-ls-row][data-active]")
-            if (!el || el.closest<HTMLElement>("[hidden]")) return
-            const max = Math.max(0, track.offsetHeight - side.clientHeight)
-            const r = el.getBoundingClientRect()
-            const at = r.top - track.getBoundingClientRect().top // ignores the slide
-            const next = target ? max : at + r.height / 2 - side.clientHeight * FOLLOW_AT
-            goal = Math.min(max, Math.max(0, next))
-            if (reduced.matches) {
-                cancelAnimationFrame(glide)
-                glide = 0
-                offset = goal
-                paint()
-            } else if (!glide) {
-                last = 0
-                glide = requestAnimationFrame(step)
-            }
-        }
-        signal.addEventListener("abort", () => cancelAnimationFrame(glide))
-        addEventListener("resize", () => follow(), { signal, passive: true })
-
-        // Commands run one at a time: the command types, then its output
-        // streams in. Anything queued behind prints instantly, so fast
-        // scrolling never leaves a half-typed line.
-        const queue: HTMLElement[] = []
-        let running = false
-        const pump = async () => {
-            if (running) return
-            running = true
-            while (queue.length && !signal.aborted) {
-                const block = queue.shift()!
-                const cmd = block.querySelector<HTMLElement>("[data-ls-cmd]")!
-                const out = block.querySelector<HTMLElement>("[data-ls-out]")!
-                const text = cmd.dataset.text!
-                block.hidden = false
-                prompt.before(block)
-                // Bring the line into view before it types, not after.
-                const egg = block.hasAttribute("data-ls-egg")
-                follow(egg ? block : undefined)
-                if (reduced.matches || queue.length) {
-                    cmd.textContent = text
-                } else {
-                    prompt.hidden = true
-                    cmd.textContent = ""
-                    cmd.toggleAttribute("data-typing", true)
-                    for (let i = 1; i <= text.length; i++) {
-                        await sleep(TYPE_MS)
-                        if (signal.aborted) return
-                        if (queue.length) {
-                            cmd.textContent = text
-                            break
-                        }
-                        cmd.textContent = text.slice(0, i)
-                    }
-                    cmd.toggleAttribute("data-typing", false)
-                    await sleep(PRINT_PAUSE_MS)
-                }
-                out.toggleAttribute("data-in", true)
-                prompt.hidden = false
-                follow(egg ? block : undefined)
-            }
-            running = false
-        }
-
-        // On load the first two commands type in: `ls projects`, then the
-        // first category. The rendered HTML already shows both, for reduced
-        // motion and for the moment before this runs.
-        const seen = new Set<string>()
-        const opening = blocks.slice(0, 2)
-        opening.forEach(block => seen.add(block.dataset.lsBlock!))
-        if (!reduced.matches) {
-            opening.forEach(block => {
-                block.hidden = true
-                block.querySelector("[data-ls-out]")!.removeAttribute("data-in")
-                queue.push(block)
-            })
-            sleep(INTRO_DELAY_MS).then(pump)
-        }
-
-        let currentId = ""
-        let currentCat = ""
-        const setActive = (card: HTMLElement) => {
-            if (card.id === currentId) return
-            currentId = card.id
-            const cat = card.dataset.category!
-            rows.forEach(row =>
-                row.toggleAttribute("data-active", row.dataset.lsRow === currentId),
-            )
-            if (pwd) pwd.textContent = `${cat}/${card.dataset.name}`
-            if (!running) follow()
-            if (cat === currentCat) return
-            currentCat = cat
-            dirs.forEach(dir =>
-                dir.toggleAttribute("data-active", dir.dataset.lsDir === cat),
-            )
-            blocks.forEach(block =>
-                block.toggleAttribute("data-on", block.dataset.lsBlock === cat),
-            )
-
-            // Print every category up to this one, so a fast scroll past one
-            // still lists them in order.
-            const upTo = blocks.findIndex(b => b.dataset.lsBlock === cat)
-            blocks.slice(0, upTo + 1).forEach(block => {
-                if (seen.has(block.dataset.lsBlock!)) return
-                seen.add(block.dataset.lsBlock!)
-                queue.push(block)
-            })
-            pump()
-        }
-
-        // The card in view is the lowest one whose top has passed a reading
-        // line a little under the fixed header.
-        const update = () => {
-            const headerBottom = header?.getBoundingClientRect().bottom ?? 200
-            const line = headerBottom + (innerHeight - headerBottom) * 0.3
-            let pick = cards[0]
-            for (const card of cards) {
-                if (card.getBoundingClientRect().top <= line) pick = card
-            }
-            if (
-                innerHeight + scrollY >=
-                document.documentElement.scrollHeight - 4
-            ) {
-                pick = cards[cards.length - 1]
-            }
-            setActive(pick)
-        }
-
-        let frame = 0
-        addEventListener(
-            "scroll",
-            () => {
-                if (frame) return
-                frame = requestAnimationFrame(() => {
-                    frame = 0
-                    update()
-                })
-            },
-            { signal, passive: true },
+        const navigation = createProjectNavigation(page, signal, reduced)
+        const terminal = createProjectsTerminal(
+            page,
+            signal,
+            reduced,
+            navigation,
         )
-        addEventListener("resize", update, { signal, passive: true })
-
-        // Easter egg: keep scrolling at the bottom of the page and the
-        // terminal tries to open the in-progress folder. Once.
-        let hatched = false
-        let push = 0
-        addEventListener(
-            "wheel",
-            event => {
-                const max = document.documentElement.scrollHeight - innerHeight
-                if (event.deltaY <= 0 || scrollY < max - 2) {
-                    push = 0
-                    return
-                }
-                // A deliberate push, not the tail of a momentum scroll.
-                push += event.deltaY
-                if (push < EGG_PUSH || running || hatched) return
-                hatched = true
-                const block = document.createElement("div")
-                block.className = "mt-6 mb-4"
-                block.dataset.lsEgg = ""
-                block.innerHTML =
-                    '<p class="ls-line"><span class="ls-dot"></span><span data-ls-cmd data-text="cd in-progress"></span><span class="ls-cursor ls-cmd-cursor"></span></p>' +
-                    '<div data-ls-out class="mt-1.5">' +
-                    '<p style="--i:0" class="font-normal text-white/45">cd: permission denied: in-progress</p>' +
-                    '<p style="--i:1" class="font-sans text-base font-normal text-white/60">there\'s def stuff in there. <em>trust.</em></p>' +
-                    "</div>"
-                block.hidden = true
-                prompt.before(block)
-                queue.push(block)
-                pump()
-            },
-            { signal, passive: true },
-        )
-
-        const scrollToCard = (card?: Element | null) =>
-            card?.scrollIntoView({ block: "start", behavior: behavior() })
-        side.querySelectorAll<HTMLElement>("[data-ls-jump]").forEach(btn =>
-            btn.addEventListener(
-                "click",
-                () => scrollToCard(document.getElementById(btn.dataset.lsJump!)),
-                { signal },
-            ),
-        )
-
-        // Arrow keys step card to card instead of nudging the page.
-        addEventListener(
-            "keydown",
-            event => {
-                if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return
-                if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
-                    return
-                const target = event.target
-                if (
-                    target instanceof Element &&
-                    target.closest("input, textarea, select, [contenteditable]")
-                )
-                    return
-                const i = cards.findIndex(card => card.id === currentId)
-                const next = cards[i + (event.key === "ArrowDown" ? 1 : -1)]
-                event.preventDefault()
-                if (next) scrollToCard(next)
-                else if (event.key === "ArrowUp") scrollTo({ top: 0, behavior: behavior() })
-            },
-            { signal },
-        )
-        update()
-        return () => cancelAnimationFrame(frame)
+        navigation.watch(terminal.setActive, terminal.isOpen)
     })
 </script>

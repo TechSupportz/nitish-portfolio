@@ -9,7 +9,9 @@ const entries = soFar.map(entry => ({
     meta: `${entry.kind} · ${entry.dates}${entry.expected ? " · expected" : ""}`,
     branch: entry.kind === "work",
 }))
-const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, end })))
+const bars = JSON.stringify(
+    soFar.map(({ kind, start, end }) => ({ kind, start, end })),
+)
 ---
 
 <Layout title="so far." headerTitle="so far.">
@@ -24,64 +26,87 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
             class="sf-band sticky z-10 motion-preset-blur-right-md self-start pb-5 motion-duration-1000 md:pb-0"
             aria-hidden="true"
         >
-            <svg data-sf-year class="sf-led w-36 md:w-full md:max-w-64" viewBox="0 0 230 70"></svg>
+            <svg
+                data-sf-year
+                class="sf-led w-36 md:w-full md:max-w-64"
+                viewBox="0 0 230 70"
+            ></svg>
             <p data-sf-label class="mt-3 font-code text-sm text-white/60"></p>
             <svg
                 data-sf-strip
                 class="sf-led sf-strip mt-6 hidden w-full max-w-64 overflow-visible md:block"
-                viewBox="0 0 230 38"></svg>
+                viewBox="0 0 230 38"
+            ></svg>
         </div>
-        <ol
-            class="relative motion-preset-focus pb-[45vh] pl-16 motion-delay-75 motion-duration-1000 md:pt-2"
-        >
-            <div class="sf-rail absolute top-2 bottom-[45vh] left-3" aria-hidden="true">
+        <ol class="relative motion-preset-focus pb-[45vh] pl-16 motion-delay-75 motion-duration-1000 md:pt-2">
+            <div
+                class="sf-rail absolute top-2 bottom-[45vh] left-3"
+                aria-hidden="true"
+            >
                 <div data-sf-fill class="sf-fill"></div>
             </div>
-            {
-                entries.map(entry => (
-                    <li
-                        data-sf-entry
-                        data-year={entry.year}
-                        data-start={entry.start}
-                        data-end={entry.end}
-                        data-label={entry.meta}
-                        class:list={["sf-entry relative pb-20", { "is-branch": entry.branch }]}
-                    >
-                        {entry.branch && (
-                            <>
-                                <svg class="sf-curve is-out" viewBox="0 0 28 32" aria-hidden="true">
-                                    <path d="M 0 0 C 0 16 28 16 28 32" />
-                                </svg>
-                                <span class="sf-rail sf-side" aria-hidden="true">
-                                    <span data-sf-fill class="sf-fill" />
-                                </span>
-                                <svg class="sf-curve is-in" viewBox="0 0 28 32" aria-hidden="true">
-                                    <path d="M 28 0 C 28 16 0 16 0 32" />
-                                </svg>
-                            </>
-                        )}
-                        <span class="sf-node" aria-hidden="true" />
-                        <div class="sf-body">
-                            <p class="font-code text-xs text-white/50">{entry.meta}</p>
-                            <h2 class="mt-1.5 text-2xl leading-tight xl:text-[1.75rem]">
-                                {entry.title}<span class="text-blue-400">.</span>
-                            </h2>
-                            <p class="mt-1 text-white/70">{entry.subtitle}</p>
-                            <ul class="dot-bullets mt-4 max-w-[62ch] space-y-1.5 text-[15px] leading-relaxed text-pretty text-white/85 lg:text-base">
-                                {entry.bullets.map(bullet => (
-                                    <li>{bullet}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </li>
-                ))
-            }
+            {entries.map(entry => (
+                <li
+                    data-sf-entry
+                    data-year={entry.year}
+                    data-start={entry.start}
+                    data-end={entry.end}
+                    data-label={entry.meta}
+                    class:list={[
+                        "sf-entry relative pb-20",
+                        { "is-branch": entry.branch },
+                    ]}
+                >
+                    {entry.branch && (
+                        <>
+                            <svg
+                                class="sf-curve is-out"
+                                viewBox="0 0 28 32"
+                                aria-hidden="true"
+                            >
+                                <path d="M 0 0 C 0 16 28 16 28 32" />
+                            </svg>
+                            <span class="sf-rail sf-side" aria-hidden="true">
+                                <span data-sf-fill class="sf-fill" />
+                            </span>
+                            <svg
+                                class="sf-curve is-in"
+                                viewBox="0 0 28 32"
+                                aria-hidden="true"
+                            >
+                                <path d="M 28 0 C 28 16 0 16 0 32" />
+                            </svg>
+                        </>
+                    )}
+                    <span class="sf-node" aria-hidden="true" />
+                    <div class="sf-body">
+                        <p class="font-code text-xs text-white/50">
+                            {entry.meta}
+                        </p>
+                        <h2 class="mt-1.5 text-2xl leading-tight xl:text-[1.75rem]">
+                            {entry.title}
+                            <span class="text-blue-400">.</span>
+                        </h2>
+                        <p class="mt-1 text-white/70">{entry.subtitle}</p>
+                        <ul class="dot-bullets mt-4 max-w-[62ch] space-y-1.5 text-[15px] leading-relaxed text-pretty text-white/85 lg:text-base">
+                            {entry.bullets.map(bullet => (
+                                <li>{bullet}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </li>
+            ))}
             <!-- Before 2021 the data runs out: a broken stretch of line, and the
                  readout glitches its way back to 2004. -->
             <li data-sf-gap class="sf-gap relative h-72" aria-hidden="true">
                 <span class="sf-corrupt"></span>
             </li>
-            <li data-sf-entry data-year="2004" data-label="life · 2004" class="sf-entry relative">
+            <li
+                data-sf-entry
+                data-year="2004"
+                data-label="life · 2004"
+                class="sf-entry relative"
+            >
                 <span class="sf-node" aria-hidden="true"></span>
                 <div class="sf-body">
                     <p class="font-code text-xs text-white/50">life · 2004</p>
@@ -178,13 +203,23 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
     /* The line: unlit dots, and a lit copy that fills down as you scroll. */
     .sf-rail {
         width: 3px;
-        background: radial-gradient(circle, rgb(255 255 255 / 0.22) 1.2px, transparent 1.6px) 0 0 / 3px 7px repeat-y;
+        background: radial-gradient(
+                circle,
+                rgb(255 255 255 / 0.22) 1.2px,
+                transparent 1.6px
+            )
+            0 0 / 3px 7px repeat-y;
     }
 
     .sf-fill {
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle, var(--color-blue-400) 1.3px, transparent 1.7px) 0 0 / 3px 7px repeat-y;
+        background: radial-gradient(
+                circle,
+                var(--color-blue-400) 1.3px,
+                transparent 1.7px
+            )
+            0 0 / 3px 7px repeat-y;
         clip-path: inset(0 0 100% 0);
     }
 
@@ -347,12 +382,17 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
         return (d.getFullYear() - 2021) * 12 + d.getMonth() + 1 - 4
     })()
 
-    const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+    const clamp = (v: number, lo: number, hi: number) =>
+        Math.min(hi, Math.max(lo, v))
     const mix = (a: number, b: number, t: number) => Math.round(a + (b - a) * t)
     // Brand gradient, sky-100 -> blue-500.
-    const ledColor = (t: number) => `rgb(${mix(224, 59, t)} ${mix(242, 130, t)} ${mix(254, 246, t)})`
+    const ledColor = (t: number) =>
+        `rgb(${mix(224, 59, t)} ${mix(242, 130, t)} ${mix(254, 246, t)})`
     const dot = (svg: SVGSVGElement, c: number, r: number, t: number) => {
-        const node = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+        const node = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle",
+        )
         node.setAttribute("cx", String(c * 10 + 5))
         node.setAttribute("cy", String(r * 10 + 5))
         node.setAttribute("r", "3.6")
@@ -366,7 +406,9 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
     // glitchy stretch; otherwise a new value flips over left to right.
     const makeYear = (svg: SVGSVGElement) => {
         const dots = Array.from({ length: 7 }, (_, r) =>
-            Array.from({ length: 23 }, (_, c) => dot(svg, c, r, (c + 6 - r) / 28)),
+            Array.from({ length: 23 }, (_, c) =>
+                dot(svg, c, r, (c + 6 - r) / 28),
+            ),
         )
         let shown = ""
         return (value: number, flip = 0) => {
@@ -376,8 +418,14 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
             dots.forEach((row, r) =>
                 row.forEach((node, c) => {
                     const col = c % 6
-                    const real = col < 5 && DIGITS[+text[Math.floor(c / 6)]][r][col] === "1"
-                    node.classList.toggle("on", col < 5 && (flip > 0 && Math.random() < flip ? !real : real))
+                    const real =
+                        col < 5 &&
+                        DIGITS[+text[Math.floor(c / 6)]][r][col] === "1"
+                    node.classList.toggle(
+                        "on",
+                        col < 5 &&
+                            (flip > 0 && Math.random() < flip ? !real : real),
+                    )
                 }),
             )
         }
@@ -391,13 +439,22 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
             Array.from({ length: 23 }, (_, c) => ({
                 node: dot(svg, c, r, (c + 6) / 28),
                 owner: data.findIndex(
-                    e => e.kind === kind && e.start <= c * 3 + 2 && Math.min(e.end, NOW) >= c * 3,
+                    e =>
+                        e.kind === kind &&
+                        e.start <= c * 3 + 2 &&
+                        Math.min(e.end, NOW) >= c * 3,
                 ),
             })),
         )
         for (let year = 2021; year <= 2026; year++) {
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-            text.setAttribute("x", String(Math.max(0, (year - 2021) * 4 - 1) * 10))
+            const text = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text",
+            )
+            text.setAttribute(
+                "x",
+                String(Math.max(0, (year - 2021) * 4 - 1) * 10),
+            )
             text.setAttribute("y", "34")
             text.textContent = `'${String(year).slice(2)}`
             svg.append(text)
@@ -406,7 +463,10 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
         return (lit: Set<number>, current: number) =>
             cells.forEach(({ node, owner }) => {
                 node.classList.toggle("on", lit.has(owner))
-                node.classList.toggle("past", owner >= 0 && owner < current && !lit.has(owner))
+                node.classList.toggle(
+                    "past",
+                    owner >= 0 && owner < current && !lit.has(owner),
+                )
             })
     }
 
@@ -419,7 +479,9 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
         const curves = [...root.querySelectorAll<SVGElement>(".sf-curve")]
         const gap = root.querySelector<HTMLElement>("[data-sf-gap]")!
         const label = root.querySelector<HTMLElement>("[data-sf-label]")!
-        const setYear = makeYear(root.querySelector<SVGSVGElement>("[data-sf-year]")!)
+        const setYear = makeYear(
+            root.querySelector<SVGSVGElement>("[data-sf-year]")!,
+        )
         const setStrip = makeStrip(
             root.querySelector<SVGSVGElement>("[data-sf-strip]")!,
             JSON.parse(root.dataset.bars!) as Bar[],
@@ -434,9 +496,16 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
         const pageY = (el: Element) => el.getBoundingClientRect().top + scrollY
         const measure = () => {
             nodeY = items.map(item => pageY(item) + 10)
-            curveY = curves.map(curve => pageY(curve) + curve.getBoundingClientRect().height / 2)
+            curveY = curves.map(
+                curve =>
+                    pageY(curve) + curve.getBoundingClientRect().height / 2,
+            )
             gapTop = pageY(gap)
-            spans = fills.map(el => ({ el, top: pageY(el), height: el.offsetHeight }))
+            spans = fills.map(el => ({
+                el,
+                top: pageY(el),
+                height: el.offsetHeight,
+            }))
         }
 
         let current = -1
@@ -449,13 +518,19 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
             const first = nodeY[0]
             const born = nodeY[nodeY.length - 1]
             const max = document.documentElement.scrollHeight - innerHeight
-            const at = first + (born - first) * (max > 0 ? clamp(scrollY / max, 0, 1) : 0)
+            const at =
+                first +
+                (born - first) * (max > 0 ? clamp(scrollY / max, 0, 1) : 0)
 
             spans.forEach(({ el, top, height }) => {
                 el.style.clipPath = `inset(0 0 ${height - clamp(at - top, 0, height)}px 0)`
             })
-            curves.forEach((curve, i) => curve.toggleAttribute("data-on", curveY[i] <= at))
-            items.forEach((item, i) => item.toggleAttribute("data-passed", nodeY[i] <= at))
+            curves.forEach((curve, i) =>
+                curve.toggleAttribute("data-on", curveY[i] <= at),
+            )
+            items.forEach((item, i) =>
+                item.toggleAttribute("data-passed", nodeY[i] <= at),
+            )
 
             // Between the last real entry and "Born": a damaged readout,
             // mostly 2021 for the first half, mostly 2004 for the second.
@@ -463,7 +538,10 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
                 const now = performance.now()
                 if (!glitching || now - lastGlitch > 140) {
                     lastGlitch = now
-                    setYear(at - gapTop < (born - gapTop) / 2 ? 2021 : 2004, reduced.matches ? 0 : 0.1)
+                    setYear(
+                        at - gapTop < (born - gapTop) / 2 ? 2021 : 2004,
+                        reduced.matches ? 0 : 0.1,
+                    )
                     label.textContent = "░░░"
                 }
                 glitching = true
@@ -486,9 +564,15 @@ const bars = JSON.stringify(soFar.map(({ kind, start, end }) => ({ kind, start, 
             const date = Number(items[current].dataset.start)
             const lit = new Set<number>([current])
             items.forEach((item, i) => {
-                if (date >= Number(item.dataset.start) && date <= Number(item.dataset.end)) lit.add(i)
+                if (
+                    date >= Number(item.dataset.start) &&
+                    date <= Number(item.dataset.end)
+                )
+                    lit.add(i)
             })
-            items.forEach((item, i) => item.toggleAttribute("data-lit", lit.has(i)))
+            items.forEach((item, i) =>
+                item.toggleAttribute("data-lit", lit.has(i)),
+            )
             setStrip(lit, current)
             if (glitching) return
             setYear(Number(items[current].dataset.year))

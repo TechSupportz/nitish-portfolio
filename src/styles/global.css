@@ -24,7 +24,6 @@
     --progressive-blur-to-b: to bottom;
     --progressive-blur-to-l: to left;
     --progressive-blur-to-r: to right;
-
 }
 
 @utility bg-progressive-blur-to-* {
@@ -59,7 +58,8 @@
 .dot-grid {
     background-image: radial-gradient(
         circle,
-        rgb(255 255 255 / var(--matrix-alpha)) calc(var(--matrix-dot) / 2 - 0.5px),
+        rgb(255 255 255 / var(--matrix-alpha))
+            calc(var(--matrix-dot) / 2 - 0.5px),
         transparent calc(var(--matrix-dot) / 2 + 0.5px)
     );
     background-size: var(--matrix-pitch) var(--matrix-pitch);
@@ -92,8 +92,12 @@ p {
 .dotted-rule {
     position: relative;
     height: 3px;
-    background: radial-gradient(circle, rgb(255 255 255 / 0.28) 1.2px, transparent 1.6px) 0 0 /
-        7px 3px repeat-x;
+    background: radial-gradient(
+            circle,
+            rgb(255 255 255 / 0.28) 1.2px,
+            transparent 1.6px
+        )
+        0 0 / 7px 3px repeat-x;
 }
 
 /* The lit version sweeps across on hover of the parent .group. */
@@ -106,7 +110,8 @@ p {
         var(--color-grad-from),
         var(--color-grad-to)
     );
-    mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px repeat-x;
+    mask: radial-gradient(circle, #000 1.2px, transparent 1.6px) 0 0 / 7px 3px
+        repeat-x;
     clip-path: inset(0 100% 0 0);
     transition: clip-path 280ms var(--ease-out-strong);
 }

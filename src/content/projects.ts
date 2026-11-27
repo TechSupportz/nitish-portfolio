@@ -1,4 +1,8 @@
-import type { TProjectContent } from "@src/types/ProjectContentType"
+import type {
+    TProjectCategory,
+    TProjectContent,
+    TProjectGroup,
+} from "@src/types/ProjectContentType"
 
 // SECTION - Project Thumbnails
 import andreaThumbnail from "@assets/project-thumbnails/Andrea.png"
@@ -137,3 +141,18 @@ export const projectContent: TProjectContent = {
         },
     ],
 }
+
+export const projectGroups: TProjectGroup[] = (
+    Object.keys(projectContent) as TProjectCategory[]
+).map(category => ({
+    category,
+    items: projectContent[category].map(project => {
+        const name = project.title.toLowerCase()
+        return {
+            ...project,
+            category,
+            name,
+            id: name.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        }
+    }),
+}))

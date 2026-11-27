@@ -1,0 +1,171 @@
+---
+import type { TProjectGroup } from "@src/types/ProjectContentType"
+import ProjectsListing from "./ProjectsListing.astro"
+
+type Props = { groups: TProjectGroup[] }
+
+const { groups } = Astro.props
+const first = groups[0]
+---
+
+<div data-pb class="lg:hidden">
+    <div class="pb-dim" data-pb-dim></div>
+    <div class="pb-bar">
+        <button
+            type="button"
+            data-pb-toggle
+            aria-expanded="false"
+            aria-controls="pb-panel"
+            class="flex w-full items-center justify-between gap-4 px-6 py-3 font-code text-sm md:px-8"
+        >
+            <span class="ls-line ls-live">
+                <span class="ls-dot"></span>
+                <span data-pb-cmd>ls -l {first.category}</span>
+            </span>
+            <span class="flex items-center gap-3 text-white/45">
+                <span data-pb-count>1/{first.items.length}</span>
+                <span class="pb-chevron" aria-hidden="true"></span>
+            </span>
+        </button>
+        <div id="pb-panel" class="pb-panel">
+            <div class="overflow-hidden">
+                <div class="pb-scroll max-h-[calc(100dvh-15.5rem)] overflow-y-auto px-6 pt-1 pb-6 font-code text-sm md:px-8">
+                    <ProjectsListing groups={groups} mobile />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style is:global>
+    /* Pinned under the fixed header, solid so cards slide under it. The
+       ::before backs the strip above it too, so cards never show through
+       the header's faded edge; ::after is a short fade underneath. */
+    .pb-bar {
+        position: fixed;
+        inset-inline: 0;
+        top: 12rem;
+        z-index: 15;
+        background: var(--color-charcoal);
+    }
+
+    @media (min-width: 456px) {
+        .pb-bar {
+            top: 13rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .pb-bar {
+            top: 16rem;
+        }
+    }
+
+    .pb-bar::before,
+    .pb-bar::after {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        pointer-events: none;
+    }
+
+    .pb-bar::before {
+        bottom: 100%;
+        height: 16rem;
+        background: var(--color-charcoal);
+    }
+
+    .pb-bar::after {
+        top: 100%;
+        height: 0.75rem;
+        background: linear-gradient(var(--color-charcoal), transparent);
+    }
+
+    [data-pb-toggle]:focus-visible {
+        outline: 2px solid var(--color-blue-400);
+        outline-offset: -4px;
+        border-radius: 6px;
+    }
+
+    [data-pb-toggle]:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    .pb-chevron {
+        width: 7px;
+        height: 7px;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: translateY(-2px) rotate(45deg);
+        transition: transform 250ms var(--ease-out-strong);
+    }
+
+    [data-pb][data-open] .pb-chevron {
+        transform: translateY(1px) rotate(-135deg);
+    }
+
+    /* The dropdown opens by animating its row from 0fr to 1fr. */
+    .pb-panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 280ms var(--ease-out-strong);
+    }
+
+    [data-pb][data-open] .pb-panel {
+        grid-template-rows: 1fr;
+    }
+
+    /* If the listing doesn't fit, its bottom edge fades out. */
+    .pb-scroll {
+        mask-image: linear-gradient(
+            to bottom,
+            white calc(100% - 2rem),
+            transparent
+        );
+    }
+
+    /* The listing prints a line at a time each time it opens. */
+    .pb-scroll [style*="--i"] {
+        visibility: hidden;
+    }
+
+    [data-pb][data-open] .pb-scroll [style*="--i"] {
+        visibility: visible;
+        transition: visibility 0s linear calc(var(--i) * 28ms);
+    }
+
+    /* Open: the page behind dims to the site's 35% and stops scrolling. */
+    .pb-dim {
+        position: fixed;
+        inset: 0;
+        z-index: 14;
+        background: color-mix(in oklch, var(--color-charcoal) 65%, transparent);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 250ms ease-out;
+    }
+
+    [data-pb][data-open] .pb-dim {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* The project you're on gets the blue full stop. */
+    .pb-stop {
+        color: var(--color-blue-400);
+        opacity: 0;
+    }
+
+    .ls-row[data-active] .pb-stop {
+        opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .pb-chevron,
+        .pb-panel,
+        .pb-dim,
+        .pb-scroll [style*="--i"] {
+            transition: none !important;
+        }
+    }
+</style>

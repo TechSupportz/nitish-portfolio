@@ -78,11 +78,9 @@ const { title, center, headerTitle, disableScroll } = Astro.props
                 "m-auto h-full max-w-screen-2xl",
                 {
                     "pt-18": !center && !headerTitle,
-                    "mt-50 xs:mt-54 md:mt-66":
-                        !!headerTitle,
+                    "mt-50 xs:mt-54 md:mt-66": !!headerTitle,
                     "flex flex-col items-center justify-center": center,
-                    "pt-32 xs:pt-36 md:pt-48":
-                        center && !!headerTitle,
+                    "pt-32 xs:pt-36 md:pt-48": center && !!headerTitle,
                 },
             ]}
         >

@@ -1,0 +1,22 @@
+---
+type Props = { mobile?: boolean }
+
+const { mobile = false } = Astro.props
+---
+
+<p
+    data-egg-prompt
+    data-locked={!mobile ? "" : undefined}
+    role={mobile ? "button" : undefined}
+    tabindex={mobile ? 0 : undefined}
+    aria-label={mobile ? "Run the next command" : undefined}
+    class:list={["ls-line ls-live ls-prompt", { "ls-prompt-slot": mobile }]}
+>
+    <span class="ls-dot"></span>
+    <span class="ls-cursor"></span>
+    {mobile && (
+        <span class="ls-egg-hint" aria-hidden="true">
+            tap to type
+        </span>
+    )}
+</p>

@@ -1,0 +1,20 @@
+---
+import type { TProjectGroup } from "@src/types/ProjectContentType"
+import ProjectsEggPrompt from "../easter-egg/ProjectsEggPrompt.astro"
+import ProjectsListing from "./ProjectsListing.astro"
+
+type Props = { groups: TProjectGroup[] }
+
+const { groups } = Astro.props
+---
+
+<nav
+    data-ls
+    class="ls-scroll h-full min-h-0 min-w-0 flex-1 overflow-hidden pr-6 font-code text-sm"
+    aria-label="Projects"
+>
+    <div data-ls-track class="will-change-transform">
+        <ProjectsListing groups={groups} />
+        <ProjectsEggPrompt />
+    </div>
+</nav>

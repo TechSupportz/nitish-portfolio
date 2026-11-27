@@ -19,10 +19,9 @@ const text = stop ? title.slice(0, -1) : title
         <div class="header-dots dot-grid"></div>
     </div>
     <div class="m-auto w-full max-w-screen-2xl">
-        <h1
-            class="mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16"
-        >
-            {text}{stop && <span class="text-blue-400">.</span>}
+        <h1 class="mb-2 motion-preset-blur-right-md px-4 text-5xl motion-duration-1000 xs:px-6 xs:text-6xl md:px-8 lg:px-12 lg:text-7xl xl:px-16">
+            {text}
+            {stop && <span class="text-blue-400">.</span>}
         </h1>
     </div>
 </div>
@@ -43,7 +42,11 @@ const text = stop ? title.slice(0, -1) : title
        ramps up toward the navbar instead of ending on one hard edge. */
     .blur-layer {
         backdrop-filter: blur(var(--b));
-        mask-image: linear-gradient(to bottom, black 30%, transparent var(--end));
+        mask-image: linear-gradient(
+            to bottom,
+            black 30%,
+            transparent var(--end)
+        );
     }
 
     /* Eased charcoal tint: solid under the navbar, easing out to nothing. */

@@ -3,7 +3,7 @@
 // the image's top edge, the description, then a small "link / built with"
 // spec straight after it.
 import Highlight from "@components/Highlight.astro"
-import ProjectIcon from "@components/project/ProjectIcon.astro"
+import ProjectIcon from "./ProjectIcon.astro"
 import type { TListedProject } from "@src/types/ProjectContentType"
 import { Image } from "astro:assets"
 
@@ -44,19 +44,17 @@ const L_DOTS = [
     data-project-card
     data-category={category}
     data-name={name}
-    class="group grid scroll-mt-72 items-start gap-5 md:grid-cols-[minmax(0,9fr)_minmax(0,11fr)] md:gap-8 xl:gap-10"
+    class="group grid scroll-mt-62 items-start gap-5 xs:scroll-mt-66 md:scroll-mt-78 md:grid-cols-[minmax(0,9fr)_minmax(0,11fr)] md:gap-8 lg:scroll-mt-72 xl:gap-10"
 >
     <div class="relative">
         <span class="card-brackets" aria-hidden="true">
-            {
-                ["tl", "tr", "bl", "br"].map(corner => (
-                    <span class:list={["card-corner", corner]}>
-                        {L_DOTS.map(([x, y]) => (
-                            <b style={`--x:${x};--y:${y}`} />
-                        ))}
-                    </span>
-                ))
-            }
+            {["tl", "tr", "bl", "br"].map(corner => (
+                <span class:list={["card-corner", corner]}>
+                    {L_DOTS.map(([x, y]) => (
+                        <b style={`--x:${x};--y:${y}`} />
+                    ))}
+                </span>
+            ))}
         </span>
         <div class="overflow-hidden rounded-md">
             <Image
@@ -71,31 +69,28 @@ const L_DOTS = [
         </div>
     </div>
     <div>
-        <h2 class="card-title text-3xl leading-tight">
-            {title}{stop && <span class="text-blue-400">.</span>}
+        <h2 class="pt-1 card-title text-3xl leading-tight">
+            {title}
+            {stop && <span class="text-blue-400">.</span>}
         </h2>
-        <div
-            class="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-pretty lg:text-base"
-        >
+        <div class="mt-2 max-w-[46ch] text-[15px] leading-relaxed text-pretty lg:text-base">
             <p class="font-normal text-white/85">{description}</p>
-            {
-                additionalDescription && (
-                    <p class="mt-2 font-normal text-white/55">
-                        {additionalDescription}
-                    </p>
-                )
-            }
+            {additionalDescription && (
+                <p class="mt-2 font-normal text-white/55">
+                    {additionalDescription}
+                </p>
+            )}
         </div>
-        <dl
-            class="mt-7 mb-2 grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-y-2 text-xs"
-        >
+        <dl class="mt-7 mb-2 grid grid-cols-[5.5rem_minmax(0,1fr)] items-center gap-y-2 text-xs">
             <dt class="text-white/35">link</dt>
             <dd class="text-white/60">
                 <Highlight>{host}</Highlight>
             </dd>
             <dt class="text-white/35">built with</dt>
             <dd class="flex gap-2">
-                {icons.map(icon => <ProjectIcon type={icon} class="size-4" />)}
+                {icons.map(icon => (
+                    <ProjectIcon type={icon} class="size-4" />
+                ))}
             </dd>
         </dl>
     </div>

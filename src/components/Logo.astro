@@ -18,24 +18,36 @@ const layers = ["off", "g", "l"] as const
     role="img"
     aria-label="nitish"
 >
-    {
-        layers.map(layer => (
-            <g class={`layer-${layer}`}>
-                <rect class={`${layer} s1`} x="0" y="0" width="30" height="120" rx="15" />
-                <path
-                    class={`${layer} s2`}
-                    d="M51,0 A51,51 0 0 1 102,51 A15,15 0 0 1 72,51 A21,21 0 0 0 51,30 A15,15 0 0 1 51,0 Z"
-                />
-                <rect class={`${layer} s3`} x="72" y="72" width="30" height="48" rx="15" />
-                <circle class={`${layer} dot`} cx="120" cy="108" r="12" />
-                {layer === "g" && (
-                    <g class="halo-wrap">
-                        <circle class="halo" cx="120" cy="108" r="12" />
-                    </g>
-                )}
-            </g>
-        ))
-    }
+    {layers.map(layer => (
+        <g class={`layer-${layer}`}>
+            <rect
+                class={`${layer} s1`}
+                x="0"
+                y="0"
+                width="30"
+                height="120"
+                rx="15"
+            />
+            <path
+                class={`${layer} s2`}
+                d="M51,0 A51,51 0 0 1 102,51 A15,15 0 0 1 72,51 A21,21 0 0 0 51,30 A15,15 0 0 1 51,0 Z"
+            />
+            <rect
+                class={`${layer} s3`}
+                x="72"
+                y="72"
+                width="30"
+                height="48"
+                rx="15"
+            />
+            <circle class={`${layer} dot`} cx="120" cy="108" r="12" />
+            {layer === "g" && (
+                <g class="halo-wrap">
+                    <circle class="halo" cx="120" cy="108" r="12" />
+                </g>
+            )}
+        </g>
+    ))}
 </svg>
 
 <style>

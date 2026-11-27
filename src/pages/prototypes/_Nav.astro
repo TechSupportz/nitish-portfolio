@@ -17,9 +17,7 @@ const links = [
 ---
 
 <nav class="z-20 w-full bg-charcoal font-display shadow-charcoal">
-    <div
-        class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8"
-    >
+    <div class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8">
         <a
             href="/"
             data-logo="lit"
@@ -30,21 +28,19 @@ const links = [
             <Logo class="w-10 md:w-12" />
         </a>
         <div class="flex flex-row items-center gap-4 text-base text-white sm:gap-6 sm:text-xl">
-            {
-                links.map(({ href, label }) => (
-                    <a href={href} class="group">
-                        <Highlight>{label}</Highlight>
-                        <span
-                            class:list={[
-                                "p-stop text-xl sm:text-2xl",
-                                { "opacity-0": label !== active },
-                            ]}
-                        >
-                            .
-                        </span>
-                    </a>
-                ))
-            }
+            {links.map(({ href, label }) => (
+                <a href={href} class="group">
+                    <Highlight>{label}</Highlight>
+                    <span
+                        class:list={[
+                            "p-stop text-xl sm:text-2xl",
+                            { "opacity-0": label !== active },
+                        ]}
+                    >
+                        .
+                    </span>
+                </a>
+            ))}
         </div>
     </div>
 </nav>
