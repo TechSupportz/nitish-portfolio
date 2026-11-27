@@ -1,8 +1,4 @@
-import {
-    $activeRole,
-    $homeBootStart,
-    HOME_BOOT_WAVE_MS,
-} from "@store/uiStore"
+import { $activeRole, $homeBootStart, HOME_BOOT_WAVE_MS } from "@store/uiStore"
 import { cn } from "@utils/cn"
 import { useEffect, useRef } from "react"
 
@@ -64,10 +60,15 @@ const SWITCH_MS = PIXEL_IN_DELAY_MS + PIXEL_IN_SPREAD_MS + PIXEL_STEP_MS
 // during the initial boot, or right away on revisit) and grows each icon dot in
 const REVEAL_DELAY_MS = 80
 const REVEAL_GROW_MS = 420
-// Mobile only: the lit icon dots are also drawn as an HDR image (~4x SDR white,
-// public/hdr-glow.avif) masked to the dots, so HDR screens show them glowing.
-// Two layers crossfade between icons over the same time as the canvas switch
+// HDR displays: the lit icon dots are also drawn as an HDR image masked to the
+// dots, so HDR screens show them glowing. The image is the brand gradient at
+// ~4x SDR white (public/hdr-glow-icon.avif), running bottom-left to top-right
+// like the canvas icon and reaching HDR_GLOW_ICON_PAD of the icon past each edge
+// (clamped), so edge dots stay inside it.
+// During an icon switch the mask is rebuilt each frame from the canvas's dot
+// levels, so the glow does the same pixel switch; this is only its fade in
 const HDR_GLOW_FADE_MS = SWITCH_MS
+const HDR_GLOW_ICON_PAD = 0.25
 // Ripples get the same HDR glow, dimmer, as a CSS-masked ring over the grid dots
 const RIPPLE_HDR_ALPHA = 0.45
 
@@ -127,7 +128,7 @@ const fadeMask = (progress: number) =>
 
 const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const glowRefs = useRef<(HTMLDivElement | null)[]>([])
+    const glowRef = useRef<HTMLDivElement | null>(null)
     const rippleGlowRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
@@ -250,8 +251,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             )
             const firstRow = Math.ceil((area.top - OFFSET) / PITCH)
             // Margin (in dots) keeping the icon in from the top-right corner
-            const insetCols = fill ? 1 : 4
-            const insetRows = fill ? 1 : 4
+            const insetCols = fill ? 2 : 4
+            const insetRows = fill ? 2 : 4
             icon = {
                 c0: Math.min(lastCol, cols - 1) - insetCols - size + 1,
                 r0: Math.max(firstRow, 0) + insetRows,
@@ -370,57 +371,70 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             if (!frame) frame = requestAnimationFrame(draw)
         }
 
-        const glowLayers = glowRefs.current.filter(
-            (layer): layer is HTMLDivElement => layer !== null,
-        )
-        let glowMasks: string[] = []
-        let glowFront = 0
+        const glowLayer = glowRef.current
+        // Whether this layout gets the HDR icon glow at all
+        let glowOn = false
+        let glowLive = false
         // SDR screens would clip the glow to flat white, losing the icon's gradient
         const hdrQuery = window.matchMedia("(dynamic-range: high)")
         let hdrEnabled = true
 
-        // One mask per icon, cropped to the icon's footprint
         const buildGlowMasks = () => {
-            glowMasks = []
-            if (!icon.fill || icon.size <= 0 || !hdrQuery.matches) return
+            glowOn = false
+            if (icon.size <= 0 || !hdrQuery.matches) return
             if (!hdrEnabled) return
+            glowOn = true
 
-            const dpr = canvas.width / Math.max(1, box.width)
-            const left = OFFSET + (icon.c0 - 1) * PITCH - PITCH / 2
-            const top = OFFSET + (icon.r0 - 1) * PITCH - PITCH / 2
-            const span = (icon.size + 2) * PITCH
-            glowMasks = iconSets.map(set => {
-                const maskCanvas = document.createElement("canvas")
-                maskCanvas.width = Math.ceil(span * dpr)
-                maskCanvas.height = Math.ceil(span * dpr)
-                const maskCtx = maskCanvas.getContext("2d")
-                if (!maskCtx) return "none"
+            // Line the gradient image up with the canvas icon's gradient
+            const iconSpan = icon.size * PITCH
+            const imageSize = iconSpan * (1 + 2 * HDR_GLOW_ICON_PAD)
+            const imageLeft =
+                OFFSET + icon.c0 * PITCH - HDR_GLOW_ICON_PAD * iconSpan
+            const imageTop =
+                OFFSET + icon.r0 * PITCH - HDR_GLOW_ICON_PAD * iconSpan
+            if (glowLayer) {
+                glowLayer.style.backgroundPosition = `${imageLeft}px ${imageTop}px`
+                glowLayer.style.backgroundSize = `${imageSize}px ${imageSize}px`
+            }
+        }
 
-                maskCtx.setTransform(dpr, 0, 0, dpr, -left * dpr, -top * dpr)
-                set.forEach((on, id) => {
-                    if (!on) return
-                    maskCtx.globalAlpha = ICON_ALPHA
-                    maskCtx.beginPath()
-                    maskCtx.arc(
-                        OFFSET + (id % cols) * PITCH,
-                        OFFSET + Math.floor(id / cols) * PITCH,
-                        ICON_RADIUS,
-                        0,
-                        Math.PI * 2,
+        // The mask is one small radial gradient per lit dot. Gradients draw
+        // straight away, unlike mask images, so swapping it every frame during
+        // an icon switch never flashes the layer
+        const dotsMask = (levelOf: (id: number) => number) => {
+            const half = Math.ceil(ICON_RADIUS) + 1
+            const layers: string[] = []
+            for (let r = icon.r0 - 1; r <= icon.r0 + icon.size; r++) {
+                if (r < 0 || r >= rows) continue
+                for (let c = icon.c0 - 1; c <= icon.c0 + icon.size; c++) {
+                    if (c < 0 || c >= cols) continue
+                    const level = levelOf(r * cols + c)
+                    if (level < 0.005) continue
+                    const radius = dotRadius + (ICON_RADIUS - dotRadius) * level
+                    const alpha = (ICON_ALPHA * level).toFixed(3)
+                    const x = OFFSET + c * PITCH - half
+                    const y = OFFSET + r * PITCH - half
+                    layers.push(
+                        `radial-gradient(circle, rgb(0 0 0 / ${alpha}) ${radius.toFixed(2)}px, transparent ${(radius + 0.6).toFixed(2)}px) ${x}px ${y}px / ${2 * half}px ${2 * half}px no-repeat`,
                     )
-                    maskCtx.fill()
-                })
-                // Sized to the rounded-up canvas so it isn't stretched by a fraction
-                const size = maskCanvas.width / dpr
-                return `url(${maskCanvas.toDataURL()}) ${left}px ${top}px / ${size}px ${size}px no-repeat`
-            })
+                }
+            }
+            return layers.length > 0 ? layers.join(",") : "none"
         }
 
-        const showGlow = (layer: HTMLDivElement, index: number) => {
-            const value = glowMasks[index] ?? "none"
-            layer.style.setProperty("mask", value)
-            layer.style.setProperty("-webkit-mask", value)
+        const setGlowMask = (value: string) => {
+            if (!glowLayer) return
+            glowLayer.style.setProperty("mask", value)
+            glowLayer.style.setProperty("-webkit-mask", value)
         }
+
+        // The settled icon, at full size and the copy's dimming
+        const showGlow = () =>
+            setGlowMask(
+                dotsMask(
+                    id => (iconSets[active]?.[id] ?? 0) * (dimTarget[id] ?? 1),
+                ),
+            )
 
         const glowTransition = () =>
             reduceMotion
@@ -435,37 +449,35 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             layer.style.transition = glowTransition()
         }
 
-        // Snaps to a clean state: the front layer shows the current icon, the back is hidden
+        // Snaps to a clean state: the layer shows the current icon
         const resetGlow = () => {
-            const on = glowMasks.length > 0
-            glowLayers.forEach((layer, i) => {
-                layer.style.display = on ? "block" : "none"
-                if (i === glowFront) showGlow(layer, active)
-                snapOpacity(layer, on && i === glowFront ? "1" : "0")
-            })
+            if (!glowLayer) return
+            glowLive = false
+            glowLayer.style.display = glowOn ? "block" : "none"
+            showGlow()
+            snapOpacity(glowLayer, glowOn ? "1" : "0")
         }
 
         const fadeInGlow = () => {
-            const layer = glowLayers[glowFront]
-            if (!layer || glowMasks.length === 0) return
-            snapOpacity(layer, "0")
-            layer.style.opacity = "1"
+            if (!glowLayer || !glowOn) return
+            snapOpacity(glowLayer, "0")
+            glowLayer.style.opacity = "1"
         }
 
-        const crossfadeGlow = (index: number) => {
-            if (glowMasks.length === 0 || glowLayers.length < 2) return
-            const next = 1 - glowFront
-            // It may still be fading out after a quick previous change, so clear
-            // it before reuse rather than swapping in a half-visible mask
-            snapOpacity(glowLayers[next], "0")
-            showGlow(glowLayers[next], index)
-            glowLayers[next].style.opacity = "1"
-            glowLayers[glowFront].style.opacity = "0"
-            glowFront = next
+        // On an icon switch the mask follows the canvas dot by dot (see draw)
+        const startLiveGlow = () => {
+            if (!glowLayer || !glowOn) return
+            if (reduceMotion) {
+                showGlow()
+                return
+            }
+            // Dots already on show through `from`, so it can sit at full opacity
+            snapOpacity(glowLayer, "1")
+            glowLive = true
         }
 
         const glowAllowed = () =>
-            icon.fill && hdrEnabled && hdrQuery.matches && !reduceMotion
+            hdrEnabled && hdrQuery.matches && !reduceMotion
 
         // Ripple glow is two nested masks, which multiply: the host is masked
         // once per layout to every grid dot (with the grid's fade), and each
@@ -538,8 +550,9 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 Object.assign(glow.style, {
                     position: "absolute",
                     inset: "0",
-                    backgroundImage: "url('/hdr-glow.avif')",
-                    backgroundSize: "cover",
+                    // Rings are tinted with the gradient across the matrix
+                    backgroundImage: "url('/hdr-glow-ripple.avif')",
+                    backgroundSize: "100% 100%",
                     opacity: "0",
                 })
                 rippleHost.append(glow)
@@ -603,6 +616,9 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             iconSets = icons.map(rasterize)
             outOrder = Float32Array.from({ length: cols * rows }, Math.random)
             inOrder = Float32Array.from({ length: cols * rows }, Math.random)
+            dimTarget = new Float32Array(cols * rows).fill(1)
+            measureText()
+            dim = Float32Array.from(dimTarget)
             buildGlowMasks()
             resetGlow()
             buildRippleDotsMask()
@@ -612,9 +628,6 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             from = Float32Array.from(lit)
             reveal = null
             unveil = null
-            dimTarget = new Float32Array(cols * rows).fill(1)
-            measureText()
-            dim = Float32Array.from(dimTarget)
             fullRedraw = true
             iconUnsettled = true
             schedule()
@@ -948,6 +961,15 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 }
             }
 
+            if (glowLive) {
+                if (reveal || since >= SWITCH_MS) {
+                    glowLive = false
+                    showGlow()
+                } else {
+                    setGlowMask(dotsMask(id => (lit[id] ?? 0) * (dim[id] ?? 1)))
+                }
+            }
+
             fullRedraw = false
             iconUnsettled = iconSweeping || dimMoving
             // Remember the raw changed area (not the snapped one) so the region
@@ -1014,7 +1036,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             reveal = null
             active = index
             changedAt = performance.now()
-            crossfadeGlow(index)
+            startLiveGlow()
             // Text widths change with the scroller, so re-measure once it settles
             iconUnsettled = true
             later(measureText, 0)
@@ -1112,7 +1134,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             unveil = { t: -1, x: 0, y: 0, reach: 1, clear: Infinity }
             // The ring is the fade in, so skip the canvas's own
             canvas.style.transition = "none"
-            glowLayers.forEach(layer => snapOpacity(layer, "0"))
+            if (glowLayer) snapOpacity(glowLayer, "0")
             lit = new Float32Array(cols * rows)
             from = new Float32Array(cols * rows)
 
@@ -1141,7 +1163,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 )
                 const reach = REVEAL_OVERSHOOT * farthest
                 const t = performance.now()
-                reveal = {
+                const activeReveal = {
                     t,
                     x,
                     y,
@@ -1151,6 +1173,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         revealArrival(Math.max(...corners), reach) +
                         REVEAL_GROW_MS,
                 }
+                reveal = activeReveal
                 unveil = {
                     t,
                     x,
@@ -1166,7 +1189,12 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     reach,
                     farthest + 4 * REVEAL_WAKE_PX,
                 )
-                fadeInGlow()
+                later(
+                    () => {
+                        if (reveal === activeReveal) fadeInGlow()
+                    },
+                    revealArrival(Math.min(...corners), reach),
+                )
                 // Re-measure once the staggered hero text finishes translating in
                 later(() => {
                     measureText()
@@ -1241,16 +1269,11 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                 className="absolute inset-0"
                 style={{ display: "none" }}
             />
-            {[0, 1].map(i => (
-                <div
-                    key={i}
-                    ref={el => {
-                        glowRefs.current[i] = el
-                    }}
-                    className="absolute inset-0 bg-[url('/hdr-glow.avif')] bg-cover opacity-0"
-                    style={{ display: "none" }}
-                />
-            ))}
+            <div
+                ref={glowRef}
+                className="absolute inset-0 bg-[url('/hdr-glow-icon.avif')] bg-no-repeat opacity-0"
+                style={{ display: "none" }}
+            />
         </div>
     )
 }
