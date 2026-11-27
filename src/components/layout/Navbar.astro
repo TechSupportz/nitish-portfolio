@@ -4,28 +4,49 @@ import Menu from "@lucide/astro/icons/menu"
 import { getNavLinks } from "@utils/navLinks"
 import Highlight from "@components/Highlight.astro"
 
+type Props = {
+    transparent?: boolean
+}
+
+const { transparent = false } = Astro.props
 const navLinks = getNavLinks(Astro.url.pathname)
 ---
 
-<nav class="navbar z-20 w-full bg-charcoal font-display shadow-charcoal">
-    <div class="m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 shadow-2xl md:px-8">
+<nav
+    class:list={[
+        "navbar z-20 w-full font-display",
+        !transparent && "bg-charcoal shadow-charcoal",
+    ]}
+>
+    <div
+        class:list={[
+            "m-auto flex h-full max-w-[1600px] items-center justify-between px-4 py-3 md:px-8",
+            !transparent && "shadow-2xl",
+        ]}
+    >
         <a
             href="/"
             class="logo flex size-12 items-center md:size-14"
             aria-label="nitish, home"
             transition:persist="navbar-logo"
         >
-            <Logo class="w-10 md:w-12" />
+            <Logo class="w-9 md:w-11" />
         </a>
         <div
             id="menu-button"
+            data-nav-enter
             class="block cursor-pointer text-zinc-200 lg:hidden"
         >
             <Menu size="1.75rem" />
         </div>
         <div class="hidden flex-row items-center gap-6 text-xl text-white lg:flex">
-            {navLinks.map(({ href, label, isActive }) => (
-                <a href={href} class="group transition duration-300">
+            {navLinks.map(({ href, label, isActive }, index) => (
+                <a
+                    href={href}
+                    data-nav-enter
+                    style={`--nav-stagger: ${index * 45}ms`}
+                    class="group transition duration-300"
+                >
                     <Highlight>{label}</Highlight>
                     <span
                         class:list={[
@@ -40,12 +61,35 @@ const navLinks = getNavLinks(Astro.url.pathname)
         </div>
     </div>
 </nav>
+<style>
+    :global(html[data-home-boot="true"]) [data-nav-enter] {
+        animation: nav-enter 500ms var(--ease-out-strong)
+            calc(var(--home-boot, 0ms) + var(--nav-stagger, 0ms)) both;
+    }
+
+    @keyframes nav-enter {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        :global(html[data-home-boot="true"]) [data-nav-enter] {
+            animation: none;
+        }
+    }
+</style>
 <script>
-    import { isDrawerOpen } from "@store/uiStore"
+    import {
+        $homeBootStart,
+        HOME_BOOT_OFFSET_MS,
+        isDrawerOpen,
+    } from "@store/uiStore"
     import { onPageLoad } from "@utils/pageLifecycle"
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)")
-    const BOOT_MS = 1200 // matches the CSS timeline in Logo.astro
+    const BOOT_MS = 1330 // matches the CSS timeline in Logo.astro
     const CHASE_MS = 1200 // one lap: stem, shoulder, leg, dot
     const PULSE = 0.28 // half-width of the travelling light, in laps
     const FLOOR = 0.16 // brightness a segment drops to once the light has left
@@ -146,15 +190,43 @@ const navLinks = getNavLinks(Astro.url.pathname)
             { signal },
         )
 
+        const root = document.documentElement
         const logo = document.querySelector<HTMLElement>(".logo")
-        if (!logo || reduced.matches) return
+        if (!logo || reduced.matches) {
+            delete root.dataset.logoBoot
+            delete root.dataset.homeBoot
+            $homeBootStart.set(null)
+            return
+        }
 
         // The same logo node survives internal navigation, so its state
         // lives outside this per-page setup. Boot once per session.
         mark ??= makeMark(logo)
-        if (!sessionStorage.getItem("logo-booted")) {
-            sessionStorage.setItem("logo-booted", "true")
+        let booted = false
+        try {
+            booted = Boolean(sessionStorage.getItem("logo-booted"))
+            if (!booted) sessionStorage.setItem("logo-booted", "true")
+        } catch {
+            booted = true
+        }
+        if (!booted) {
+            delete root.dataset.logoBoot
             mark.boot()
+            if (root.dataset.homeBoot === "true") {
+                $homeBootStart.set(performance.now())
+                const clearBoot = setTimeout(() => {
+                    delete root.dataset.homeBoot
+                }, HOME_BOOT_OFFSET_MS + 1400)
+                signal.addEventListener("abort", () => {
+                    clearTimeout(clearBoot)
+                    delete root.dataset.homeBoot
+                    $homeBootStart.set(null)
+                })
+            }
+        } else {
+            delete root.dataset.logoBoot
+            delete root.dataset.homeBoot
+            $homeBootStart.set(null)
         }
         logo.addEventListener(
             "pointerenter",

@@ -65,12 +65,28 @@ const { title, center, headerTitle, disableScroll } = Astro.props
         <meta property="twitter:image:height" content="630" />
 
         <title>{title}</title>
+        <script is:inline>
+            ;(() => {
+                if (matchMedia("(prefers-reduced-motion: reduce)").matches)
+                    return
+                try {
+                    if (sessionStorage.getItem("logo-booted")) return
+                } catch {
+                    return
+                }
+                const root = document.documentElement
+                root.dataset.logoBoot = "pending"
+                if (/^\/(index\.html)?$/.test(location.pathname)) {
+                    root.dataset.homeBoot = "true"
+                }
+            })()
+        </script>
     </head>
     <body class:list={[{ "lg:overflow-hidden": disableScroll }]}>
         <Posthog />
         <Drawer />
         <div class="fixed top-0 z-20 w-full">
-            <Navbar />
+            <Navbar transparent={!headerTitle} />
             {headerTitle && <Header title={headerTitle} />}
         </div>
         <div

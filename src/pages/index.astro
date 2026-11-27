@@ -18,30 +18,32 @@ const scrollItemClass =
         <DotMatrix
             client:load
             icons={profileRoles.map(role => role.icon)}
-            className="fixed inset-x-0 top-18 h-[calc((100dvh-72px)*0.8)] max-h-256 w-full lg:h-[calc((100dvh-72px)*2/3)]"
+            className="fixed inset-x-0 top-0 h-[calc(72px+(100dvh-72px)*0.8)] max-h-[calc(72px+64rem)] w-full lg:h-[calc(72px+(100dvh-72px)*2/3)]"
         />
         <div class="relative flex h-full flex-col px-4 xs:px-6 md:px-8 lg:px-12 xl:px-16">
             <div class="relative flex min-h-[62%] items-end pt-6 pb-[5vh] lg:h-[60%] lg:pt-0 lg:pb-[5vh]">
                 <div class="relative flex min-w-0 flex-1 flex-col gap-1 sm:gap-2">
                     <p
                         data-matrix-dim
-                        class="text-md mb-1 motion-preset-blur-right-md motion-duration-1000 xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
+                        data-home-enter
+                        style="--stagger: 0ms"
+                        class="text-md mb-1 motion-preset-blur-right-md motion-duration-750 xs:text-lg sm:text-xl lg:text-2xl 2xl:text-3xl"
                     >
                         hello, my name is
                     </p>
                     <h1
                         data-matrix-dim
-                        class="mb-0.5 motion-preset-blur-right-md text-5xl motion-delay-75 motion-duration-1000 xs:text-6xl sm:text-7xl xl:text-[5rem] 2xl:text-8xl"
+                        data-home-enter
+                        style="--stagger: 110ms"
+                        class="mb-0.5 motion-preset-blur-right-md text-5xl motion-duration-800 xs:text-6xl sm:text-7xl xl:text-[5rem] 2xl:text-8xl"
                     >
-                        Nitish
-                        <span
-                            data-matrix-origin
-                            class="stop-flicker text-blue-400"
-                        >
-                            .
-                        </span>
+                        Nitish,
                     </h1>
-                    <div class="flex motion-preset-blur-right-md flex-wrap items-baseline gap-2 text-5xl motion-delay-100 motion-duration-1000 xs:text-6xl sm:text-7xl lg:text-6xl xl:text-[5rem] 2xl:text-8xl">
+                    <div
+                        data-home-enter
+                        style="--stagger: 220ms"
+                        class="flex motion-preset-blur-right-md flex-wrap items-baseline gap-2 text-5xl motion-duration-800 xs:text-6xl sm:text-7xl lg:text-6xl xl:text-[5rem] 2xl:text-8xl"
+                    >
                         <h1 data-matrix-dim>I am a&nbsp;</h1>
                         <div
                             data-matrix-dim-clip
@@ -60,7 +62,11 @@ const scrollItemClass =
                             </ul>
                         </div>
                     </div>
-                    <div class="mt-2 flex motion-preset-blur-right-md gap-4 motion-delay-150 motion-duration-1000 2xl:gap-6">
+                    <div
+                        data-home-enter
+                        style="--stagger: 320ms"
+                        class="mt-2 flex motion-preset-blur-right-md gap-4 motion-duration-750 2xl:gap-6"
+                    >
                         <IconButton
                             href="https://github.tnitish.com/"
                             openInNewTab
@@ -94,24 +100,35 @@ const scrollItemClass =
             </div>
 
             <div class="hidden flex-1 items-center pb-[6vh] lg:flex">
-                <ol class="grid w-full motion-preset-blur-up-md grid-cols-3 motion-delay-300 motion-duration-1000">
+                <ol class="grid w-full grid-cols-3">
                     {profileRoles.map((role, index) => (
                         <li
-                            data-role-column
-                            class="border-l-[3px] border-dotted border-white/20 px-6 opacity-35 transition-opacity duration-500 first:border-l-0 first:pl-0 data-[active=true]:opacity-100 xl:px-8"
+                            data-home-enter
+                            style={`--stagger: ${[420, 500, 570][index] ?? 420 + index * 75}ms`}
+                            class="motion-preset-blur-up-md motion-duration-750"
                         >
-                            <span class="flex gap-1.5" aria-hidden="true">
-                                {Array.from({ length: index + 1 }, () => (
-                                    <span class="size-1.5 rounded-full bg-white" />
-                                ))}
-                            </span>
-                            <h2 class="mt-3 text-2xl xl:text-3xl">
-                                {role.title}
-                            </h2>
-                            <p
-                                class="mt-1.5 text-base text-pretty xl:text-lg"
-                                set:html={role.body}
-                            />
+                            <div
+                                data-role-column
+                                class:list={[
+                                    "h-full opacity-35 transition-opacity duration-500 data-[active=true]:opacity-100",
+                                    index === 0
+                                        ? "pr-6 xl:pr-8"
+                                        : "border-l-[3px] border-dotted border-white/20 px-6 xl:px-8",
+                                ]}
+                            >
+                                <span class="flex gap-1.5" aria-hidden="true">
+                                    {Array.from({ length: index + 1 }, () => (
+                                        <span class="size-1.5 rounded-full bg-white" />
+                                    ))}
+                                </span>
+                                <h2 class="mt-3 text-2xl xl:text-3xl">
+                                    {role.title}
+                                </h2>
+                                <p
+                                    class="mt-1.5 text-base text-pretty xl:text-lg"
+                                    set:html={role.body}
+                                />
+                            </div>
                         </li>
                     ))}
                 </ol>
@@ -121,7 +138,9 @@ const scrollItemClass =
                 <button
                     id="role-cycle"
                     type="button"
-                    class="flex w-full motion-preset-blur-up-md flex-col gap-3 text-left motion-delay-300 motion-duration-1000"
+                    data-home-enter
+                    style="--stagger: 420ms"
+                    class="flex w-full motion-preset-blur-up-md flex-col gap-3 text-left motion-duration-750"
                 >
                     <span class="flex gap-1.5" aria-hidden="true">
                         {profileRoles.map(() => (
@@ -157,7 +176,7 @@ const scrollItemClass =
 
 <script>
     import { profileRoles } from "@content/profileRoles"
-    import { $activeRole } from "@store/uiStore"
+    import { $activeRole, HOME_BOOT_OFFSET_MS } from "@store/uiStore"
 
     import { onPageLoad } from "@utils/pageLifecycle"
 
@@ -190,11 +209,11 @@ const scrollItemClass =
 
         let roleTimer: ReturnType<typeof setTimeout>
 
-        const queueNextRole = () => {
+        const queueNextRole = (extraDelay = 0) => {
             clearTimeout(roleTimer)
             roleTimer = setTimeout(() => {
                 setRole(($activeRole.get() + 1) % roleCount)
-            }, ROLE_DURATION_MS)
+            }, ROLE_DURATION_MS + extraDelay)
         }
 
         const setRole = (index: number) => {
@@ -203,7 +222,13 @@ const scrollItemClass =
             queueNextRole()
         }
 
-        queueNextRole()
+        // Always start a fresh homepage visit on the first role.
+        $activeRole.set(0)
+        queueNextRole(
+            document.documentElement.dataset.homeBoot === "true"
+                ? HOME_BOOT_OFFSET_MS
+                : 0,
+        )
 
         // Scroller: one step per role, wrapping through the trailing duplicate
         if (scrollList) {
@@ -306,42 +331,15 @@ const scrollItemClass =
             clearTimeout(roleTimer)
             timers.forEach(clearTimeout)
             subscriptions.forEach(unsubscribe => unsubscribe())
+            // Reset before the next page mounts so revisiting / starts on role 0
+            // before DotMatrix hydrates and subscribes.
+            $activeRole.set(0)
         }
     })
 </script>
 
 <style>
-    /* The full stop flickers on like the logo's dot, then the matrix sends the
-       first icon out from it (DotMatrix.tsx, REVEAL_DELAY_MS). */
-    .stop-flicker {
-        animation: stop-flicker 430ms steps(1, end) 450ms backwards;
-    }
-
-    @keyframes stop-flicker {
-        0% {
-            opacity: 0;
-        }
-        14% {
-            opacity: 1;
-        }
-        28% {
-            opacity: 0;
-        }
-        48% {
-            opacity: 1;
-        }
-        60% {
-            opacity: 0.25;
-        }
-        74%,
-        100% {
-            opacity: 1;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .stop-flicker {
-            animation: none;
-        }
+    [data-home-enter] {
+        --motion-delay: calc(var(--home-boot, 0ms) + var(--stagger, 0ms));
     }
 </style>

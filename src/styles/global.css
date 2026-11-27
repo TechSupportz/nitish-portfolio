@@ -181,6 +181,17 @@ details summary::-webkit-details-marker {
     display: none;
 }
 
+/* Initial homepage boot: while the logo lights up in the corner, hold the
+   rest of the page back and offset its entrance animations by --home-boot. */
+html[data-home-boot="true"] {
+    --home-boot: 1150ms;
+}
+
+html[data-logo-boot="pending"][data-home-boot="true"] [data-home-enter],
+html[data-logo-boot="pending"][data-home-boot="true"] [data-nav-enter] {
+    animation-play-state: paused !important;
+}
+
 /* The client router swaps content without reloading the document. Keep the
    page and navbar stationary; only the active full stop travels. Existing
    content entry animations run independently of the header backdrop. */

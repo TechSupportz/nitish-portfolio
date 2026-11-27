@@ -1,4 +1,8 @@
-import { $activeRole } from "@store/uiStore"
+import {
+    $activeRole,
+    $homeBootStart,
+    HOME_BOOT_WAVE_MS,
+} from "@store/uiStore"
 import { cn } from "@utils/cn"
 import { useEffect, useRef } from "react"
 
@@ -56,9 +60,9 @@ const PIXEL_IN_DELAY_MS = 120
 const PIXEL_IN_SPREAD_MS = 420
 const PIXEL_STEP_MS = 70
 const SWITCH_MS = PIXEL_IN_DELAY_MS + PIXEL_IN_SPREAD_MS + PIXEL_STEP_MS
-// First icon: the hero's full stop flickers on (CSS, index.astro), then a
-// ripple leaves it and each icon dot grows in as the ring passes
-const REVEAL_DELAY_MS = 880
+// First icon: a ripple leaves the corner logo's blue dot (after it flickers on
+// during the initial boot, or right away on revisit) and grows each icon dot in
+const REVEAL_DELAY_MS = 80
 const REVEAL_GROW_MS = 420
 // Mobile only: the lit icon dots are also drawn as an HDR image (~4x SDR white,
 // public/hdr-glow.avif) masked to the dots, so HDR screens show them glowing.
@@ -209,15 +213,20 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
         const baseLayer = document.createElement("canvas")
         const baseCtx = baseLayer.getContext("2d")
 
-        // Anchors the icon to the top-right of the slot, or of the whole matrix
-        // when there's no visible slot (mobile)
-        const placeIcon = () => {
+        // Anchors the icon to the top-right of the slot, or of the grid area
+        // below the navbar when there's no visible slot (mobile)
+        const placeIcon = (gridTop: number) => {
             const slot = document
                 .querySelector<HTMLElement>("[data-matrix-icon-slot]")
                 ?.getBoundingClientRect()
             const fill = !slot || slot.width === 0 || slot.height === 0
             const area = fill
-                ? { left: 0, top: 0, width: box.width, height: box.height }
+                ? {
+                      left: 0,
+                      top: gridTop,
+                      width: box.width,
+                      height: Math.max(0, box.height - gridTop),
+                  }
                 : {
                       left: slot.left - box.left,
                       top: slot.top - box.top,
@@ -555,11 +564,21 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
             cols = Math.max(0, Math.floor((box.width - OFFSET) / PITCH) + 1)
             rows = Math.max(0, Math.floor((box.height - OFFSET) / PITCH) + 1)
-            mask = new Float32Array(rows).map((_, r) =>
-                fadeMask(clamp((OFFSET + r * PITCH) / box.height)),
-            )
+            // Keep the resting grid faded below the navbar so the logo area
+            // stays clean at rest, while still letting the reveal wave emerge
+            // directly from the logo dot behind the transparent navbar.
+            const navBottom =
+                document.querySelector(".navbar")?.getBoundingClientRect()
+                    .bottom ?? 0
+            const gridTop = Math.max(0, navBottom - box.top)
+            const gridHeight = Math.max(1, box.height - gridTop)
+            mask = new Float32Array(rows).map((_, r) => {
+                const y = OFFSET + r * PITCH
+                if (y < gridTop) return 0
+                return fadeMask(clamp((y - gridTop) / gridHeight))
+            })
 
-            placeIcon()
+            placeIcon(gridTop)
             dotRadius = icon.fill ? DOT_RADIUS_MOBILE : DOT_RADIUS
 
             baseLayer.width = canvas.width
@@ -836,7 +855,8 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         spot = Math.pow(1 - toPointer / SPOT_RADIUS, 1.5)
                     }
 
-                    let ripple = 0
+                    let tapRipple = 0
+                    let revealRipple = 0
                     let wake = 0
                     for (const wave of ripples) {
                         const age = now - wave.t
@@ -846,10 +866,12 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                             Math.hypot(x - wave.x, y - wave.y)
                         const offRing = Math.abs(behind)
                         if (offRing < RIPPLE_WIDTH) {
-                            ripple = Math.max(
-                                ripple,
-                                (1 - offRing / RIPPLE_WIDTH) * fade,
-                            )
+                            const strength = (1 - offRing / RIPPLE_WIDTH) * fade
+                            if (wave.wake) {
+                                revealRipple = Math.max(revealRipple, strength)
+                            } else {
+                                tapRipple = Math.max(tapRipple, strength)
+                            }
                         }
                         if (wave.wake && behind > 0) {
                             wake = Math.max(
@@ -868,21 +890,24 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     if (
                         level < 0.001 &&
                         spot === 0 &&
-                        ripple === 0 &&
+                        tapRipple === 0 &&
+                        revealRipple === 0 &&
                         wake < 0.01
                     )
                         continue
 
-                    // Spotlight and ripple only ever brighten dots that exist,
-                    // so they fade out with the grid instead of spilling past it
+                    // Spotlight and tap ripples only brighten dots that exist;
+                    // the logo reveal wave also lights dots through the top
+                    // fade around the logo dot, while still fading at the bottom.
+                    const waveMask = y < box.height * 0.5 ? 1 : m
                     const base = m * BASE_ALPHA
                     const alpha = Math.min(
                         1,
                         Math.max(base, level * ICON_ALPHA) +
-                            (spot * 0.3 +
-                                ripple * 0.6 +
-                                wake * REVEAL_WAKE_ALPHA) *
-                                Math.max(m, level),
+                            (spot * 0.3 + tapRipple * 0.6) *
+                                Math.max(m, level) +
+                            (revealRipple * 0.6 + wake * REVEAL_WAKE_ALPHA) *
+                                Math.max(waveMask, level),
                     )
                     // Painted over the base dot, so only add what's missing
                     const overlay = (alpha - base) / (1 - base)
@@ -897,8 +922,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         )
                         color = mix(color, mix(SKY, BLUE, along), lit[id])
                     }
-                    const tint =
-                        Math.max(spot * 0.5, ripple * 0.85, wake * 0.85) * m
+                    const tint = Math.max(
+                        Math.max(spot * 0.5, tapRipple * 0.85) * m,
+                        Math.max(revealRipple * 0.85, wake * 0.85) * waveMask,
+                    )
                     if (tint > 0) {
                         color = mix(color, mix(SKY, BLUE, c / cols), tint)
                     }
@@ -910,7 +937,10 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                         y,
                         dotRadius +
                             (ICON_RADIUS - dotRadius) * level +
-                            dotRadius * (ripple * 0.55 + wake * 0.3) * m,
+                            dotRadius *
+                                (tapRipple * 0.55 * m +
+                                    (revealRipple * 0.55 + wake * 0.3) *
+                                        waveMask),
                         0,
                         Math.PI * 2,
                     )
@@ -1072,25 +1102,27 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
 
         layout()
         laidOutSize = `${box.width}x${box.height}`
-        // First icon: wait for the hero's full stop to flicker on, then light
-        // the icon from it with a ripple. Without the full stop, it switches in
-        // from blank like any other icon
-        const origin = document.querySelector<HTMLElement>(
-            "[data-matrix-origin]",
-        )
+        // First icon: radiate out from the corner logo's blue dot (right as it
+        // locks on during the initial boot, or shortly after mount on revisit).
+        const origin = document.querySelector("[data-matrix-origin]")
+        let unsubscribeBoot: (() => void) | undefined
         if (origin && !reduceMotion) {
             const pending = { t: -1, x: 0, y: 0, reach: 1, end: Infinity }
             reveal = pending
             unveil = { t: -1, x: 0, y: 0, reach: 1, clear: Infinity }
             // The ring is the fade in, so skip the canvas's own
             canvas.style.transition = "none"
+            glowLayers.forEach(layer => snapOpacity(layer, "0"))
             lit = new Float32Array(cols * rows)
             from = new Float32Array(cols * rows)
-            later(() => {
+
+            const triggerReveal = () => {
                 if (reveal !== pending) return
-                const stop = origin.getBoundingClientRect()
-                const x = stop.left + stop.width / 2 - box.left
-                const y = stop.top + stop.height * 0.72 - box.top
+                measureText()
+                dim = Float32Array.from(dimTarget)
+                const dot = origin.getBoundingClientRect()
+                const x = dot.left + dot.width / 2 - box.left
+                const y = dot.top + dot.height / 2 - box.top
                 const corners = [
                     [icon.c0 - 1, icon.r0 - 1],
                     [icon.c0 + icon.size + 1, icon.r0 + icon.size + 1],
@@ -1135,7 +1167,36 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
                     farthest + 4 * REVEAL_WAKE_PX,
                 )
                 fadeInGlow()
-            }, REVEAL_DELAY_MS)
+                // Re-measure once the staggered hero text finishes translating in
+                later(() => {
+                    measureText()
+                    iconUnsettled = true
+                    schedule()
+                }, 1150)
+            }
+
+            if (document.documentElement.dataset.homeBoot === "true") {
+                const scheduleFromBoot = (startedAt: number) => {
+                    const elapsed = performance.now() - startedAt
+                    later(
+                        triggerReveal,
+                        Math.max(0, HOME_BOOT_WAVE_MS - elapsed),
+                    )
+                }
+                const startedAt = $homeBootStart.get()
+                if (startedAt !== null) {
+                    scheduleFromBoot(startedAt)
+                } else {
+                    unsubscribeBoot = $homeBootStart.subscribe(at => {
+                        if (at === null) return
+                        unsubscribeBoot?.()
+                        unsubscribeBoot = undefined
+                        scheduleFromBoot(at)
+                    })
+                }
+            } else {
+                later(triggerReveal, REVEAL_DELAY_MS)
+            }
         } else {
             from = new Float32Array(cols * rows)
             changedAt = performance.now()
@@ -1157,6 +1218,7 @@ const DotMatrix = ({ className, icons = [] }: DotMatrixProps) => {
             hdrQuery.removeEventListener("change", onHdrChange)
             debugToggle?.remove()
             unsubscribe()
+            unsubscribeBoot?.()
             resizeObserver.disconnect()
             import.meta.hot?.off("vite:afterUpdate", relayout)
             window.removeEventListener("pointermove", onPointerMove)

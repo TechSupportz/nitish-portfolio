@@ -40,7 +40,13 @@ const layers = ["off", "g", "l"] as const
                 height="48"
                 rx="15"
             />
-            <circle class={`${layer} dot`} cx="120" cy="108" r="12" />
+            <circle
+                class={`${layer} dot`}
+                data-matrix-origin={layer === "l" ? "" : undefined}
+                cx="120"
+                cy="108"
+                r="12"
+            />
             {layer === "g" && (
                 <g class="halo-wrap">
                     <circle class="halo" cx="120" cy="108" r="12" />
@@ -101,7 +107,14 @@ const layers = ["off", "g", "l"] as const
         --d: 2;
     }
 
-    /* Boot, about 1.2s: stem, shoulder and leg power on in turn with a glow
+    /* Hold the lit mark dark before the navbar script starts the boot, so it
+       never flashes fully lit on first paint. */
+    :global(html[data-logo-boot="pending"]) .l,
+    :global(html[data-logo-boot="pending"]) .halo-wrap {
+        opacity: 0;
+    }
+
+    /* Boot, about 1.3s: stem, shoulder and leg power on in turn with a glow
        flash each, then the dot flickers alive. Backwards fill only, so the
        resting state takes over when it ends. */
     .is-boot .l:not(.dot) {
@@ -113,15 +126,15 @@ const layers = ["off", "g", "l"] as const
     }
 
     .is-boot .l.dot {
-        animation: logo-flicker 427ms steps(1, end) 547ms backwards;
+        animation: logo-flicker 600ms steps(1, end) 547ms backwards;
     }
 
     .is-boot .g.dot {
-        animation: logo-flash 333ms ease-out 867ms backwards;
+        animation: logo-flash 333ms ease-out 990ms backwards;
     }
 
     .is-boot .halo-wrap {
-        animation: logo-on 333ms ease-out 867ms backwards;
+        animation: logo-on 333ms ease-out 990ms backwards;
     }
 
     @keyframes logo-on {
