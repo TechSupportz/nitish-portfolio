@@ -10,14 +10,13 @@ const text = stop ? title.slice(0, -1) : title
 ---
 
 <div class="relative flex h-32 w-full flex-col justify-center xs:h-36 md:h-56">
-    <div
-        class="absolute inset-x-0 size-full bg-linear-to-t from-transparent from-30% to-charcoal to-80% bg-progressive-blur-to-b"
-    >
-        <div
-            class="dot-matrix h-32 bg-[url('/dot-matrix.svg')] bg-repeat opacity-30 xs:h-36 md:h-56"
-            style="mask-image: linear-gradient(to bottom,transparent,15%,white)"
-        >
-        </div>
+    <div class="header-backdrop" aria-hidden="true">
+        <div class="blur-layer" style="--b: 1px; --end: 100%"></div>
+        <div class="blur-layer" style="--b: 3px; --end: 88%"></div>
+        <div class="blur-layer" style="--b: 6px; --end: 74%"></div>
+        <div class="blur-layer" style="--b: 12px; --end: 60%"></div>
+        <div class="header-tint"></div>
+        <div class="header-dots bg-[url('/dot-matrix.svg')] bg-repeat"></div>
     </div>
     <div class="m-auto w-full max-w-screen-2xl">
         <h1
@@ -27,3 +26,50 @@ const text = stop ? title.slice(0, -1) : title
         </h1>
     </div>
 </div>
+
+<style>
+    .header-backdrop {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .header-backdrop > * {
+        position: absolute;
+        inset: 0;
+    }
+
+    /* Progressive blur: each layer is stronger and stops sooner, so the blur
+       ramps up toward the navbar instead of ending on one hard edge. */
+    .blur-layer {
+        backdrop-filter: blur(var(--b));
+        mask-image: linear-gradient(to bottom, black 30%, transparent var(--end));
+    }
+
+    /* Eased charcoal tint: solid under the navbar, easing out to nothing. */
+    .header-tint {
+        background: linear-gradient(
+            to bottom,
+            rgb(18 18 18 / 1) 0%,
+            rgb(18 18 18 / 0.97) 35%,
+            rgb(18 18 18 / 0.9) 50%,
+            rgb(18 18 18 / 0.74) 62%,
+            rgb(18 18 18 / 0.5) 73%,
+            rgb(18 18 18 / 0.26) 83%,
+            rgb(18 18 18 / 0.08) 92%,
+            rgb(18 18 18 / 0) 100%
+        );
+    }
+
+    /* The dots fade in under the navbar and dissolve before the content. */
+    .header-dots {
+        opacity: 0.3;
+        mask-image: linear-gradient(
+            to bottom,
+            transparent,
+            black 25%,
+            black 50%,
+            transparent 90%
+        );
+    }
+</style>
