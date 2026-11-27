@@ -1,4 +1,5 @@
 ---
+import ArrowUpRight from "@lucide/astro/icons/arrow-up-right"
 import ProjectIcon from "@components/project/ProjectIcon.astro"
 import type { TListedProject } from "@src/types/ProjectContentType"
 import { Image } from "astro:assets"
@@ -32,22 +33,31 @@ const host = new URL(url).hostname.replace(/^www\./, "")
     data-name={name}
     class="project-card group grid scroll-mt-72 items-center gap-5 md:grid-cols-2 md:gap-8 xl:gap-10"
 >
-    <Image
-        class="w-full rounded-md outline-2 outline-white/10 transition-[outline-color] duration-200 ease-out group-hover:outline-white/35"
-        src={imageUrl}
-        alt={`${title} preview`}
-        width={900}
-        height={600}
-        widths={[300, 450, 600, 800, 900]}
-        sizes="(min-width: 1024px) 34vw, (min-width: 768px) 46vw, 92vw"
-    />
+    <div
+        class="relative overflow-hidden rounded-md outline-2 outline-white/10 transition-[outline-color] duration-200 ease-out group-hover:outline-white/35"
+    >
+        <Image
+            class="w-full"
+            src={imageUrl}
+            alt={`${title} preview`}
+            width={900}
+            height={600}
+            widths={[300, 450, 600, 800, 900]}
+            sizes="(min-width: 1024px) 34vw, (min-width: 768px) 46vw, 92vw"
+        />
+        <div class="card-dots" aria-hidden="true"></div>
+    </div>
     <div class="max-w-[60ch]">
         <div class="flex justify-between gap-4 font-code text-xs text-white/55">
             <span>{no} / {category}</span>
             <span
-                class="transition-colors duration-200 ease-out group-hover:text-white"
+                class="flex items-center gap-1 transition-colors duration-200 ease-out group-hover:text-white"
             >
-                {host} ↗
+                {host}
+                <ArrowUpRight
+                    class="size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    aria-hidden="true"
+                />
             </span>
         </div>
         <h2 class="mt-1.5 text-2xl xl:text-[1.75rem]">
@@ -65,3 +75,27 @@ const host = new URL(url).hostname.replace(/^www\./, "")
         </div>
     </div>
 </a>
+
+<style>
+    /* A quiet halftone over the preview on hover: charcoal dots that fade
+       out toward the top right, so the image is screened, not covered. */
+    .card-dots {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: radial-gradient(
+            circle at center,
+            rgb(18 18 18 / 0.35) 1px,
+            transparent 1.4px
+        );
+        background-size: 5px 5px;
+        mask-image: linear-gradient(to top right, black, transparent 65%);
+        opacity: 0;
+        transition: opacity 300ms var(--ease-out-strong, ease-out);
+    }
+
+    .group:hover .card-dots,
+    .group:focus-visible .card-dots {
+        opacity: 1;
+    }
+</style>
