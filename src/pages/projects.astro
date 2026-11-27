@@ -38,7 +38,7 @@ const first = groups[0].items[0]
             <ProjectsSidebar groups={groups} />
             <div
                 class="mr-10 h-full w-1 motion-preset-fade-lg overflow-clip motion-delay-500 motion-duration-1500"
-                style="mask-image: linear-gradient(to top,transparent,15%,transparent,35%,white,75%,white,transparent)"
+                style="mask-image: linear-gradient(to bottom, transparent, white 18%, white 82%, transparent)"
             >
                 <div
                     id="divider"
@@ -278,6 +278,27 @@ const first = groups[0].items[0]
                 () => scrollToCard(document.getElementById(row.dataset.lsRow!)),
                 { signal },
             ),
+        )
+        // Arrow keys step card to card instead of nudging the page.
+        addEventListener(
+            "keydown",
+            event => {
+                if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return
+                if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+                    return
+                const target = event.target
+                if (
+                    target instanceof Element &&
+                    target.closest("input, textarea, select, [contenteditable]")
+                )
+                    return
+                const i = cards.findIndex(card => card.id === currentId)
+                const next = cards[i + (event.key === "ArrowDown" ? 1 : -1)]
+                event.preventDefault()
+                if (next) scrollToCard(next)
+                else if (event.key === "ArrowUp") scrollTo({ top: 0, behavior: behavior() })
+            },
+            { signal },
         )
         update()
         return () => cancelAnimationFrame(frame)
